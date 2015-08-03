@@ -6,34 +6,35 @@ holiday_scrape <- function(beg_year, end_year) {
   #----------------------------------------
   months <- data.frame(month= c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
                        month_number= 1:12)
-
+  cal <- vector(mode= "list")
+  
   # 02. scrape holidays
   #----------------------------------------
   for(i in beg_year:end_year) {
     # pull in holidays for a given year
-    cal <- as.data.frame(readHTMLTable(scrape(paste0("http://www.timeanddate.com/holidays/us/", i), 
+    cal[[i - beg_year + 1]] <- as.data.frame(readHTMLTable(scrape(paste0("http://www.timeanddate.com/holidays/us/", i), 
                           parse=TRUE)[[1]], stringsAsFactors= FALSE))
-    cal$year <- i
+    # mung dates
+    cal[[i - beg_year + 1]]$year  <- i
+    cal[[i - beg_year + 1]]$month <- str_sub(cal[[i - beg_year + 1]][,1], 1, 3)
+    cal[[i - beg_year + 1]]$day   <- as.numeric(str_sub(cal[[i - beg_year + 1]][,1], 4))
     
-    if (i == beg_year) {
-      holidays <- cal
-    } else {
-      holidays <- rbind(holidays, cal)
-    } 
+    # add black friday
+    cal[[i - beg_year + 1]] <- add_black_fri(cal[[i - beg_year + 1]]) 
+    names(cal[[i - beg_year + 1]]) <- c("date", "week_day", "holiday", "holiday_cat", "states_celebrated", "year", "month", "day")
   }
+  holidays <- data.table::rbindlist(cal)
     
   # Munging - dates
-  names(holidays) <- c("date", "week_day", "holiday", "holiday_cat", "states_celebrated", "year")
-  holidays$month <- str_sub(holidays$date, 1, 3)
-  holidays$day <- as.numeric(str_sub(holidays$date, 4))
-  holidays <- merge(holidays, months, all.x= TRUE)
+  holidays <- merge(holidays, months, by= "month", all.x= TRUE)
   holidays$date2 <- as.Date(paste(holidays$year, holidays$month_number, holidays$day, sep= "-"), format= "%Y-%m-%d")
   
   
   # 03. Subset specific holiday categories
   #----------------------------------------
   # avoiding duplicates
-  holidays_sub <- holidays[holidays$holiday_cat %in% c("National holiday", "National holiday, Christian") |
+  holidays <- as.data.frame(holidays)
+  holidays_sub <- holidays[holidays$holiday_cat %in% c("National holiday", "National holiday, Christian", "Consumerism") |
                           (holidays$holiday == "Christmas Eve" & holidays$holiday_cat == "Observance, Christian") | 
                           (holidays$holiday == "New Year's Eve" & holidays$holiday_cat == "Observance, Christian") |
                           (holidays$holiday == "Election Day"), c("date2", "year", "month", "week_day", "holiday")]
@@ -53,4 +54,13 @@ num_wks <- function(days, sun_indices) {
                   rep(wks, length(days) - (wks - 1) * 7 + sun_indices[1] - 2))
   }
   return(week_num)
+}
+
+
+add_black_fri <- function(x) {
+  tg <- x[which(x[,3] == "Thanksgiving Day"), ]
+  tg_day <- tg$day
+  yr <- tg$year
+  black_fri <- c(paste("Nov", tg_day + 1), "Friday", "Black Friday", "Consumerism", "", yr, "Nov", tg_day + 1)
+  return(data.frame(rbind(x, black_fri)))
 }
