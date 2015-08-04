@@ -1,5 +1,5 @@
 #' @title Pull call data
-#' @description Pull in the appropriate call data from the appropriate databases
+#' @description Pull in inbound five9id call data from the appropriate databases / daily dump
 #' @param channel A character string corresponding to the appropriate ODBC connection. Defaults to "c2g"
 #' @param call_date A character string specifying subset \code{where call_date >= date}. Defaults to '1/01/2014'
 #' @return a \code{data.frame} with call data

@@ -12,8 +12,10 @@ new_campaign_proj <- function(cur_date, future_date, current_campaigns, called_b
   require(data.table) # for rbindlist()
   
   future_days <- seq(future_date, cur_date, 1); class(future_days) <- "Date"
-  # preallocate 
+  current_campaigns$call_date <- NULL
+  current_campaigns$Called <- NULL
   
+  # preallocate 
   p <- length(future_days)
   new_camp <- vector(mode= "list", length= p)
   
@@ -25,17 +27,16 @@ new_campaign_proj <- function(cur_date, future_date, current_campaigns, called_b
     daily_campaigns$days_to_response <- as.numeric(as.Date(daily_campaigns$response_date)) - as.numeric(as.Date(daily_campaigns$date)) 
     daily_campaigns <- daily_campaigns[daily_campaigns$days_to_response <= 90, ]
     
-    new_camp[[i]] <- daily_campaigns[, -c(29:30)]
+    new_camp[[i]] <- daily_campaigns
   }
   new_campaigns <- rbindlist(new_camp)
   
   #Define both new_campaigns projected and called
-  new_campaigns$projected <- "NA"
   new_campaigns$year_response_date <- year(new_campaigns$response_date)
   new_campaigns$month_response_date <- month(new_campaigns$response_date)
   new_campaigns$day_response_date <- day(new_campaigns$response_date)
-  new_campaigns <- merge(new_campaigns, called_by_day, 
-                         by=c("year_response_date", "month_response_date", "day_response_date"), all.x="TRUE")
+  new_campaigns <- merge(as.data.frame(new_campaigns), called_by_day, 
+                         by=c("year_response_date", "month_response_date", "day_response_date"), all.x=TRUE)
   
   
   #Change day_of_week to response_day_of_week
