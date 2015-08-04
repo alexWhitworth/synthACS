@@ -1,33 +1,32 @@
-#' @description Internal function called by \code{clean_model_data()}. Calculates future dates
-#' for response projection for each current campaign.
+#' @description Internal function called by \code{clean_model_data()}. Calculates all future dates
+#' where we expect responses for each current campaign for use in projection.
 #' @param cur_date \code{Numeric}. Coerced date corresponding to the last day of the current month.
 #' @param future_date \code{Numeric}. Corresponds to first day after max response date to date.
-#' @param current_campaigns \code{data.frame}. Defined in \code{clean_model_data()}.
+#' @param cur_campaigns \code{data.frame}. Defined in \code{clean_model_data()}.
 #' @param called_by_day \code{data.frame}. Aggregate sum of calls by day
 #' @return A \code{data.frame}.
 #' @export
 
-new_campaign_proj <- function(cur_date, future_date, current_campaigns, called_by_day) {
+new_campaign_proj <- function(cur_date, future_date, cur_campaigns, called_by_day) {
   require(lubridate)
   require(data.table) # for rbindlist()
   
   future_days <- seq(future_date, cur_date, 1); class(future_days) <- "Date"
-  current_campaigns$call_date <- NULL
-  current_campaigns$Called <- NULL
+  cur_campaigns$call_date <- NULL
+  cur_campaigns$Called <- NULL
   
   # preallocate 
   p <- length(future_days)
   new_camp <- vector(mode= "list", length= p)
   
-  # Loop through current_campaigns by date to assign the campaigns outstanding 
-  # for each date and create forward looking campaign data
+  # Loop through cur_campaigns by date to assign upcoming days in which we will project responses
   for(i in 1:p) {
-    daily_campaigns <- current_campaigns[as.numeric(as.Date(current_campaigns$date)) <= as.numeric(future_days[i]), ]
-    daily_campaigns$response_date <- future_days[i]
-    daily_campaigns$days_to_response <- as.numeric(as.Date(daily_campaigns$response_date)) - as.numeric(as.Date(daily_campaigns$date)) 
-    daily_campaigns <- daily_campaigns[daily_campaigns$days_to_response <= 90, ]
-    
-    new_camp[[i]] <- daily_campaigns
+    future_day_resp <- cur_campaigns[as.numeric(as.Date(cur_campaigns$date)) <= as.numeric(future_days[i]), ]
+    future_day_resp$response_date <- future_days[i]
+    future_day_resp$days_to_response <- as.numeric(as.Date(future_day_resp$response_date)) - as.numeric(as.Date(future_day_resp$date)) 
+    # only keep 90 days of tracking
+    future_day_resp <- future_day_resp[future_day_resp$days_to_response <= 90, ]
+    new_camp[[i]] <- future_day_resp
   }
   new_campaigns <- rbindlist(new_camp)
   
