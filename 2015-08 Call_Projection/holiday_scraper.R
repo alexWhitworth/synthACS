@@ -15,7 +15,7 @@ holiday_scrape <- function(beg_year, end_year) {
     cal[[i - beg_year + 1]] <- as.data.frame(readHTMLTable(scrape(paste0("http://www.timeanddate.com/holidays/us/", i), 
                           parse=TRUE)[[1]], stringsAsFactors= FALSE))
     # mung dates
-    cal[[i - beg_year + 1]]$year  <- i
+    cal[[i - beg_year + 1]]$year  <- as.integer(i)
     cal[[i - beg_year + 1]]$month <- str_sub(cal[[i - beg_year + 1]][,1], 1, 3)
     cal[[i - beg_year + 1]]$day   <- as.numeric(str_sub(cal[[i - beg_year + 1]][,1], 4))
     

@@ -7,6 +7,7 @@ pull_call_data <- function(channel= "c2g", call_date= '1/01/2014') {
   
   #Load 'RODBC'
   require(RODBC)
+  require(data.table)
   ch <- odbcConnect(channel)
   
   query_txt <- paste("select ltrim(rtrim(category)) category, DNIS, campaign, TFN, five9did, 
@@ -28,6 +29,6 @@ pull_call_data <- function(channel= "c2g", call_date= '1/01/2014') {
   close(ch)
   
   # Order calls by date and return
-  called <- called[order(called$call_date), ]
+  called <- data.table(called)[order(call_date)]
   return(called)
 }
