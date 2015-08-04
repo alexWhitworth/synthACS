@@ -32,7 +32,7 @@ clean_model_data <- function(called_data, channel= "c2g") {
   
   # Merge called_by_day to campaign response
   camp_resp <- merge(camp_resp, called_by_day, 
-                               by=c("year_response_date", "month_response_date", "day_response_date"), all.x="TRUE")  
+                     by=c("year_response_date", "month_response_date", "day_response_date"), all.x="TRUE")  
   
   # 01b. Calculate some dates
   #---------------------------------------------------
@@ -77,8 +77,8 @@ clean_model_data <- function(called_data, channel= "c2g") {
                                          as.numeric(as.Date(camp_resp$date)) <= last_day_num &
                                          as.character(camp_resp$campaign_group) != "A/B Test", ]
   
-  #Create campaign response where all days have already happened (response date exists)
-  camp_resp_old <- camp_resp_final[!is.na(camp_resp_final$response_date) & 
+  # Complete campaigns: all response days have already happened (response date exists)
+  camp_resp_comp <- camp_resp_final[!is.na(camp_resp_final$response_date) & 
                                                      !is.null(camp_resp_final$response_date), ]
   
   #Bind campaigns_outstanding and campaign_future to see all current possible campaigns and dedup
@@ -87,17 +87,17 @@ clean_model_data <- function(called_data, channel= "c2g") {
   
   rm(campaign_future, campaign_outstanding)
   
-  # 03. Create new_campaigns, merge, and return
+  # 03. Create new_campaigns -- ie projection range, merge, and return
   #---------------------------------------------------  
   new_campaigns <- new_campaign_proj(last_day_num, future_date1,
                                      current_campaigns, called_by_day) ## needs to be loaded (create R package)
   
-  #Form final dataset, camp_resp
-  camp_resp <- rbind(new_campaigns, camp_resp_old)
+  # Form final dataset, camp_resp
+  camp_resp <- rbind(new_campaigns, camp_resp_comp)
   camp_resp <- camp_resp[order(camp_resp$year_response_date, 
-                                               camp_resp$month_response_date, 
-                                               camp_resp$day_response_date), ]  
+                               camp_resp$month_response_date, 
+                               camp_resp$day_response_date), ]  
   
   return(list(called_by_day= called_by_day, camp_resp= camp_resp, 
-              camp_resp_final= camp_resp_final))
+              camp_resp_final= camp_resp_final)) # not sure that I need camp_resp_final
 }
