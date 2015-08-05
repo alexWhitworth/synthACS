@@ -2,22 +2,23 @@
 #' @description Input IB call data, pull campaign response data. Do aggregations, data cleaning,
 #' and find all future dates for oustanding and future campaigns where we expect responses within
 #' the upcoming month.
-#' @param a \code{data.frame} with call data from \code{data_pull()}.
+#' @param called_data A \code{data.frame} with call data from \code{data_pull()}.
 #' @param channel A character string corresponding to the appropriate ODBC connection. Defaults to "c2g"
 #' @return \code{list} of four \code{data.frame}s: (1) Aggregated call-by-day data, (2) completed
 #' campaign data, (3) oustanding campaign data, (4) all future response days for upcoming campaigns.
 get_model_data <- function(called_data, channel= "c2g") {
   require(lubridate)
   require(RODBC)
-  require(dplyr)
+  require(data.table)
   
   # 01. Pull campaign response data and clean
   #     Assumed that we want to use data back through March 2014 only  
   #---------------------------------------------------
   # Pull campaign response data, all variables
   ch <- odbcConnect(channel)
-  camp_resp <- sqlQuery(ch, "SELECT * FROM [c2g].[dbo].[c2g_campaign_response] 
-                                where year(date) >= 2014", stringsAsFactors= FALSE)
+  camp_resp <- data.table(sqlQuery(ch, "SELECT * FROM [c2g].[dbo].[c2g_campaign_response] 
+                                where year(date) >= 2014", stringsAsFactors= FALSE), 
+                          key= c("cell_code", "response_date"))
   close(ch); rm(ch)
   
   # do some munging on response data
@@ -26,7 +27,7 @@ get_model_data <- function(called_data, channel= "c2g") {
   camp_resp$day_response_date <- day(camp_resp$response_date)
   
   # Aggregate daily call volume, do some basic munging
-  called_by_day <- called_data %>% group_by(call_date) %>% summarize(Called= sum(mktg_call_count, na.rm= TRUE))
+  called_by_day <- data.table(called)[, .(Called= sum(mktg_call_count, na.rm= TRUE)), keyby= call_date]
   called_by_day$month_response_date <- month(called_by_day$call_date)
   called_by_day$day_response_date <- day(called_by_day$call_date)
   called_by_day$year_response_date <- year(called_by_day$call_date)
@@ -84,8 +85,9 @@ get_model_data <- function(called_data, channel= "c2g") {
   
   # 03. Create new_campaigns -- ie dates to be projected -- and return
   #---------------------------------------------------  
-  new_campaigns <- new_campaign_proj(last_day_num, future_date1,
-                                     cur_campaigns, called_by_day) ## needs to be loaded (create R package)
+  new_campaigns <- data.table(new_campaign_proj(last_day_num, future_date1,
+                                     cur_campaigns, called_by_day),
+                              key= c("cell_code", "response_date"))  ## needs to be loaded (create R package)
   
   return(list(called_by_day= called_by_day, 
               camp_complete= camp_resp_comp,
