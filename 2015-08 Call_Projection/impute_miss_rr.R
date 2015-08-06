@@ -20,7 +20,6 @@ impute_zero_resp <- function(dat, days_tracking= 90) {
     responders= 0
     pct_of_leads= 0
     pct_of_responders= 0
-    Called= 0
   })
   
   miss <- c(0:90)[-which(0:90 %in% dat$days_to_response)]

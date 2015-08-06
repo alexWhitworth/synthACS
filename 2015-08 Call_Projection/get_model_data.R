@@ -33,8 +33,8 @@ get_model_data <- function(called_data, channel= "c2g") {
   called_by_day$year_response_date <- year(called_by_day$call_date)
   
   # Merge called_by_day to campaign response
-  camp_resp <- merge(camp_resp, called_by_day, 
-                     by=c("year_response_date", "month_response_date", "day_response_date"), all.x="TRUE")  
+  #camp_resp <- merge(camp_resp, called_by_day, 
+  #                   by=c("year_response_date", "month_response_date", "day_response_date"), all.x="TRUE")  
   
   # 01b. Calculate some dates
   #---------------------------------------------------

@@ -11,7 +11,7 @@ camp_out_calc_adj <- function(camp_out, channel= "c2g") {
   
   # 01. Pull campaign tracker data, subset complete and incomplete campaigns
   #--------------------------------------------------------
-  ch <- odbcConnect("c2g")
+  ch <- odbcConnect(channel)
   camp_track <- data.table(sqlQuery(ch, "SELECT * FROM [c2g].[dbo].[c2g_campaign_tracker]
                        where year(date) >= 2014", stringsAsFactors= FALSE), key= "cell_code")
   close(ch); rm(ch)
@@ -51,7 +51,7 @@ camp_out_calc_adj <- function(camp_out, channel= "c2g") {
                      by= .(campaign_type, class_of_mail)][order(campaign_type, class_of_mail)]
   
   # top_campaigns -- cell codes and data from campaign_response
-  top_camp <- extract_top(camp_comp, comp_rr)
+  top_camp <- extract_top(camp_comp, comp_rr, channel= channel)
   
   # 03. summarize top campaigns over time relative to all campaigns
   #--------------------------------------------------------
@@ -71,7 +71,13 @@ camp_out_calc_adj <- function(camp_out, channel= "c2g") {
   
 }
 
-
+#' @title Extract top / not top campaign data
+#' @description Pulls campaign data from [campaign_response] for top campaigns and not-top campaigns
+#' by class (\code{campaign_type:class_of_mail})
+#' @param campaigns A \code{data.frame} with data on complete campaigns from [campaign_tracker].
+#' @param rr_stats A \code{data.frame} with summary statistics on complete campaigns.
+#' @param channel A character string corresponding to the appropriate ODBC connection. Defaults to "c2g"
+#' @return a \code{list} of two \code{data.table}s: (1) top campaign data; (2) not-top campaign data
 extract_top <- function(campaigns, rr_stats, channel= "c2g") {
   require(RODBC)
   require(data.table)

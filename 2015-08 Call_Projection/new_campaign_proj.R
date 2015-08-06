@@ -12,8 +12,6 @@ new_campaign_proj <- function(cur_date, future_date, cur_campaigns, called_by_da
   require(data.table) # for rbindlist()
   
   future_days <- seq(future_date, cur_date, 1); class(future_days) <- "Date"
-  cur_campaigns$call_date <- NULL
-  cur_campaigns$Called <- NULL
   
   # preallocate 
   p <- length(future_days)
