@@ -50,7 +50,7 @@ camp_out_calc_adj <- function(camp_out, channel= "c2g") {
                            p_90= quantile(response_rate_duns, .9, na.rm=TRUE)), 
                      by= .(campaign_type, class_of_mail)][order(campaign_type, class_of_mail)]
   
-  # top_campaigns
+  # top_campaigns -- cell codes and data from campaign_response
   top_camp <- extract_top(camp_comp, comp_rr)
   
   # 03. summarize top campaigns over time relative to all campaigns
@@ -80,23 +80,29 @@ extract_top <- function(campaigns, rr_stats, channel= "c2g") {
   camp_resp <- data.table(sqlQuery(ch, "SELECT * FROM [c2g].[dbo].[c2g_campaign_response] 
                                   where year(date) >= 2014", stringsAsFactors= FALSE), 
                           key= c("cell_code", "response_date")); close(ch); rm(ch)
-  top_camp <- list()
   
+  top_camp <- not_top  <- top_camp_cell_codes <- list()
   for (i in 1:nrow(rr_stats)) {
     if (rr_stats$n[i] < 50 | is.na(rr_stats$class_of_mail[i])) {next}
     # extract cell codes for top campaigns
     #-------------------------------------------------------- 
     camp_sub <- campaigns[campaign_type == rr_stats$campaign_type[i] &
                                       class_of_mail == rr_stats$class_of_mail[i]]
-    top_camp[[length(top_camp) + 1]] <- camp_sub$cell_code[which(camp_sub$response_rate_duns > rr_stats$p_90[i])]
+    top_camp_cell_codes[[length(top_camp_cell_codes) + 1]] <- 
+      camp_sub$cell_code[which(camp_sub$response_rate_duns > rr_stats$p_90[i])]
   
     # extract relevant campaign_response data
     #--------------------------------------------------------
-    top_camp[[length(top_camp)]] <- list(top_camp[[length(top_camp)]],
-      camp_resp[cell_code %in% top_camp[[length(top_camp)]],])
+    top_camp[[length(top_camp) + 1]] <- camp_resp[cell_code %in% 
+                  top_camp_cell_codes[[length(top_camp_cell_codes)]],]
+    
+    not_top[[length(not_top) + 1]] <- camp_resp[!(cell_code %in% 
+                  top_camp_cell_codes[[length(top_camp_cell_codes)]]) & 
+                  campaign_type == rr_stats$campaign_type[i] &
+                  class_of_mail == rr_stats$class_of_mail[i],]
     # apply class name
-    names(top_camp)[length(top_camp)] <- paste(rr_stats$campaign_type[i], rr_stats$class_of_mail[i], sep= "_")
+    names(not_top)[length(not_top)] <- names(top_camp)[length(top_camp)] <- 
+      paste(rr_stats$campaign_type[i], rr_stats$class_of_mail[i], sep= "_")
   }
-  
-  return(top_camp)
+  return(list(top=top_camp, not_top=not_top))
 }
