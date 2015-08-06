@@ -1,5 +1,5 @@
 
-#' @title Calculate adjustment rate (ie lift) for ongoing campaigns 
+#' @title Calculate adjustment rate (ie lift) for oustanding campaigns 
 #' @description Calculates adjustment rate (ie-lift) for ongoing campaigns by class and 
 #' IDs top ongoing capaigns where statistically significant. Class is defined as 
 #' \code{interaction(campaign_type, class_of_mail)}.
