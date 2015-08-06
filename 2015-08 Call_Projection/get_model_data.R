@@ -6,6 +6,7 @@
 #' @param channel A character string corresponding to the appropriate ODBC connection. Defaults to "c2g"
 #' @return \code{list} of four \code{data.frame}s: (1) Aggregated call-by-day data, (2) completed
 #' campaign data, (3) oustanding campaign data, (4) all future response days for upcoming campaigns.
+#' @export
 get_model_data <- function(called_data, channel= "c2g") {
   require(lubridate)
   require(RODBC)

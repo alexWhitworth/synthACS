@@ -3,6 +3,7 @@
 #' @param channel A character string corresponding to the appropriate ODBC connection. Defaults to "c2g"
 #' @param call_date A character string specifying subset \code{where call_date >= date}. Defaults to '1/01/2014'
 #' @return a \code{data.frame} with call data
+#' @export
 pull_call_data <- function(channel= "c2g", call_date= '1/01/2014') {
   
   #Load 'RODBC'

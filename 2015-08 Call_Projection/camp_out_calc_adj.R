@@ -8,6 +8,7 @@
 #' @param channel A character string corresponding to the appropriate ODBC connection. Defaults to "c2g"
 #' @return A \code{list} of length two: (1) \code{list} of top performing campaigns by class, 
 #' (2) the adjustment rate (lift) for each class.
+#' @export
 camp_out_calc_adj <- function(camp_out, channel= "c2g") {
   library(RODBC)
   library(data.table)
@@ -120,6 +121,7 @@ camp_out_calc_adj <- function(camp_out, channel= "c2g") {
 #' @param rr_stats A \code{data.frame} with summary statistics on complete campaigns.
 #' @param channel A character string corresponding to the appropriate ODBC connection. Defaults to "c2g"
 #' @return a \code{list} of two \code{data.table}s: (1) top campaign data; (2) not-top campaign data
+#' @export
 extract_top <- function(campaigns, rr_stats, channel= "c2g") {
   require(RODBC)
   require(data.table)
@@ -160,6 +162,7 @@ extract_top <- function(campaigns, rr_stats, channel= "c2g") {
 #' @param df2 A \code{data.frame} with four columns: (1) a key, (2) sample size, 
 #' (3) a vector of means, (4) a vector of SDs
 #' @param alpha The significance level of test. Defaults to 0.05
+#' @export
 listwise.t.test <- function(df1, df2, alpha= 0.05) {
   if (!all(dim(df1) == dim(df2))) stop("Input equal dimension data frames.")
   if (df1[,1] != df2[,1]) stop("Data frames must have matching keys")

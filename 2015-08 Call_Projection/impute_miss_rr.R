@@ -6,6 +6,7 @@
 #' @param days_tracking An integer corresponding to the days of tracking across campaigns. 
 #' Defaults to 90.
 #' @return A \code{data.frame} with imputed zero responses on days without responses.
+#' @export
 impute_zero_resp <- function(dat, days_tracking= 90) {
   require(data.table)
   
@@ -46,6 +47,7 @@ impute_zero_resp <- function(dat, days_tracking= 90) {
 #' Defaults to \code{"cell_code"}.
 #' @param comp_camp \code{Logical}. Are the campaigns complete or not? Defaults to TRUE. 
 #' @return A \code{data.frame} with imputed zero responses on days without responses.
+#' @export
 impute_zero_resp_all <- function(dat, days_tracking= 90, group= "cell_code", comp_camp= TRUE) {
   require(data.table)
   dat <- data.table(dat)
