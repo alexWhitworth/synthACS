@@ -32,10 +32,13 @@ get_model_data <- function(called_data, channel= "c2g") {
   called_by_day$month_response_date <- month(called_by_day$call_date)
   called_by_day$day_response_date <- day(called_by_day$call_date)
   called_by_day$year_response_date <- year(called_by_day$call_date)
-  
-  # Merge called_by_day to campaign response
-  #camp_resp <- merge(camp_resp, called_by_day, 
-  #                   by=c("year_response_date", "month_response_date", "day_response_date"), all.x="TRUE")  
+  called_by_day$resp_day_of_week <- wday(called_by_day$call_date)
+  called_by_day$resp_day_of_week_chr <- ifelse(called_by_day$resp_day_of_week == 1, "Sunday", 
+                                        ifelse(called_by_day$resp_day_of_week == 2, "Monday", 
+                                        ifelse(called_by_day$resp_day_of_week == 3, "Tuesday", 
+                                        ifelse(called_by_day$resp_day_of_week == 4, "Wednesday", 
+                                        ifelse(called_by_day$resp_day_of_week == 5, "Thursday", 
+                                        ifelse(called_by_day$resp_day_of_week == 6, "Friday", "Saturday"))))))
   
   # 01b. Calculate some dates
   #---------------------------------------------------
@@ -81,8 +84,9 @@ get_model_data <- function(called_data, channel= "c2g") {
                                    camp_resp_final$days_of_tracking < 0, ]
   
   # current campaigns': outstanding or future with < 90 days tracking
+  # double check for errors
   cur_campaigns <- rbind(camp_outstanding, camp_future)
-  cur_campaigns <- cur_campaigns[!duplicated(cur_campaigns$cell_code),]
+  cur_campaigns <- cur_campaigns[!duplicated(cur_campaigns),] 
   
   # 03. Create new_campaigns -- ie dates to be projected -- and return
   #---------------------------------------------------  
@@ -90,7 +94,7 @@ get_model_data <- function(called_data, channel= "c2g") {
                                      cur_campaigns, called_by_day),
                               key= c("cell_code", "response_date"))  ## needs to be loaded (create R package)
   
-  return(list(called_by_day= called_by_day, 
+  return(list(called_by_day= called_by_day, # not sure that I need this; perhaps for historical analysis
               camp_complete= camp_resp_comp,
               camp_outstanding= camp_outstanding,
               camp_proj= new_campaigns)) 

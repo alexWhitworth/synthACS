@@ -32,9 +32,6 @@ new_campaign_proj <- function(cur_date, future_date, cur_campaigns, called_by_da
   new_campaigns$year_response_date <- year(new_campaigns$response_date)
   new_campaigns$month_response_date <- month(new_campaigns$response_date)
   new_campaigns$day_response_date <- day(new_campaigns$response_date)
-  new_campaigns <- merge(as.data.frame(new_campaigns), called_by_day, 
-                         by=c("year_response_date", "month_response_date", "day_response_date"), all.x=TRUE)
-  
   
   #Change day_of_week to response_day_of_week
   new_campaigns$response_day_of_week <- wday(new_campaigns$response_date)
