@@ -58,10 +58,10 @@ get_model_data <- function(called_data, channel= "c2g") {
   # 01c. subset data and do some final munging
   #---------------------------------------------------  
   # Remove A/B Test and any missing dates (errors)
-  camp_resp_final <- camp_resp[camp_resp$campaign_group != "A/B Test" & !is.na(camp_resp$date), ]
-  camp_resp_final <- camp_resp_final[order(camp_resp_final$year_response_date, 
-                                                   camp_resp_final$month_response_date, 
-                                                   camp_resp_final$day_response_date), ]
+  camp_resp_final <- camp_resp[tolower(campaign_type) %in% c("ad hoc", "bau", "latest inquiry") &
+                                 !is.na(date), ][,
+                               ':='(campaign_type= tolower(campaign_type))] 
+  
   # only look to last day of current month
   camp_resp_final <- camp_resp_final[as.numeric(as.Date(camp_resp_final$date)) <= last_day_num, ]
   
@@ -93,5 +93,5 @@ get_model_data <- function(called_data, channel= "c2g") {
   return(list(called_by_day= called_by_day, 
               camp_complete= camp_resp_comp,
               camp_outstanding= camp_outstanding,
-              camp_inc= new_campaigns)) 
+              camp_proj= new_campaigns)) 
 }
