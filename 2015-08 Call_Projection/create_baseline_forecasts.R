@@ -63,7 +63,11 @@ create_baseline_forecasts <- function(camp_proj, camp_comp_stats, top_outstandin
   }
   # 03. combine and return
   #---------------------------------------------------------------
-  return(rbindlist(as.list(projections)))
+  projections <- rbindlist(as.list(projections))
+  projections2 <- projections[, .(day_of_week= response_day_of_week[1], 
+                                  responders= sum(responders)) , by= response_date]
+  
+  return(list(projections, projections2))
 }
 
 
