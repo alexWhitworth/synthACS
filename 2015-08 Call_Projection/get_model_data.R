@@ -88,6 +88,10 @@ get_model_data <- function(called_data, channel= "c2g") {
   cur_campaigns <- rbind(camp_outstanding, camp_future)
   cur_campaigns <- cur_campaigns[!duplicated(cur_campaigns),] 
   
+  sel_last <- function(x) {return(x[order(days_to_response)][nrow(x),])}
+  
+  cur_campaigns <- cur_campaigns[, sel_last(.SD), by= cell_code]
+  
   # 03. Create new_campaigns -- ie dates to be projected -- and return
   #---------------------------------------------------  
   new_campaigns <- data.table(new_campaign_proj(last_day_num, future_date1,

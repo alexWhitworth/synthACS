@@ -19,11 +19,16 @@ new_campaign_proj <- function(cur_date, future_date, cur_campaigns, called_by_da
   
   # Loop through cur_campaigns by date to assign upcoming days in which we will project responses
   for(i in 1:p) {
-    future_day_resp <- cur_campaigns[as.numeric(as.Date(cur_campaigns$date)) <= as.numeric(future_days[i]), ]
-    future_day_resp$response_date <- future_days[i]
-    future_day_resp$days_to_response <- as.numeric(as.Date(future_day_resp$response_date)) - as.numeric(as.Date(future_day_resp$date)) 
+    future_day_resp <- within(cur_campaigns[as.numeric(as.Date(cur_campaigns$date)) <= as.numeric(future_days[i]), ], {
+      response_date= future_days[i]
+      days_to_response <- as.numeric(as.Date(response_date)) - as.numeric(as.Date(date))
+      responders= NA
+      pct_of_leads= NA
+      pct_of_responders= NA
+    })
+  
     # only keep 90 days of tracking
-    future_day_resp <- future_day_resp[future_day_resp$days_to_response <= 90, ]
+    future_day_resp <- future_day_resp[days_to_response <= 90, ]
     new_camp[[i]] <- future_day_resp
   }
   new_campaigns <- rbindlist(new_camp)
