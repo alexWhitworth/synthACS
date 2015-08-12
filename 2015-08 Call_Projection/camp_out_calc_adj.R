@@ -189,6 +189,7 @@ listwise.t.test <- function(df1, df2, alpha= 0.05) {
 #' campaigns. Should be the "camp_sum_stats[[1]]" internal from camp_out_calc_adj().
 #' @param inc_campaigns A \code{data.table}. Should be the "inc_camp_track" internal
 #' from camp_out_calc_adj().
+#' @export
 id_top_inc <- function(complete_camp_rr, top_camp_list, inc_campaigns) {
   require(data.table)
   # subset to match extract_top()

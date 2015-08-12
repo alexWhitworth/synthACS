@@ -23,22 +23,20 @@ get_model_data <- function(called_data, channel= "c2g") {
   close(ch); rm(ch)
   
   # do some munging on response data
+  camp_resp$response_day_of_week <- NULL
   camp_resp$year_response_date <- year(camp_resp$response_date)
   camp_resp$month_response_date <- month(camp_resp$response_date)
   camp_resp$day_response_date <- day(camp_resp$response_date)
   
+  camp_resp$responders <- as.double(camp_resp$responders)
+  
   # Aggregate daily call volume, do some basic munging
-  called_by_day <- data.table(called)[, .(Called= sum(mktg_call_count, na.rm= TRUE)), keyby= call_date]
+  called_by_day <- data.table(called)[, .(Called= sum(call_count, na.rm= TRUE)), keyby= call_date]
   called_by_day$month_response_date <- month(called_by_day$call_date)
   called_by_day$day_response_date <- day(called_by_day$call_date)
   called_by_day$year_response_date <- year(called_by_day$call_date)
   called_by_day$resp_day_of_week <- wday(called_by_day$call_date)
-  called_by_day$resp_day_of_week_chr <- ifelse(called_by_day$resp_day_of_week == 1, "Sunday", 
-                                        ifelse(called_by_day$resp_day_of_week == 2, "Monday", 
-                                        ifelse(called_by_day$resp_day_of_week == 3, "Tuesday", 
-                                        ifelse(called_by_day$resp_day_of_week == 4, "Wednesday", 
-                                        ifelse(called_by_day$resp_day_of_week == 5, "Thursday", 
-                                        ifelse(called_by_day$resp_day_of_week == 6, "Friday", "Saturday"))))))
+  
   
   # 01b. Calculate some dates
   #---------------------------------------------------

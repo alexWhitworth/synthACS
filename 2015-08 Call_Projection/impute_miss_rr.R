@@ -24,15 +24,16 @@ impute_zero_resp <- function(dat, days_tracking= 90) {
   })
   
   miss <- c(0:90)[-which(0:90 %in% dat$days_to_response)]
-  miss_dat <- within(rbindlist(replicate(length(miss), samp_row, simplify= FALSE)), {
-    days_to_response= miss
-  })
- 
-  dat <- within(rbindlist(list(miss_dat, dat))[order(days_to_response)], {
-    response_date= mail_date + days_to_response
-    call_date= mail_date + days_to_response
-    response_day_of_week = lubridate::wday(response_date)
-  })
+  if (length(miss) > 0) {
+    miss_dat <- within(rbindlist(replicate(length(miss), samp_row, simplify= FALSE)), {
+      days_to_response= miss
+    })
+   
+    dat <- within(rbindlist(list(miss_dat, dat))[order(days_to_response)], {
+      response_date= mail_date + days_to_response
+      #response_day_of_week = wday(response_date)
+    })
+  }
   return(dat)
 }
 
@@ -51,6 +52,7 @@ impute_zero_resp <- function(dat, days_tracking= 90) {
 impute_zero_resp_all <- function(dat, days_tracking= 90, group= "cell_code", comp_camp= TRUE) {
   require(data.table)
   dat <- data.table(dat)
+  dat$responders <- as.double(dat$responders)
   
   if (comp_camp == TRUE) { # for complete campaigns
     return(dat[, impute_zero_resp(.SD, days_tracking= days_tracking), by= group])

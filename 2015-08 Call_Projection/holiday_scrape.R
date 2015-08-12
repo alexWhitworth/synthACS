@@ -35,6 +35,7 @@ holiday_scrape <- function(beg_year, end_year) {
   # Munging - dates
   holidays <- merge(holidays, months, by= "month", all.x= TRUE)
   holidays$date2 <- as.Date(paste(holidays$year, holidays$month_number, holidays$day, sep= "-"), format= "%Y-%m-%d")
+  holidays$month_number <- holidays$day <- holidays$year <- NULL
   
   
   # 03. Subset specific holiday categories
@@ -44,7 +45,7 @@ holiday_scrape <- function(beg_year, end_year) {
   holidays_sub <- holidays[holidays$holiday_cat %in% c("National holiday", "National holiday, Christian", "Consumerism") |
                           (holidays$holiday == "Christmas Eve" & holidays$holiday_cat == "Observance, Christian") | 
                           (holidays$holiday == "New Year's Eve" & holidays$holiday_cat == "Observance, Christian") |
-                          (holidays$holiday == "Election Day"), c("date2", "year", "month", "week_day", "holiday")]
+                          (holidays$holiday == "Election Day"), c("date2", "holiday")]
   
   # return
   return(holidays_sub[!duplicated(holidays_sub), ])

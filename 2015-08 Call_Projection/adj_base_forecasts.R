@@ -13,11 +13,15 @@
 #' seasonal pattern in the response trend. Used for model tuning. Defaults to 4 (for now)
 #' @param seasonal_adj_type \code{character}. A method for weekday seasonal adjustment.
 #' @param ratio_adj_type \code{character}. A method for ratio adjustment.
+#' @call_hist A \code{data.frame} of historical calls data on which to examine holiday patterns.
+#' @param beg_year An integer specifying first year of holidays to pull. Defaults to 2014.
+#' @param end_year An integer specifying last year of holidays to pull. Defaults to \code{year(Sys.Date())}.
 #' @return A \code{data.frame} of call projections by category for the month.
 #' @export
 adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
                                seasonal_adj_type= c("stl", "ets", "wk_avg", "ensemble"),
-                               ratio_adj_type= c("stl", "ets", "ensemble")) {
+                               ratio_adj_type= c("stl", "ets", "ensemble"),
+                               call_hist, beg_year= 2014, end_year= year(Sys.Date())) {
   
   # 00. Initiate
   seasonal_adj_type <- match.arg(seasonal_adj_type, several.ok= FALSE)
@@ -127,7 +131,8 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   
   # 04. Examine holiday effects
   #--------------------------------------------------------------
-  
+  holiday_adj <- holiday_adj(cur_forecasts= baseline, beg_year= beg_year, end_year= end_year,
+                             call_hist= call_hist)
   
   # 05. Project non "marketing direct" calls
   #--------------------------------------------------------------
