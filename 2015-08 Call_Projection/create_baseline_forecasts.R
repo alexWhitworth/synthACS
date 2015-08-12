@@ -8,7 +8,8 @@
 #' campaigns computed at the \code{group_by(campaign_type, class_of_mail, days_to_response)} 
 #' level.
 #' @param top_outstanding A \code{list}. Should be the results from \code{camp_out_calc_adj()}.
-#' @return ???
+#' @return A \code{list} of length two with: (1) Daily forecasts at the campaign level; and (2)
+#' aggregated daily forecasts
 #' @export
 create_baseline_forecasts <- function(camp_proj, camp_comp_stats, top_outstanding) {
   require(data.table)
