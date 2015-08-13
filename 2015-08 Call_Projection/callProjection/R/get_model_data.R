@@ -7,7 +7,7 @@
 #' @param historical Logical. Do you want to forecast historical projections for testing? 
 #' Defaults to FALSE
 #' @param hist_yr An integer corresponding to a historical year. Must be $>= 2012$.
-#' @param hist_mo An integer $\in [1,12]$ corresponding to a historical month.
+#' @param hist_mo An integer in $[1,12]$ corresponding to a historical month.
 #' @return \code{list} of four \code{data.frame}s: (1) Aggregated call-by-day data, (2) completed
 #' campaign data, (3) oustanding campaign data, (4) all future response days for upcoming campaigns.
 #' @export
@@ -36,8 +36,9 @@ get_model_data <- function(called_data, channel= "c2g", historical= FALSE, hist_
                           key= c("cell_code", "response_date"))
   } else {
     hist_date <- paste(hist_yr, hist_mo, 1, sep= "-")
-    query_txt <- paste("SELECT * FROM [c2g].[dbo].[c2g_campaign_response] 
-                                where year(date) >= 2014 and response_date < '", hist_date, "'")
+    query_txt <- paste(
+      "SELECT * FROM [c2g].[dbo].[c2g_campaign_response] where year(date) >= 2014 and response_date < '", 
+      hist_date, "'")
     
     camp_resp <- data.table(sqlQuery(ch, query_txt, stringsAsFactors= FALSE), 
                             key= c("cell_code", "response_date"))
@@ -53,7 +54,7 @@ get_model_data <- function(called_data, channel= "c2g", historical= FALSE, hist_
   camp_resp$responders <- as.double(camp_resp$responders)
   
   # Aggregate daily call volume, do some basic munging
-  called_by_day <- data.table(called)[, .(Called= sum(call_count, na.rm= TRUE)), keyby= call_date]
+  called_by_day <- data.table(called_data)[, .(Called= sum(call_count, na.rm= TRUE)), keyby= call_date]
   called_by_day$month_response_date <- month(called_by_day$call_date)
   called_by_day$day_response_date <- day(called_by_day$call_date)
   called_by_day$year_response_date <- year(called_by_day$call_date)
@@ -129,7 +130,7 @@ get_model_data <- function(called_data, channel= "c2g", historical= FALSE, hist_
   #---------------------------------------------------  
   new_campaigns <- data.table(new_campaign_proj(last_day_num, first_future_resp_dt,
                                      cur_campaigns),
-                              key= c("cell_code", "response_date"))  ## needs to be loaded (create R package)
+                              key= c("cell_code", "response_date")) 
   
   return(list(called_by_day= called_by_day, # not sure that I need this; perhaps for historical analysis
               camp_complete= camp_resp_comp,

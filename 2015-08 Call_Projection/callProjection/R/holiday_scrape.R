@@ -66,7 +66,7 @@ add_black_fri <- function(x) {
 #' @title Number weeks of a vector of days
 #' @description Provided a vector of weekdays and a vector of indices corresponding to Sundays,
 #' return a vector corresponding to the week numbers for the days vector
-#' @param days A numeric \code{vector} of weekdays with elements $\in [1,7]$ ; Sunday == 1, Sat == 7
+#' @param days A numeric \code{vector} of weekdays with elements in $[1,7]$ ; Sunday == 1, Sat == 7
 #' @param sun_indices A numeric \code{vector} of indices denoting which elements of \code{days}
 #' correspond to Sundays.
 #' @export

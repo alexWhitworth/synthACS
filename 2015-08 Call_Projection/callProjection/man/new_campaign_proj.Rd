@@ -11,10 +11,11 @@ new_campaign_proj(cur_date, future_date, cur_campaigns)
 
 \item{future_date}{\code{Numeric}. Corresponds to first day after max response date to date.}
 
-\item{cur_campaigns}{\code{data.frame}. Defined in \code{clean_model_data()}.}
+\item{cur_campaigns}{\code{data.frame}. Defined in \code{get_model_data()}.}
 }
 \value{
-A \code{data.frame}.
+A \code{data.frame} with all future dates where we expect responses for
+each current campaign for use in projection.
 }
 \description{
 Internal function called by \code{clean_model_data()}. Calculates all future dates

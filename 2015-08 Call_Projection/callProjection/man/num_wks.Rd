@@ -7,7 +7,7 @@
 num_wks(days, sun_indices)
 }
 \arguments{
-\item{days}{A numeric \code{vector} of weekdays with elements $\in [1,7]$ ; Sunday == 1, Sat == 7}
+\item{days}{A numeric \code{vector} of weekdays with elements in $[1,7]$ ; Sunday == 1, Sat == 7}
 
 \item{sun_indices}{A numeric \code{vector} of indices denoting which elements of \code{days}
 correspond to Sundays.}

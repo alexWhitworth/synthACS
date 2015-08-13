@@ -17,7 +17,7 @@ Defaults to FALSE}
 
 \item{hist_yr}{An integer corresponding to a historical year. Must be $>= 2012$.}
 
-\item{hist_mo}{An integer $\in [1,12]$ corresponding to a historical month.}
+\item{hist_mo}{An integer in $[1,12]$ corresponding to a historical month.}
 }
 \value{
 \code{list} of four \code{data.frame}s: (1) Aggregated call-by-day data, (2) completed

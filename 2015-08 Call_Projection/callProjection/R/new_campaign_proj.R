@@ -3,13 +3,14 @@
 #' where we expect responses for each current campaign for use in projection.
 #' @param cur_date \code{Numeric}. Coerced date corresponding to the last day of the current month.
 #' @param future_date \code{Numeric}. Corresponds to first day after max response date to date.
-#' @param cur_campaigns \code{data.frame}. Defined in \code{clean_model_data()}.
-#' @return A \code{data.frame}.
+#' @param cur_campaigns \code{data.frame}. Defined in \code{get_model_data()}.
+#' @return A \code{data.frame} with all future dates where we expect responses for 
+#' each current campaign for use in projection.
 #' @export
 
 new_campaign_proj <- function(cur_date, future_date, cur_campaigns) {
   require(lubridate)
-  require(data.table) # for rbindlist()
+  require(data.table) 
   
   future_days <- seq(future_date, cur_date, 1); class(future_days) <- "Date"
   
@@ -19,14 +20,13 @@ new_campaign_proj <- function(cur_date, future_date, cur_campaigns) {
   
   # Loop through cur_campaigns by date to assign upcoming days in which we will project responses
   for(i in 1:p) {
-    future_day_resp <- within(cur_campaigns[as.numeric(as.Date(cur_campaigns$date)) <= as.numeric(future_days[i]), ], {
-      response_date= future_days[i]
-      days_to_response <- as.numeric(as.Date(response_date)) - as.numeric(as.Date(date))
-      responders= NA
-      pct_of_leads= NA
-      pct_of_responders= NA
-    })
-  
+    future_day_resp <- cur_campaigns[cur_campaigns$date <= future_days[i], ][, ':='(
+      response_date= future_days[i],
+      days_to_response= as.numeric(as.Date(response_date) - as.Date(date)),
+      responders= NA,
+      pct_of_leads= NA,
+      pct_of_responders= NA)]
+    
     # only keep 90 days of tracking
     future_day_resp <- future_day_resp[days_to_response <= 90, ]
     new_camp[[i]] <- future_day_resp
