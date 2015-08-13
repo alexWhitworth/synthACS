@@ -4,12 +4,9 @@
 \alias{get_model_data}
 \title{Clean Model data}
 \usage{
-get_model_data(called_data, channel = "c2g", historical = FALSE, hist_yr,
-  hist_mo)
+get_model_data(channel = "c2g", historical = FALSE, hist_yr, hist_mo)
 }
 \arguments{
-\item{called_data}{A \code{data.frame} with call data from \code{data_pull()}.}
-
 \item{channel}{A character string corresponding to the appropriate ODBC connection. Defaults to "c2g"}
 
 \item{historical}{Logical. Do you want to forecast historical projections for testing?
@@ -20,11 +17,11 @@ Defaults to FALSE}
 \item{hist_mo}{An integer in $[1,12]$ corresponding to a historical month.}
 }
 \value{
-\code{list} of four \code{data.frame}s: (1) Aggregated call-by-day data, (2) completed
-campaign data, (3) oustanding campaign data, (4) all future response days for upcoming campaigns.
+\code{list} of three \code{data.frame}s: (21 completed
+campaign data, (2) oustanding campaign data, (3) all future response days for upcoming campaigns.
 }
 \description{
-Input IB call data, pull campaign response data. Do aggregations, data cleaning,
+Pull campaign response data. Do aggregations, data cleaning,
 and find all future dates for oustanding and future campaigns where we expect responses within
 the upcoming month.
 }

@@ -1,17 +1,16 @@
 #' @title Clean Model data
-#' @description Input IB call data, pull campaign response data. Do aggregations, data cleaning,
+#' @description Pull campaign response data. Do aggregations, data cleaning,
 #' and find all future dates for oustanding and future campaigns where we expect responses within
 #' the upcoming month.
-#' @param called_data A \code{data.frame} with call data from \code{data_pull()}.
 #' @param channel A character string corresponding to the appropriate ODBC connection. Defaults to "c2g"
 #' @param historical Logical. Do you want to forecast historical projections for testing? 
 #' Defaults to FALSE
 #' @param hist_yr An integer corresponding to a historical year. Must be $>= 2012$.
 #' @param hist_mo An integer in $[1,12]$ corresponding to a historical month.
-#' @return \code{list} of four \code{data.frame}s: (1) Aggregated call-by-day data, (2) completed
-#' campaign data, (3) oustanding campaign data, (4) all future response days for upcoming campaigns.
+#' @return \code{list} of three \code{data.frame}s: (21 completed
+#' campaign data, (2) oustanding campaign data, (3) all future response days for upcoming campaigns.
 #' @export
-get_model_data <- function(called_data, channel= "c2g", historical= FALSE, hist_yr, hist_mo) {
+get_model_data <- function(channel= "c2g", historical= FALSE, hist_yr, hist_mo) {
   if (historical == TRUE) {
     if (!hist_mo %in% seq(1,12,1)) {
       stop("Input integer in [1,12] for hist_mo.")
@@ -48,13 +47,6 @@ get_model_data <- function(called_data, channel= "c2g", historical= FALSE, hist_
   camp_resp$day_response_date <- day(camp_resp$response_date)
   
   camp_resp$responders <- as.double(camp_resp$responders)
-  
-  # Aggregate daily call volume, do some basic munging
-  called_by_day <- data.table(called_data)[, .(Called= sum(call_count, na.rm= TRUE)), keyby= call_date]
-  called_by_day$month_response_date <- month(called_by_day$call_date)
-  called_by_day$day_response_date <- day(called_by_day$call_date)
-  called_by_day$year_response_date <- year(called_by_day$call_date)
-  called_by_day$resp_day_of_week <- wday(called_by_day$call_date)
   
   
   # 01b. Calculate some dates
@@ -136,8 +128,7 @@ get_model_data <- function(called_data, channel= "c2g", historical= FALSE, hist_
                                      cur_campaigns),
                               key= c("cell_code", "response_date")) 
   
-  return(list(called_by_day= called_by_day, # not sure that I need this; perhaps for historical analysis
-              camp_complete= camp_resp_comp,
+  return(list(camp_complete= camp_resp_comp,
               camp_outstanding= camp_outstanding,
               camp_proj= new_campaigns)) 
 }

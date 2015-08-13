@@ -24,8 +24,6 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   # 00. Initiate
   seasonal_adj_type <- match.arg(seasonal_adj_type, several.ok= FALSE)
   #ratio_adj_type <- match.arg(ratio_adj_type, several.ok= FALSE)
-  require(data.table)
-  require(forecast)
  
   # 01. Aggregate call data, do basic munging, and merge datasets
   #--------------------------------------------------------------
@@ -49,7 +47,7 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   resp_by_day <- camp_tot[, .(responses= sum(responders)), by= response_date][
     response_date > as.Date("2015-01-01", format= "%Y-%m-%d"),][order(response_date)]
   # make sure no missing
-  days <- data.frame(response_date=seq(min(resp_by_day$response_date), max(resp_by_day$response_date), 1))
+  days <- data.frame(response_date= seq(min(resp_by_day$response_date), max(resp_by_day$response_date), 1))
   resp_by_day <- merge(days, resp_by_day, all.x= TRUE); rm(days)
   resp_by_day$responses <- ifelse(is.na(resp_by_day$responses), 0, resp_by_day$responses)
   resp_by_day$wday <- wday(resp_by_day$response_date)
