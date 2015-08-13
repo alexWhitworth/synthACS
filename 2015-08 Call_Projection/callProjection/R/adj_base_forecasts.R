@@ -6,9 +6,9 @@
 #' values from \code{create_baseline_forecasts()}. 
 #' @param calls A \code{data.frame} of call data from Phoenix with categorical data. Returned
 #' from \code{data_pull()}.
-#' @param camp_tot A \code{data.frame} of campaign data from c2g.campaign_response. Should be
-#' combined from the returns of \code{get_model_data()$camp_complete} and 
-#' \code{get_model_data()$camp_outstanding}. 
+#' @param camp_tot A \code{data.frame} of campaign resposne data from c2g.campaign_response. 
+#' Should be combined from the returns of \code{get_model_data()$camp_complete} and 
+#' \code{get_model_data()$camp_outstanding}. Used for adjusting calls to c2g tracked reponses.
 #' @param seasonal_wks An integer for the number of trailing weeks used to calculate the weekly
 #' seasonal pattern in the response trend. Used for model tuning. Defaults to 4 (for now)
 #' @param seasonal_adj_type \code{character}. A method for weekday seasonal adjustment.
@@ -23,9 +23,9 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   
   # 00. Initiate
   seasonal_adj_type <- match.arg(seasonal_adj_type, several.ok= FALSE)
-  #ratio_adj_type <- match.arg(ratio_adj_type, several.ok= FALSE)
- 
+  
   # 01. Aggregate call data, do basic munging, and merge datasets
+  # The goal here is to create a training dataset for seasonality adjustments
   #--------------------------------------------------------------
   # update category names
   calls_by_day_cat <- calls[, .(calls= sum(call_count)) ,by= .(category, call_date)]
@@ -41,11 +41,22 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   
   calls$wday <- wday(calls$call_date)
   calls_by_day_cat$wday <- wday(calls_by_day_cat$call_date) 
-  calls15 <- calls[call_date > as.POSIXct("2015-01-01", format= "%Y-%m-%d"),]
   
-  # get resp / day from camp_resp
-  resp_by_day <- camp_tot[, .(responses= sum(responders)), by= response_date][
-    response_date > as.Date("2015-01-01", format= "%Y-%m-%d"),][order(response_date)]
+  # 01a. get at least 6 months training data
+  #---------------------------
+  if (max(camp_tot$response_date) >=  as.Date("2015-07-01", format= "%Y-%m-%d")) {
+    # calls15 == all calls training data
+    # resp_by_day == resp / day from camp_resp
+    calls15 <- calls[call_date > as.POSIXct("2015-01-01", format= "%Y-%m-%d"),]
+    resp_by_day <- camp_tot[, .(responses= sum(responders)), by= response_date][
+      response_date > as.Date("2015-01-01", format= "%Y-%m-%d"),][order(response_date)]
+  } else {
+    # Note: naming convention below doesn't really make sense for older data
+    calls15 <- calls[call_date > as.POSIXct(median(camp_tot$response_date)) ,]
+    resp_by_day <- camp_tot[, .(responses= sum(responders)), by= response_date][
+      response_date > median(camp_tot$response_date),][order(response_date)]
+  }
+  
   # make sure no missing
   days <- data.frame(response_date= seq(min(resp_by_day$response_date), max(resp_by_day$response_date), 1))
   resp_by_day <- merge(days, resp_by_day, all.x= TRUE); rm(days)
@@ -92,23 +103,40 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   n <- length(baseline$responders)
   rep <- n %% 7
   wkday1 <- wday(baseline$call_date[1])
+  
   if (seasonal_adj_type == "stl") {
     wk1 <- adj_stl[wkday1:length(adj_stl)]; 
     len1 <- length(wk1); wks <- floor((n - len1) / 7); extra <- (n - len1) %% 7
-    adj <- c(wk1, rep(adj_stl, wks), adj_stl[1:extra])
+    if (length(wk1) + wks * 7 == n) {
+      adj <- c(wk1, rep(adj_stl, wks))
+    } else {
+      adj <- c(wk1, rep(adj_stl, wks), adj_stl[1:extra])
+    }
   } else if (seasonal_adj_type == "ets") {
     wk1 <- adj_ets[wkday1:length(adj_ets)]; 
     len1 <- length(wk1); wks <- floor((n - len1) / 7); extra <- (n - len1) %% 7
-    adj <- c(wk1, rep(adj_ets, wks), adj_ets[1:extra])
+    if (length(wk1) + wks * 7 == n) {
+      adj <- c(wk1, rep(adj_ets, wks))
+    } else {
+      adj <- c(wk1, rep(adj_ets, wks), adj_ets[1:extra])
+    }
   } else if (seasonal_adj_type == "wk_avg") {
     wk1 <- adj_wks[wkday1:length(adj_wks)]; 
     len1 <- length(wk1); wks <- floor((n - len1) / 7); extra <- (n - len1) %% 7
-    adj <- c(wk1, rep(adj_wks, wks), adj_wks[1:extra])
+    if (length(wk1) + wks * 7 == n) {
+      adj <- c(wk1, rep(adj_wks, wks))
+    } else {
+      adj <- c(wk1, rep(adj_wks, wks), adj_wks[1:extra])
+    }
   } else if (seasonal_adj_type == "ensemble") {
     adj_ens <- apply(rbind(adj_stl, adj_ets, adj_wks), 2, mean)
     wk1 <- adj_ens[wkday1:length(adj_ens)]; 
     len1 <- length(wk1); wks <- floor((n - len1) / 7); extra <- (n - len1) %% 7
-    adj <- c(wk1, rep(adj_ens, wks), adj_ens[1:extra])
+    if (length(wk1) + wks * 7 == n) {
+      adj <- c(wk1, rep(adj_ens, wks))
+    } else {
+      adj <- c(wk1, rep(adj_ens, wks), adj_ens[1:extra])
+    }
   } else {stop("Invalid seasonal_adj_type.")}
   
   baseline$responders <- baseline$responders + adj
@@ -122,7 +150,12 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   #--------------------------------------------------------------
   av_ratio <- tapply(ratios$mkt_to_resp[(nrow(ratios)- seasonal_wks * 7 + 1):nrow(ratios)], 
                      wday(ratios$call_date[(nrow(ratios)- seasonal_wks * 7 + 1):nrow(ratios)]), mean)
+  
+  if (length(wk1) + wks * 7 == n) {
+    ratio_adj <- c(av_ratio[wkday1:length(av_ratio)], rep(av_ratio, wks))
+  }  else {
   ratio_adj <- c(av_ratio[wkday1:length(av_ratio)], rep(av_ratio, wks), av_ratio[1:extra])
+  }
   baseline$responders <- baseline$responders * ratio_adj
   
   # 04. Project non "marketing direct" calls
