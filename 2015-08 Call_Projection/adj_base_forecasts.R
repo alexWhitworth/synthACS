@@ -20,12 +20,12 @@
 #' @export
 adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
                                seasonal_adj_type= c("stl", "ets", "wk_avg", "ensemble"),
-                               ratio_adj_type= c("stl", "ets", "ensemble"),
+                               #ratio_adj_type= c("stl", "ets", "ensemble"),
                                call_hist, beg_year= 2014, end_year= year(Sys.Date())) {
   
   # 00. Initiate
   seasonal_adj_type <- match.arg(seasonal_adj_type, several.ok= FALSE)
-  ratio_adj_type <- match.arg(ratio_adj_type, several.ok= FALSE)
+  #ratio_adj_type <- match.arg(ratio_adj_type, several.ok= FALSE)
   require(data.table)
   require(forecast)
  
@@ -95,7 +95,7 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   # adjust
   n <- length(baseline$responders)
   rep <- n %% 7
-  wkday1 <- wday(baseline$response_date[1])
+  wkday1 <- wday(baseline$call_date[1])
   if (seasonal_adj_type == "stl") {
     wk1 <- adj_stl[wkday1:length(adj_stl)]; 
     len1 <- length(wk1); wks <- floor((n - len1) / 7); extra <- (n - len1) %% 7
@@ -129,12 +129,7 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   ratio_adj <- c(av_ratio[wkday1:length(av_ratio)], rep(av_ratio, wks), av_ratio[1:extra])
   baseline$responders <- baseline$responders * ratio_adj
   
-  # 04. Examine holiday effects
-  #--------------------------------------------------------------
-  holiday_adj <- holiday_adj(cur_forecasts= baseline, beg_year= beg_year, end_year= end_year,
-                             call_hist= call_hist)
-  
-  # 05. Project non "marketing direct" calls
+  # 04. Project non "marketing direct" calls
   #--------------------------------------------------------------
   ets_dbivr   <- ets(ts(ratios$dbivr_mkt, start=c(1, wday(ratios$call_date[1])), frequency= 7))
   ets_dandb   <- ets(ts(ratios$dandb_mkt, start=c(1, wday(ratios$call_date[1])), frequency= 7))
@@ -143,9 +138,10 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   ets_iupdate <- ets(ts(ratios$iupdate_mkt, start=c(1, wday(ratios$call_date[1])), frequency= 7))
   
   
-  # 06. combine and return
+  # 05. combine projections, Examine and adjust for holiday effects
   #--------------------------------------------------------------
-  projections <- data.frame(date= baseline$response_date, wkday= baseline$day_of_week,
+  projections <- data.frame(call_date= baseline$call_date, wkday= baseline$day_of_week, 
+                            wday= wday(baseline$call_date),
                             mkt_direct= round(baseline$responders, 2),
                             db_ivr= round(baseline$responders * forecast(ets_dbivr, h=n)$mean, 2),
                             dandb.com= round(baseline$responders * forecast(ets_dandb, h=n)$mean, 2),
@@ -153,8 +149,12 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
                             paid_etc= round(baseline$responders * forecast(ets_paidetc, h=n)$mean, 2),
                             iupdate= round(baseline$responders * forecast(ets_iupdate, h=n)$mean, 2))
   
+  projections <- holiday_adj(cur_forecasts= projections, beg_year= beg_year, end_year= end_year,
+                             call_hist= call_hist)
+  
+  
+  # 06. Finalize and return
+  #--------------------------------------------------------------
+  
   return(projections)
 }
-
-
-test <- adj_base_forecasts(base_forecasts[[2]], called, camp_tot, seasonal_adj_type= "ensemble")
