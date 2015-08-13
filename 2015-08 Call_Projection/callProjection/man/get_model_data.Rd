@@ -4,12 +4,20 @@
 \alias{get_model_data}
 \title{Clean Model data}
 \usage{
-get_model_data(called_data, channel = "c2g")
+get_model_data(called_data, channel = "c2g", historical = FALSE, hist_yr,
+  hist_mo)
 }
 \arguments{
 \item{called_data}{A \code{data.frame} with call data from \code{data_pull()}.}
 
 \item{channel}{A character string corresponding to the appropriate ODBC connection. Defaults to "c2g"}
+
+\item{historical}{Logical. Do you want to forecast historical projections for testing?
+Defaults to FALSE}
+
+\item{hist_yr}{An integer corresponding to a historical year. Must be $>= 2012$.}
+
+\item{hist_mo}{An integer $\in [1,12]$ corresponding to a historical month.}
 }
 \value{
 \code{list} of four \code{data.frame}s: (1) Aggregated call-by-day data, (2) completed

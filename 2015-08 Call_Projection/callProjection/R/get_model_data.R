@@ -4,10 +4,23 @@
 #' the upcoming month.
 #' @param called_data A \code{data.frame} with call data from \code{data_pull()}.
 #' @param channel A character string corresponding to the appropriate ODBC connection. Defaults to "c2g"
+#' @param historical Logical. Do you want to forecast historical projections for testing? 
+#' Defaults to FALSE
+#' @param hist_yr An integer corresponding to a historical year. Must be $>= 2012$.
+#' @param hist_mo An integer $\in [1,12]$ corresponding to a historical month.
 #' @return \code{list} of four \code{data.frame}s: (1) Aggregated call-by-day data, (2) completed
 #' campaign data, (3) oustanding campaign data, (4) all future response days for upcoming campaigns.
 #' @export
-get_model_data <- function(called_data, channel= "c2g") {
+get_model_data <- function(called_data, channel= "c2g", historical= FALSE, hist_yr, hist_mo) {
+  if (historical == TRUE) {
+    if (!hist_mo %in% seq(1,12,1)) {
+      stop("Input integer in [1,12] for hist_mo.")
+    }
+    if (!hist_yr %in% seq(2012, lubridate::year(Sys.Date()), 1)) {
+      stop("Input integer in [2012, current year] for hist_yr.")
+    }
+  }
+  
   require(lubridate)
   require(RODBC)
   require(data.table)
@@ -17,10 +30,19 @@ get_model_data <- function(called_data, channel= "c2g") {
   #---------------------------------------------------
   # Pull campaign response data, all variables
   ch <- odbcConnect(channel)
-  camp_resp <- data.table(sqlQuery(ch, "SELECT * FROM [c2g].[dbo].[c2g_campaign_response] 
+  if (historical == FALSE) {
+    camp_resp <- data.table(sqlQuery(ch, "SELECT * FROM [c2g].[dbo].[c2g_campaign_response] 
                                 where year(date) >= 2014", stringsAsFactors= FALSE), 
                           key= c("cell_code", "response_date"))
-  close(ch); rm(ch)
+  } else {
+    hist_date <- paste(hist_yr, hist_mo, 1, sep= "-")
+    query_txt <- paste("SELECT * FROM [c2g].[dbo].[c2g_campaign_response] 
+                                where year(date) >= 2014 and response_date < '", hist_date, "'")
+    
+    camp_resp <- data.table(sqlQuery(ch, query_txt, stringsAsFactors= FALSE), 
+                            key= c("cell_code", "response_date"))
+  }
+  close(ch); rm(ch, hist_date, query_txt)
   
   # do some munging on response data
   camp_resp$response_day_of_week <- NULL
@@ -41,20 +63,33 @@ get_model_data <- function(called_data, channel= "c2g") {
   # 01b. Calculate some dates
   #---------------------------------------------------
   # Find last day of month
-  last_day <- 
-    ifelse(is.Date(try(as.Date(paste(year(Sys.Date()), "-", month(Sys.Date()), "-", 31, sep="")), TRUE)) == TRUE, 
-      paste(year(Sys.Date()), "-", month(Sys.Date()), "-", 31, sep=""), 
-      ifelse(is.Date(try(as.Date(paste(year(Sys.Date()), "-", month(Sys.Date()), "-", 30, sep="")), TRUE)) == TRUE, 
-        paste(year(Sys.Date()), "-", month(Sys.Date()), "-", 30, sep=""), 
-        ifelse(is.Date(try(as.Date(paste(year(Sys.Date()), "-", month(Sys.Date()), "-", 29, sep="")), TRUE)) == TRUE, 
-          paste(year(Sys.Date()), "-", month(Sys.Date()), "-", 29, sep=""),
-          ifelse(is.Date(try(as.Date(paste(year(Sys.Date()), "-", month(Sys.Date()), "-", 28, sep="")), TRUE)) == TRUE, 
-                 paste(year(Sys.Date()), "-", month(Sys.Date()), "-", 28, sep="")))))
+  if (historical == FALSE) {
+    cur_yr <- year(Sys.Date())
+    cur_mo <- month(Sys.Date())
+    
+    last_day <- ifelse(is.Date(try(as.Date(paste(cur_yr, "-", cur_mo, "-", 31, sep="")), TRUE)), 
+          paste(cur_yr, "-", cur_mo, "-", 31, sep=""), 
+        ifelse(is.Date(try(as.Date(paste(cur_yr, "-", cur_mo, "-", 30, sep="")), TRUE)), 
+          paste(cur_yr, "-", cur_mo, "-", 30, sep=""), 
+          ifelse(is.Date(try(as.Date(paste(cur_yr, "-", month(cur_mo, "-", 29, sep="")), TRUE)), 
+            paste(cur_yr, "-", cur_mo, "-", 29, sep=""),
+            ifelse(is.Date(try(as.Date(paste(cur_yr, "-", cur_mo, "-", 28, sep="")), TRUE)), 
+                   paste(cur_yr, "-", cur_mo, "-", 28, sep=""))))))
+  } else {
+    last_day <- ifelse(is.Date(try(as.Date(paste(hist_yr, "-", hist_mo, "-", 31, sep="")), TRUE)), 
+          paste(hist_yr, "-", hist_mo, "-", 31, sep=""), 
+        ifelse(is.Date(try(as.Date(paste(hist_yr, "-", hist_mo, "-", 30, sep="")), TRUE)), 
+          paste(hist_yr, "-", hist_mo, "-", 30, sep=""), 
+          ifelse(is.Date(try(as.Date(paste(hist_yr, "-", hist_mo, "-", 29, sep="")), TRUE)), 
+            paste(hist_yr, "-", hist_mo, "-", 29, sep=""),
+            ifelse(is.Date(try(as.Date(paste(hist_yr, "-", hist_mo, "-", 28, sep="")), TRUE)), 
+                   paste(hist_hr, "-", month(Sys.Date()), "-", 28, sep="")))))
+  }
   
   # coerce to numeric
   last_day_num <- as.numeric(as.Date(last_day))
   # calc first day for future responses
-  future_date1 <- max(as.numeric(camp_resp$response_date), na.rm=TRUE) + 1 
+  first_future_resp_dt <- max(as.numeric(camp_resp$response_date), na.rm=TRUE) + 1 
   
   # 01c. subset data and do some final munging
   #---------------------------------------------------  
@@ -92,8 +127,8 @@ get_model_data <- function(called_data, channel= "c2g") {
   
   # 03. Create new_campaigns -- ie dates to be projected -- and return
   #---------------------------------------------------  
-  new_campaigns <- data.table(new_campaign_proj(last_day_num, future_date1,
-                                     cur_campaigns, called_by_day),
+  new_campaigns <- data.table(new_campaign_proj(last_day_num, first_future_resp_dt,
+                                     cur_campaigns),
                               key= c("cell_code", "response_date"))  ## needs to be loaded (create R package)
   
   return(list(called_by_day= called_by_day, # not sure that I need this; perhaps for historical analysis

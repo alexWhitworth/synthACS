@@ -5,7 +5,7 @@ Authors@R: person("Alex", "Whitworth", email = "awhitworth@dandb.com", role = c(
 Description: This package creates monthly IB call projections / forecasts. Forecasts more than one week in advance should be treated as less reliable. Forecasts are created from historical call data and dbo.c2g data. Adjustments are made for day-of-week seasonality as well as for holidays.
 Depends: R (>= 3.2.1)
 Imports:
-    data.table (>= 1.9.1), RODBC, forecast (>= 6.1)
+    data.table (>= 1.9.1), RODBC, forecast (>= 6.1), lubridate
 Suggests: dplyr, ggplot2 (>= 0.9.0)
 License: Copyright 2015 Alex Whitworth
 LazyData: true

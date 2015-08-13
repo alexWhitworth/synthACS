@@ -4,7 +4,7 @@
 \alias{new_campaign_proj}
 \title{Create backbone for future forecasts}
 \usage{
-new_campaign_proj(cur_date, future_date, cur_campaigns, called_by_day)
+new_campaign_proj(cur_date, future_date, cur_campaigns)
 }
 \arguments{
 \item{cur_date}{\code{Numeric}. Coerced date corresponding to the last day of the current month.}
@@ -12,8 +12,6 @@ new_campaign_proj(cur_date, future_date, cur_campaigns, called_by_day)
 \item{future_date}{\code{Numeric}. Corresponds to first day after max response date to date.}
 
 \item{cur_campaigns}{\code{data.frame}. Defined in \code{clean_model_data()}.}
-
-\item{called_by_day}{\code{data.frame}. Aggregate sum of calls by day}
 }
 \value{
 A \code{data.frame}.

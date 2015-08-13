@@ -4,11 +4,10 @@
 #' @param cur_date \code{Numeric}. Coerced date corresponding to the last day of the current month.
 #' @param future_date \code{Numeric}. Corresponds to first day after max response date to date.
 #' @param cur_campaigns \code{data.frame}. Defined in \code{clean_model_data()}.
-#' @param called_by_day \code{data.frame}. Aggregate sum of calls by day
 #' @return A \code{data.frame}.
 #' @export
 
-new_campaign_proj <- function(cur_date, future_date, cur_campaigns, called_by_day) {
+new_campaign_proj <- function(cur_date, future_date, cur_campaigns) {
   require(lubridate)
   require(data.table) # for rbindlist()
   
