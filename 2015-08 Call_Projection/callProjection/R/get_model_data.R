@@ -21,16 +21,12 @@ get_model_data <- function(called_data, channel= "c2g", historical= FALSE, hist_
     }
   }
   
-  require(lubridate)
-  require(RODBC)
-  require(data.table)
-  
   # 01. Pull campaign response data and clean
   #     Assumed that we want to use data back through March 2014 only  
   #---------------------------------------------------
   # Pull campaign response data, all variables
   ch <- odbcConnect(channel)
-  if (historical == FALSE) {
+  if (!historical) {
     camp_resp <- data.table(sqlQuery(ch, "SELECT * FROM [c2g].[dbo].[c2g_campaign_response] 
                                 where year(date) >= 2014", stringsAsFactors= FALSE), 
                           key= c("cell_code", "response_date"))
@@ -64,7 +60,7 @@ get_model_data <- function(called_data, channel= "c2g", historical= FALSE, hist_
   # 01b. Calculate some dates
   #---------------------------------------------------
   # Find last day of month
-  if (historical == FALSE) {
+  if (!historical) {
     cur_yr <- year(Sys.Date())
     cur_mo <- month(Sys.Date())
     
@@ -105,7 +101,15 @@ get_model_data <- function(called_data, channel= "c2g", historical= FALSE, hist_
   # 02. Subset outstanding, future and completed campaigns
   #---------------------------------------------------  
   # Outstanding campaigns -- ie haven't completed yet
-  camp_outstanding <- camp_resp_final[camp_resp_final$days_of_tracking < 90, ]
+  if (!historical) {
+    camp_outstanding <- camp_resp_final[camp_resp_final$days_of_tracking < 90, ]
+  } else {
+    sum_tracking <- camp_resp %>% group_by(cell_code) %>% 
+      summarize(max_resp = max(response_date), 
+          days_to_response= days_to_response[which(response_date == max(response_date))])
+    camp_outstanding <- camp_resp_final[cell_code %in% sum_tracking[sum_tracking$max_resp >= 
+          as.Date("2014-07-15", format= "%Y-%m-%d") & sum_tracking$days_to_response < 90,]$cell_code,]
+  }
   
   # Complete campaigns: full 90 days of tracking
   camp_resp_comp <- camp_resp_final[!is.na(camp_resp_final$response_date) & 

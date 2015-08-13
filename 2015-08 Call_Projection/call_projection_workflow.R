@@ -1,12 +1,10 @@
 
 setwd("G:/Whitworth_Alex/2015-08 Call_Projection/")
-devtools::install_github("dandb/data-analysis/callProjection", user= "alexWhitworth",
+devtools::install_github("dandb/data-analysis/tree/master/2015-08%20Call_Projection/callProjection", user= "alexWhitworth",
                          auth_token= "684f19755192333326787d9f055cfd67244452e8")
 
 library(callProjection)
-library(RODBC)
 library(dplyr)
-library(data.table)
 
 
 # current call projection workflow
