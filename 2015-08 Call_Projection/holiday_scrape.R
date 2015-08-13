@@ -52,6 +52,7 @@ holiday_scrape <- function(beg_year, end_year) {
 }
 
 #' @title Add Black Friday to a calendar year of holidays
+#' @description Adds Black Friday to a calendar year of holidays
 #' @param x A \code{data.frame} for a single year of holidays; internal to \code{holiday_scrape()}.
 add_black_fri <- function(x) {
   tg <- x[which(x[,3] == "Thanksgiving Day"), ]

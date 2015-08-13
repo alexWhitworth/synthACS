@@ -1,0 +1,34 @@
+#Final call projection script. Automatically called weekly (Monday morning) by Windows Task Scheduler
+#Bring in 'RODBC'
+library(RODBC)
+
+#Open channel to server
+ch <- odbcConnect("phoenix1")
+
+#First, call function which pulls all the data and runs the model to produce forecasts
+load("/Users/ashelton/Documents/The Call Projection Model/R_workspace_The_NEW_call_projection_model")
+
+#Query ALL calls for holiday adjustments
+calls_holiday <- call_query_all()
+
+#Define all_calls
+all_calls <- calls_holiday$called
+
+#Function to merge all calls to mktg direct only, and regress calls types on mktg direct 
+all_call_regs <- all_call_estimates(all_calls)
+
+#Get All holiday dates to merge into call projection data
+
+#Full weekly call projection
+w <- weekly_call_projection_full()
+
+#Final adjustments off of lagged error terms
+x <- adjust_lagged_error(x4$y$full_estimates, 5)
+
+y <- write_calls_to_server(x$full_estimates_1)
+
+z <- write_calls_to_server_2(x$full_estimates_1)
+
+save.image("/Users/ashelton/Documents/The Call Projection Model/last_model_run")
+
+#Done!

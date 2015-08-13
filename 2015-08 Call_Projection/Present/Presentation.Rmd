@@ -1,0 +1,26 @@
+---
+title: "2015-08 Call Projection"
+author: "Alex Whitworth"
+date: "August 13, 2015"
+output: beamer_presentation
+---
+
+## Objectives
+
+- Nothing yet
+
+## Data
+
+- Nothing yet
+
+## Modeling approach
+
+- Nothing yet
+
+## Modeling (technical overview)
+
+- Nothing yet
+
+## Testing: How accurate is the model?
+
+- Nothing yet

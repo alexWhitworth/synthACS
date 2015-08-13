@@ -156,6 +156,7 @@ extract_top <- function(campaigns, rr_stats, channel= "c2g") {
   return(list(top=top_camp, all=all))
 }
 
+#' @title Listwise t-test
 #' @description Computes pairs of Weltch t-tests for matching 
 #' @param df1 A \code{data.frame} with four columns: (1) a key, (2) sample size, 
 #' (3) a vector of means, (4) a vector of SDs
@@ -183,6 +184,10 @@ listwise.t.test <- function(df1, df2, alpha= 0.05) {
   return(results)
 }
 
+#' @title Identify top performing ongoing campaigns
+#' @description Using historical data on complete campaigns and data on incomplete / 
+#' ongoing campaigns, identify ongoing campaigns which are expected to be top performing 
+#' campaigns.
 #' @param  complete_camp_rr A \code{data.table}. Should be the "comp_rr" internal from
 #'  camp_out_calc_adj().
 #' @param top_camp_list A \code{list} with summary statistics for top performing complete

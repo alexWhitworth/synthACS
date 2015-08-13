@@ -1,3 +1,4 @@
+#' @title Create backbone for future forecasts
 #' @description Internal function called by \code{clean_model_data()}. Calculates all future dates
 #' where we expect responses for each current campaign for use in projection.
 #' @param cur_date \code{Numeric}. Coerced date corresponding to the last day of the current month.

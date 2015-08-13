@@ -1,5 +1,8 @@
 
-#' @paran cur_forecasts A \code{data.frame} of the current, unadjusted (for holidays), forecasts.
+#' @title Define and apply holiday adjustments to forecasts
+#' @description Adjusts current forecasts and adjusts for any holidays in the forecast period.
+#' Appropriate holiday adjustments are found via negative binomial regression.
+#' @param cur_forecasts A \code{data.frame} of the current, unadjusted (for holidays), forecasts.
 #' @param beg_year An \code{integer} specifying the first year in which you would like holidays
 #' @param end_year An \code{integer} specifying the last year in which you would like holidays. 
 #' Defaults to the current year.
@@ -85,6 +88,7 @@ holiday_adj <- function(cur_forecasts, beg_year= 2014, end_year= year(Sys.Date()
 
 #test <- holiday_adj(base_forecasts[[2]], 2012, call_hist= call_hist)
 
+#' @title Apply holiday adjustments
 #' @description This function should only be called internally.
 #' It applies the holiday adjustments to the forecasts
 #' @param cur_forecasts A \code{data.frame}. The internal object \code{projections}.
