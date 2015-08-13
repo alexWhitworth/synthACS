@@ -1,18 +1,10 @@
 
 setwd("G:/Whitworth_Alex/2015-08 Call_Projection/")
-source("./data_pull.R")
-source("./get_model_data.R")
-source("./new_campaign_proj.R")
-source("./impute_miss_rr.R")
-source("./holiday_scrape.R")
-source("./camp_out_calc_adj.R")
-source("./create_baseline_forecasts.R")
-source("./adj_base_forecasts.R")
-source("./holiday_adj.R")
+library(callProjection)
 
-library(RODBC)
-library(dplyr)
-library(data.table)
+# library(RODBC)
+# library(dplyr)
+# library(data.table)
 
 
 # current call projection workflow
@@ -48,3 +40,4 @@ projections <- adj_base_forecasts(base_forecasts[[2]], called, rbind(model_data$
 # note 1: no seasonality of RR by date / month observed
 # note 2: Weekly calls: sat / sun roughly equivalent; M/T roughly equivalent; W-F roughly equivalent
 
+write.csv(projections, "./projections_aug-2015.csv", row.names= FALSE)
