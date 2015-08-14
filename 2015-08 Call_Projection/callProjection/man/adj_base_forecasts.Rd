@@ -5,8 +5,9 @@
 \title{Adjust baseline forecasts for weekday seasonality.}
 \usage{
 adj_base_forecasts(baseline, calls, camp_tot, seasonal_wks = 4,
-  seasonal_adj_type = c("stl", "ets", "wk_avg", "ensemble"), call_hist,
-  beg_year = 2014, end_year = year(Sys.Date()))
+  seasonal_adj_type = c("stl", "ets", "wk_avg", "ensemble", "wk_stl"),
+  call_hist, beg_year = 2014, end_year = year(Sys.Date()),
+  etsmodel = "ZZZ")
 }
 \arguments{
 \item{baseline}{A \code{data.frame} of aggregate forecasts. One of the return
@@ -15,9 +16,9 @@ values from \code{create_baseline_forecasts()}.}
 \item{calls}{A \code{data.frame} of call data from Phoenix with categorical data. Returned
 from \code{data_pull()}.}
 
-\item{camp_tot}{A \code{data.frame} of campaign data from c2g.campaign_response. Should be
-combined from the returns of \code{get_model_data()$camp_complete} and
-\code{get_model_data()$camp_outstanding}.}
+\item{camp_tot}{A \code{data.frame} of campaign resposne data from c2g.campaign_response.
+Should be combined from the returns of \code{get_model_data()$camp_complete} and
+\code{get_model_data()$camp_outstanding}. Used for adjusting calls to c2g tracked reponses.}
 
 \item{seasonal_wks}{An integer for the number of trailing weeks used to calculate the weekly
 seasonal pattern in the response trend. Used for model tuning. Defaults to 4 (for now)}
@@ -29,6 +30,12 @@ seasonal pattern in the response trend. Used for model tuning. Defaults to 4 (fo
 \item{beg_year}{An integer specifying first year of holidays to pull. Defaults to 2014.}
 
 \item{end_year}{An integer specifying last year of holidays to pull. Defaults to \code{year(Sys.Date())}.}
+
+\item{etsmodel}{A three-character string identifying method using the framework terminology
+of Hyndman et al. (2002) and Hyndman et al. (2008). The first letter denotes the error type ("A", "M"
+or "Z"); the second letter denotes the trend type ("N","A","M" or "Z"); and the third letter denotes
+the season type ("N","A","M" or "Z"). In all cases, "N"=none, "A"=additive, "M"=multiplicative and
+"Z"=automatically selected.}
 }
 \value{
 A \code{data.frame} of call projections by category for the month.

@@ -15,11 +15,17 @@
 #' @param call_hist A \code{data.frame} of historical calls data on which to examine holiday patterns.
 #' @param beg_year An integer specifying first year of holidays to pull. Defaults to 2014.
 #' @param end_year An integer specifying last year of holidays to pull. Defaults to \code{year(Sys.Date())}.
+#' @param etsmodel A three-character string identifying method using the framework terminology 
+#' of Hyndman et al. (2002) and Hyndman et al. (2008). The first letter denotes the error type ("A", "M" 
+#' or "Z"); the second letter denotes the trend type ("N","A","M" or "Z"); and the third letter denotes 
+#' the season type ("N","A","M" or "Z"). In all cases, "N"=none, "A"=additive, "M"=multiplicative and 
+#' "Z"=automatically selected. 
 #' @return A \code{data.frame} of call projections by category for the month.
 #' @export
 adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
-                               seasonal_adj_type= c("stl", "ets", "wk_avg", "ensemble"),
-                               call_hist, beg_year= 2014, end_year= year(Sys.Date())) {
+                               seasonal_adj_type= c("stl", "ets", "wk_avg", "ensemble", "wk_stl"),
+                               call_hist, beg_year= 2014, end_year= year(Sys.Date()),
+                               etsmodel= "ZZZ") {
   
   # 00. Initiate
   seasonal_adj_type <- match.arg(seasonal_adj_type, several.ok= FALSE)
@@ -86,7 +92,7 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   stl1 <- stl(ts(calls15$responses, start=c(1, calls15$wday[1]), frequency= 7), s.window = 7, robust=T)
   stl_decomp <- data.frame(call_date= calls15$call_date, wday= calls15$wday,
                            stl1$time.series)
-  ets1 <- ets(ts(calls15$responses, start=c(1, calls15$wday[1]), frequency= 7))
+  ets1 <- ets(ts(calls15$responses+1, start=c(1, calls15$wday[1]), frequency= 7), model= etsmodel)
   ets_decomp <- data.frame(call_date= calls15$call_date, wday= calls15$wday,
                            fitted= ets1$fitted, residuals=ets1$residuals)
   
@@ -137,13 +143,22 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
     } else {
       adj <- c(wk1, rep(adj_ens, wks), adj_ens[1:extra])
     }
-  } else {stop("Invalid seasonal_adj_type.")}
+  } else if (seasonal_adj_type == "wk_stl") {
+    adj_ens <- apply(rbind(adj_stl, adj_wks), 2, mean)
+    wk1 <- adj_ens[wkday1:length(adj_ens)]; 
+    len1 <- length(wk1); wks <- floor((n - len1) / 7); extra <- (n - len1) %% 7
+    if (length(wk1) + wks * 7 == n) {
+      adj <- c(wk1, rep(adj_ens, wks))
+    } else {
+      adj <- c(wk1, rep(adj_ens, wks), adj_ens[1:extra])
+    }
+  }  else {stop("Invalid seasonal_adj_type.")}
   
   baseline$responders <- baseline$responders + adj
   # if any <= 0, use ETS forecasts
   ets_forecasts <- forecast(ets1, h= n)$mean
   if (any(baseline$responders <= 0)) {
-    baseline$responders[which(baseline$responders <= 0)] <- ets_forecasts[which(baseline$responders <= 0)]
+    baseline$responders[which(baseline$responders <= 0)] <- (ets_forecasts[which(baseline$responders <= 0)] - 1)
   }
   
   # 03. Adjust for calls / resp ratio
