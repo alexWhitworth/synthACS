@@ -98,12 +98,12 @@ apply_hol_adj <- function(cur_forecasts, pred_adj) {
   p2 <- p2[order(p2$call_date),]
   
   # update
-  p2$mkt_direct <- p2$mkt_direct - p2$pred_mkt
-  p2$db_ivr     <- p2$db_ivr - p2$pred_ivr
-  p2$dandb.com  <- p2$dandb.com - p2$pred_dandb
-  p2$organic    <- p2$organic - p2$pred_organic
-  p2$paid_etc   <- p2$paid_etc - p2$pred_paid
-  p2$iupdate    <- p2$iupdate - p2$pred_iupdate
+  p2$mkt_direct <- p2$mkt_direct + p2$pred_mkt
+  p2$db_ivr     <- p2$db_ivr + p2$pred_ivr
+  p2$dandb.com  <- p2$dandb.com + p2$pred_dandb
+  p2$organic    <- p2$organic + p2$pred_organic
+  p2$paid_etc   <- p2$paid_etc + p2$pred_paid
+  p2$iupdate    <- p2$iupdate + p2$pred_iupdate
   
   # remove extra columns
   p2$flag <- NULL;  p2$wday <- NULL

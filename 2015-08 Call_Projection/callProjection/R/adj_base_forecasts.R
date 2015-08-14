@@ -155,10 +155,11 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   }  else {stop("Invalid seasonal_adj_type.")}
   
   baseline$responders <- baseline$responders + adj
-  # if any <= 0, use ETS forecasts
-  ets_forecasts <- forecast(ets1, h= n)$mean
+  # if any <= 0, use ETS forecasts -- [AW 8/14] switch to STL
+  # ets_forecasts <- forecast(ets1, h= n)$mean
+  stl_forecasts <- forecast(stl1, h= n)$mean
   if (any(baseline$responders <= 0)) {
-    baseline$responders[which(baseline$responders <= 0)] <- (ets_forecasts[which(baseline$responders <= 0)] - 1)
+    baseline$responders[which(baseline$responders <= 0)] <- (stl_forecasts[which(baseline$responders <= 0)] - 1)
   }
   
   # 03. Adjust for calls / resp ratio
@@ -174,6 +175,7 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   baseline$responders <- baseline$responders * ratio_adj
   
   # 04. Project non "marketing direct" calls
+  # NOTE: do you wish this to be ETS? STL? ensemble?
   #--------------------------------------------------------------
   ets_dbivr   <- ets(ts(ratios$dbivr_mkt, start=c(1, wday(ratios$call_date[1])), frequency= 7))
   ets_dandb   <- ets(ts(ratios$dandb_mkt, start=c(1, wday(ratios$call_date[1])), frequency= 7))
