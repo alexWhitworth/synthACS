@@ -20,6 +20,11 @@ camp_complete_imp <- impute_zero_resp_all(dat= model_data$camp_complete, days_tr
 top_ongoing <- camp_out_calc_adj(model_data$camp_outstanding, channel= "c2g")
 # 5. summarize complete campaigns by campaign class and day of response
 # use state-space model depending on weekend or not
+camp_complete_imp$class_of_mail <- 
+  ifelse(!is.na(camp_complete_imp$class_of_mail), camp_complete_imp$class_of_mail,
+    ifelse(is.na(camp_complete_imp$class_of_mail) & substr(camp_complete_imp$cell_code, 5,5) == "1", "1st",
+      ifelse(is.na(camp_complete_imp$class_of_mail) & substr(camp_complete_imp$cell_code, 5,5) == "3", "3rd", NA)))
+
 camp_comp_stats <- camp_complete_imp %>% group_by(campaign_type, class_of_mail, days_to_response) %>% 
   summarize(n= length(cell_code), 
             mean_daily_resp_rate= mean(responders / unique_leads, na.rm=TRUE),

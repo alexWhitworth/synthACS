@@ -12,6 +12,7 @@
 #' aggregated daily forecasts
 #' @export
 create_baseline_forecasts <- function(camp_proj, camp_comp_stats, top_outstanding) {
+  require(stringr)
   
   camp_proj <- camp_proj[, .(cell_code, campaign_type, class_of_mail, response_date, response_day_of_week, 
                        days_of_tracking, days_to_response, unique_leads, total_responders, responders,
