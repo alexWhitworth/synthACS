@@ -72,7 +72,7 @@ get_model_data <- function(channel= "c2g", historical= FALSE, hist_yr, hist_mo) 
           ifelse(is.Date(try(as.Date(paste(hist_yr, "-", hist_mo, "-", 29, sep="")), TRUE)), 
             paste(hist_yr, "-", hist_mo, "-", 29, sep=""),
             ifelse(is.Date(try(as.Date(paste(hist_yr, "-", hist_mo, "-", 28, sep="")), TRUE)), 
-                   paste(hist_hr, "-", month(Sys.Date()), "-", 28, sep="")))))
+                   paste(hist_yr, "-", month(Sys.Date()), "-", 28, sep="")))))
   }
   
   # coerce to numeric

@@ -1,10 +1,12 @@
 
 setwd("G:/Whitworth_Alex/2015-08 Call_Projection/")
-devtools::install_github("dandb/data-analysis/tree/master/2015-08%20Call_Projection/callProjection", user= "alexWhitworth",
+devtools::install_github("dandb/data-analysis/2015-08 Call_Projection/callProjection", 
                          auth_token= "684f19755192333326787d9f055cfd67244452e8")
 
 library(callProjection)
 library(dplyr)
+
+devtools::install_github("crossfital/emclustr")
 
 
 # current call projection workflow
