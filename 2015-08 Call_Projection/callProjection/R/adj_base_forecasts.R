@@ -155,24 +155,35 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   }  else {stop("Invalid seasonal_adj_type.")}
   
   baseline$responders <- baseline$responders + adj
-  # if any <= 0, use ETS forecasts -- [AW 8/14] switch to STL
-  # ets_forecasts <- forecast(ets1, h= n)$mean
-  stl_forecasts <- forecast(stl1, h= n)$mean
+  # if any <= 0, use ETS forecasts -- [AW 8/14] better to use STL or ETS?
+  ets_forecasts <- forecast(ets1, h= n)$mean - 1
+  #stl_forecasts <- forecast(stl1, h= n)$mean
   if (any(baseline$responders <= 0)) {
-    baseline$responders[which(baseline$responders <= 0)] <- (stl_forecasts[which(baseline$responders <= 0)] - 1)
+    # baseline$responders[which(baseline$responders <= 0)] <- (stl_forecasts[which(baseline$responders <= 0)] - 1)
+    baseline$responders[which(baseline$responders <= 0)] <- (ets_forecasts[which(baseline$responders <= 0)] - 1)
   }
   
   # 03. Adjust for calls / resp ratio
   #--------------------------------------------------------------
+  # [AW- 8/17/2015] -- better to use wk-average or STL? both?
   av_ratio <- tapply(ratios$mkt_to_resp[(nrow(ratios)- seasonal_wks * 7 + 1):nrow(ratios)], 
                      wday(ratios$call_date[(nrow(ratios)- seasonal_wks * 7 + 1):nrow(ratios)]), mean)
+  
+  stl_ratio <- forecast(stl(ts(ratios$mkt_to_resp, start = c(1, wday(ratios$call_date[1])), 
+                               frequency = 7), s.window= 7, robust=T), h=n)$mean
   
   if (length(wk1) + wks * 7 == n) {
     ratio_adj <- c(av_ratio[wkday1:length(av_ratio)], rep(av_ratio, wks))
   }  else {
   ratio_adj <- c(av_ratio[wkday1:length(av_ratio)], rep(av_ratio, wks), av_ratio[1:extra])
   }
-  baseline$responders <- baseline$responders * ratio_adj
+  if (any(stl_ratio < 0)) {
+    baseline$responders <- baseline$responders * ratio_adj
+  } else {
+    baseline$responders <- baseline$responders * (ratio_adj + stl_ratio)/2
+  }
+  
+  
   
   # 04. Project non "marketing direct" calls
   # NOTE: do you wish this to be ETS? STL? ensemble?
@@ -202,5 +213,5 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   # 06. Finalize and return
   #--------------------------------------------------------------
   
-  return(projections)
+  return(list(projections= projections, ets_mod= ets1$method))
 }
