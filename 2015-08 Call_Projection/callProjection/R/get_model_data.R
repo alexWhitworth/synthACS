@@ -42,11 +42,7 @@ get_model_data <- function(channel= "c2g", historical= FALSE, hist_yr, hist_mo) 
   
   # do some munging on response data
   camp_resp$response_day_of_week <- NULL
-  camp_resp$year_response_date <- year(camp_resp$response_date)
-  camp_resp$month_response_date <- month(camp_resp$response_date)
-  camp_resp$day_response_date <- day(camp_resp$response_date)
-  
-  camp_resp$responders <- as.double(camp_resp$responders)
+  camp_resp$responders <- as.double(camp_resp$responders) # needed for data.table
   
   
   # 01b. Calculate some dates
@@ -92,26 +88,37 @@ get_model_data <- function(channel= "c2g", historical= FALSE, hist_yr, hist_mo) 
   
   # 02. Subset outstanding, future and completed campaigns
   #---------------------------------------------------  
-  # Outstanding campaigns -- ie haven't completed yet
   if (!historical) {
+    # Outstanding campaigns -- ie haven't completed yet
     camp_outstanding <- camp_resp_final[camp_resp_final$days_of_tracking < 90, ]
+    # Complete campaigns: full 90 days of tracking
+    camp_resp_comp <- camp_resp_final[!is.na(camp_resp_final$response_date) & 
+                                        !is.null(camp_resp_final$response_date) &
+                                        camp_resp_final$days_of_tracking == 90, ]
+    
+    # future campaigns: days of tracking < 0
+    camp_future <- camp_resp_final[!is.na(camp_resp_final$response_date) & 
+                                     !is.null(camp_resp_final$response_date) &
+                                     camp_resp_final$days_of_tracking < 0, ]
+    
   } else {
-    sum_tracking <- camp_resp %>% group_by(cell_code) %>% 
-      summarize(max_resp = max(response_date), 
-          days_to_response= days_to_response[which(response_date == max(response_date))])
-    camp_outstanding <- camp_resp_final[cell_code %in% sum_tracking[sum_tracking$max_resp >= 
-          as.Date("2014-07-15", format= "%Y-%m-%d") & sum_tracking$days_to_response < 90,]$cell_code,]
+    camp_dates <- camp_resp %>% group_by(cell_code) %>% summarize(date= max(date), last_date= max(date) + 90)
+    # Outstanding: final campaign tracking day > max of response date
+    # completed: final campaign tracking day <= max of response date
+    # future: mail date hasn't occured yet
+    camp_dates$outstand <- ifelse(camp_dates$last_date > max(camp_resp$response_date), TRUE, FALSE)
+    camp_dates$comp     <- ifelse(camp_dates$last_date <= max(camp_resp$response_date), TRUE, FALSE)
+    camp_dates$future   <- ifelse(camp_dates$date > max(camp_resp$response_date), TRUE, FALSE)
+    
+    camp_outstanding <- camp_resp_final[cell_code %in% camp_dates[camp_dates$outstand == TRUE, ]$cell_code, ]
+    
+    camp_resp_comp <- camp_resp_final[!is.na(camp_resp_final$response_date) & 
+                                        !is.null(camp_resp_final$response_date) & 
+                                      cell_code %in% camp_dates[camp_dates$comp == TRUE, ]$cell_code, ]
+    camp_future <- camp_resp_final[!is.na(camp_resp_final$response_date) & 
+                                     !is.null(camp_resp_final$response_date) &
+                                     cell_code %in% camp_dates[camp_dates$future == TRUE, ]$cell_code, ]
   }
-  
-  # Complete campaigns: full 90 days of tracking
-  camp_resp_comp <- camp_resp_final[!is.na(camp_resp_final$response_date) & 
-                                    !is.null(camp_resp_final$response_date) &
-                                    camp_resp_final$days_of_tracking == 90, ]
-  
-  # future campaigns: days of tracking < 0
-  camp_future <- camp_resp_final[!is.na(camp_resp_final$response_date) & 
-                                   !is.null(camp_resp_final$response_date) &
-                                   camp_resp_final$days_of_tracking < 0, ]
   
   # current campaigns': outstanding or future with < 90 days tracking
   # double check for errors

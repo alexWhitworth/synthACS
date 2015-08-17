@@ -29,6 +29,11 @@ create_baseline_forecasts <- function(camp_proj, camp_comp_stats, top_outstandin
     for (m in names(table(camp_comp_stats$class_of_mail))) {
       # stats for campaign class
       comp_resp <- camp_comp_stats[campaign_type == c & class_of_mail == m,]
+      if (nrow(comp_resp) == 0 & c == "latest inquiry" & m == "3rd") {
+        # if latest inquiry 3rd --> missing data, use latest inquiry 1st -- they are reasonably close
+        comp_resp <- camp_comp_stats[campaign_type == c & class_of_mail == "1st",]
+      }
+      
       # oustanding campaigns for campaign class
       to_proj   <- camp_proj[campaign_type == c & class_of_mail == m,]
       
@@ -74,5 +79,3 @@ create_baseline_forecasts <- function(camp_proj, camp_comp_stats, top_outstandin
     break
   }
 }
-
-

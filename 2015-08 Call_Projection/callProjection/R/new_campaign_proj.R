@@ -34,19 +34,7 @@ new_campaign_proj <- function(cur_date, future_date, cur_campaigns) {
   }
   new_campaigns <- rbindlist(new_camp)
   
-  #Define both new_campaigns projected and called
-  new_campaigns$year_response_date <- year(new_campaigns$response_date)
-  new_campaigns$month_response_date <- month(new_campaigns$response_date)
-  new_campaigns$day_response_date <- day(new_campaigns$response_date)
-  
-  #Change day_of_week to response_day_of_week
   new_campaigns$response_day_of_week <- wday(new_campaigns$response_date)
-  new_campaigns$response_day_of_week <- ifelse(new_campaigns$response_day_of_week == 1, "Sunday", 
-                                        ifelse(new_campaigns$response_day_of_week == 2, "Monday", 
-                                        ifelse(new_campaigns$response_day_of_week == 3, "Tuesday", 
-                                        ifelse(new_campaigns$response_day_of_week == 4, "Wednesday", 
-                                        ifelse(new_campaigns$response_day_of_week == 5, "Thursday", 
-                                        ifelse(new_campaigns$response_day_of_week == 6, "Friday", "Saturday"))))))
   
   return(new_campaigns)
 }

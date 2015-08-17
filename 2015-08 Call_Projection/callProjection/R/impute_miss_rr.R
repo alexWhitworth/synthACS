@@ -31,7 +31,7 @@ impute_zero_resp <- function(dat, days_tracking= 90) {
    
     dat <- within(rbindlist(list(miss_dat, dat))[order(days_to_response)], {
       response_date= mail_date + days_to_response
-      #response_day_of_week = wday(response_date)
+      response_day_of_week = wday(response_date)
     })
   }
   return(dat)
