@@ -37,8 +37,9 @@ get_model_data <- function(channel= "c2g", historical= FALSE, hist_yr, hist_mo) 
     
     camp_resp <- data.table(sqlQuery(ch, query_txt, stringsAsFactors= FALSE), 
                             key= c("cell_code", "response_date"))
+    rm(hist_date, query_txt)
   }
-  close(ch); rm(ch, hist_date, query_txt)
+  close(ch); rm(ch)
   
   # do some munging on response data
   camp_resp$response_day_of_week <- NULL

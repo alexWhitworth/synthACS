@@ -6,16 +6,13 @@ devtools::install_github("dandb/data-analysis/2015-08 Call_Projection/callProjec
 library(callProjection)
 library(dplyr)
 
-devtools::install_github("crossfital/emclustr")
-
-
 # current call projection workflow
 #---------------------------------------------------------------
 # 1. pull in call data
 called <- pull_call_data(channel= "c2g", call_date= '4/01/2014') # use defaults
 
 # 2. Aggregate call data, pull / clean campaign tracking and response data
-model_data <- get_model_data(called, channel= "c2g")
+model_data <- get_model_data(channel= "c2g", historical= FALSE)
 # 3. impute missing days response for complete campaigns
 camp_complete_imp <- impute_zero_resp_all(dat= model_data$camp_complete, days_tracking= 90, comp_camp= TRUE)
 # 4. calculate adjustment rate for top performing ongoing campaigns
@@ -40,7 +37,8 @@ base_forecasts <- create_baseline_forecasts(model_data$camp_proj, camp_comp_stat
 
 # 7. calculate / apply adjustments for day of week -- aggregate level
 # and calculate / apply adjustments for holidays    -- aggregate level
-projections <- adj_base_forecasts(base_forecasts[[2]], called, rbind(model_data$camp_complete, model_data$camp_outstanding), 
+projections <- adj_base_forecasts(base_forecasts[[2]], called, 
+                                  rbind(model_data$camp_complete, model_data$camp_outstanding), 
                                   seasonal_adj_type= "ensemble", call_hist= called)
 
 
