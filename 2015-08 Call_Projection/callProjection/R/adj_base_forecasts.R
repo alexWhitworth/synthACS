@@ -105,7 +105,8 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
                     calls15$wday[(nrow(calls15)- seasonal_wks * 7 + 1):nrow(calls15)], mean)
   adj_wks <- adj_wks - mean(adj_wks)
   
-  # adjust
+  # 02(B). apply adjustments at day level
+  #--------------------------------------------------------------
   n <- length(baseline$responders)
   rep <- n %% 7
   wkday1 <- wday(baseline$call_date[1])
@@ -166,6 +167,8 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   # 03. Adjust for calls / resp ratio
   #--------------------------------------------------------------
   # [AW- 8/17/2015] -- better to use wk-average or STL? both?
+  #### NEED TO TWEAK THIS
+  
   av_ratio <- tapply(ratios$mkt_to_resp[(nrow(ratios)- seasonal_wks * 7 + 1):nrow(ratios)], 
                      wday(ratios$call_date[(nrow(ratios)- seasonal_wks * 7 + 1):nrow(ratios)]), mean)
   
@@ -175,9 +178,9 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   if (length(wk1) + wks * 7 == n) {
     ratio_adj <- c(av_ratio[wkday1:length(av_ratio)], rep(av_ratio, wks))
   }  else {
-  ratio_adj <- c(av_ratio[wkday1:length(av_ratio)], rep(av_ratio, wks), av_ratio[1:extra])
+    ratio_adj <- c(av_ratio[wkday1:length(av_ratio)], rep(av_ratio, wks), av_ratio[1:extra])
   }
-  if (any(stl_ratio < 0)) {
+  if (any(stl_ratio < 0) | sum(stl_ratio[1:7] > 4) > 2) { # controls for large outlier impact on STL
     baseline$responders <- baseline$responders * ratio_adj
   } else {
     baseline$responders <- baseline$responders * (ratio_adj + stl_ratio)/2
@@ -209,9 +212,73 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   projections <- holiday_adj(cur_forecasts= projections, beg_year= beg_year, end_year= end_year,
                              call_hist= call_hist)
   
-  
-  # 06. Finalize and return
+  # 06. Error checks for < 0
+  # if any < 0, set to weekly average (based on seasonal_wks)
   #--------------------------------------------------------------
+  # mkt_direct
+  if (any(projections$mkt_direct <= 0)) { 
+    projections$mkt_direct <- adj_replace(calls15, projections$mkt_direct, call_name= "mkt_direct",
+                  seasonal_wks= seasonal_wks, wkday1= wkday1, wks= wks, extra= extra)
+  }  
   
+  # db_ivr 
+  projections$db_ivr <- ifelse(projections$db_ivr < 0, 1, projections$db_ivr)
+  
+  # dandb.com
+  if (any(projections$dandb.com <= 0)) { 
+    projections$dandb.com <- adj_replace(calls15, projections$dandb.com, call_name= "dandb_com",
+                  seasonal_wks= seasonal_wks, wkday1= wkday1, wks= wks, extra= extra)
+  }
+  
+  # organic
+  if (any(projections$organic <= 0)) { 
+    projections$organic <- adj_replace(calls15, projections$organic, call_name= "organic",
+                  seasonal_wks= seasonal_wks, wkday1= wkday1, wks= wks, extra= extra)
+  }
+  
+  # paid_etc
+  if (any(projections$paid_etc <= 0)) { 
+    projections$paid_etc <- adj_replace(calls15, projections$paid_etc, call_name= "paid_etc",
+                  seasonal_wks= seasonal_wks, wkday1= wkday1, wks= wks, extra= extra)
+  }
+  
+  # iupdate
+  if (any(projections$iupdate <= 0)) { 
+    projections$iupdate <- adj_replace(calls15, projections$iupdate, call_name= "iupdate",
+                  seasonal_wks= seasonal_wks, wkday1= wkday1, wks= wks, extra= extra)
+  }
+  
+  # 07. Finalize and return
+  #--------------------------------------------------------------
   return(list(projections= projections, ets_mod= ets1$method))
+}
+
+
+
+#' @title Calculate replacements for month
+#' @description Internal function repeatedly used for replacing problematic values
+#' with weekly averages
+#' @param calls15 Should be the calls15 \code{data.frame} internal to adj_base_forecasts
+#' @param x The vector of ou wish to adjust / replace errors
+#' @param call_name String denoting the appropriate column in calls15
+#' @param seasonal_wks An integer for the number of trailing weeks used to calculate
+#' replacement values.
+#' @param wkday1 see section 02(B)
+#' @param wks see section 02(B) 
+#' @param extra see section 02(B)
+adj_replace <- function(calls15, x, call_name, seasonal_wks= 4,
+                        wkday1= wkday1, wks= wks, extra= extra) {
+  if (any(x <= 0)) { 
+    n <- length(x)
+    mkt_avg <- tapply(calls15[[call_name]][(nrow(calls15)- seasonal_wks * 7 + 1):nrow(calls15)],
+                      calls15$wday[(nrow(calls15)- seasonal_wks * 7 + 1):nrow(calls15)], mean, na.rm=T)
+    wk1 <- mkt_avg[wkday1:length(mkt_avg)]; 
+    if (length(wk1) + wks * 7 == n) { # see section 02(B)
+      adj <- c(wk1, rep(mkt_avg, wks))
+    } else {
+      adj <- c(wk1, rep(mkt_avg, wks), mkt_avg[1:extra])
+    }
+    x[which(x <= 0)] <- (adj[which(x <= 0)])
+  }
+  return(x)
 }
