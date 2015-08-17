@@ -69,7 +69,6 @@ add_black_fri <- function(x) {
 #' @param days A numeric \code{vector} of weekdays with elements in $[1,7]$ ; Sunday == 1, Sat == 7
 #' @param sun_indices A numeric \code{vector} of indices denoting which elements of \code{days}
 #' correspond to Sundays.
-#' @export
 num_wks <- function(days, sun_indices) {
   if((length(days) - (sun_indices[1] -1)) %% 7 == 0 ) {
     wks <- (length(days) - (sun_indices[1] -1)) / 7 + 1

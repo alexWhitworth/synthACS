@@ -212,41 +212,54 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   projections <- holiday_adj(cur_forecasts= projections, beg_year= beg_year, end_year= end_year,
                              call_hist= call_hist)
   
-  # 06. Error checks for < 0
+  # 06. Error checks for extreme points
   # if any < 0, set to weekly average (based on seasonal_wks)
+  # if max values, cap
   #--------------------------------------------------------------
   # mkt_direct
   if (any(projections$mkt_direct <= 0)) { 
     projections$mkt_direct <- adj_replace(calls15, projections$mkt_direct, call_name= "mkt_direct",
                   seasonal_wks= seasonal_wks, wkday1= wkday1, wks= wks, extra= extra)
-  }  
+  } 
+  projections$mkt_direct <- ifelse(projections$mkt_direct > quantile(calls15$mkt_direct, .975, na.rm=T),
+                                   quantile(calls15$mkt_direct, .975, na.rm=T), projections$mkt_direct)
   
   # db_ivr 
   projections$db_ivr <- ifelse(projections$db_ivr < 0, 1, projections$db_ivr)
+  projections$db_ivr <- ifelse(projections$db_ivr > quantile(calls15$db_ivr, .975, na.rm=T),
+                                   quantile(calls15$db_ivr, .975, na.rm=T), projections$db_ivr)
   
   # dandb.com
   if (any(projections$dandb.com <= 0)) { 
     projections$dandb.com <- adj_replace(calls15, projections$dandb.com, call_name= "dandb_com",
                   seasonal_wks= seasonal_wks, wkday1= wkday1, wks= wks, extra= extra)
   }
+  projections$dandb.com <- ifelse(projections$dandb.com > quantile(calls15$dandb_com, .975, na.rm=T),
+                                   quantile(calls15$dandb_com, .975, na.rm=T), projections$dandb.com)
   
   # organic
   if (any(projections$organic <= 0)) { 
     projections$organic <- adj_replace(calls15, projections$organic, call_name= "organic",
                   seasonal_wks= seasonal_wks, wkday1= wkday1, wks= wks, extra= extra)
   }
+  projections$organic <- ifelse(projections$organic > quantile(calls15$organic, .975, na.rm=T),
+                                  quantile(calls15$organic, .975, na.rm=T), projections$organic)
   
   # paid_etc
   if (any(projections$paid_etc <= 0)) { 
     projections$paid_etc <- adj_replace(calls15, projections$paid_etc, call_name= "paid_etc",
                   seasonal_wks= seasonal_wks, wkday1= wkday1, wks= wks, extra= extra)
   }
+  projections$paid_etc <- ifelse(projections$paid_etc > quantile(calls15$paid_etc, .975, na.rm=T),
+                                quantile(calls15$paid_etc, .975, na.rm=T), projections$paid_etc)
   
   # iupdate
   if (any(projections$iupdate <= 0)) { 
     projections$iupdate <- adj_replace(calls15, projections$iupdate, call_name= "iupdate",
                   seasonal_wks= seasonal_wks, wkday1= wkday1, wks= wks, extra= extra)
   }
+  projections$iupdate <- ifelse(projections$iupdate > quantile(calls15$iupdate, .975, na.rm=T),
+                                 quantile(calls15$iupdate, .975, na.rm=T), projections$iupdate)
   
   # 07. Finalize and return
   #--------------------------------------------------------------
