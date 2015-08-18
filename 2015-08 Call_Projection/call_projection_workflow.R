@@ -45,4 +45,4 @@ projections <- adj_base_forecasts(base_forecasts[[2]], called,
 # note 1: no seasonality of RR by date / month observed
 # note 2: Weekly calls: sat / sun roughly equivalent; M/T roughly equivalent; W-F roughly equivalent
 
-write.csv(projections, "./projections_aug-2015.csv", row.names= FALSE)
+write.csv(projections[[1]], "./projections_aug-2015.csv", row.names= FALSE)

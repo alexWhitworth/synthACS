@@ -20,15 +20,17 @@
 #' or "Z"); the second letter denotes the trend type ("N","A","M" or "Z"); and the third letter denotes 
 #' the season type ("N","A","M" or "Z"). In all cases, "N"=none, "A"=additive, "M"=multiplicative and 
 #' "Z"=automatically selected. 
+#' @param windsor.q A numeric vector of length 2 in (0,1) for windsorizing forecasts.
 #' @return A \code{data.frame} of call projections by category for the month.
 #' @export
 adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
                                seasonal_adj_type= c("stl", "ets", "wk_avg", "ensemble", "wk_stl"),
                                call_hist, beg_year= 2014, end_year= year(Sys.Date()),
-                               etsmodel= "ZZZ") {
+                               etsmodel= "ZZZ", windsor.q= c(.25, .75)) {
   
   # 00. Initiate
   seasonal_adj_type <- match.arg(seasonal_adj_type, several.ok= FALSE)
+  if (windsor.q[1] <= 0 | windsor.q[2] >= 1 | windsor.q[1] >= windsor.q[2]) {stop("Please windsorize between (0,1)")}
   
   # 01. Aggregate call data, do basic munging, and merge datasets
   # The goal here is to create a training dataset for seasonality adjustments
@@ -50,7 +52,7 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   
   # 01a. get at least 6 months training data
   #---------------------------
-  if (max(camp_tot$response_date) >=  as.Date("2015-07-01", format= "%Y-%m-%d")) {
+  if (max(camp_tot$response_date, na.rm=T) >=  as.Date("2015-07-01", format= "%Y-%m-%d")) {
     # calls15 == all calls training data
     # resp_by_day == resp / day from camp_resp
     calls15 <- calls[call_date > as.POSIXct("2015-01-01", format= "%Y-%m-%d"),]
@@ -209,9 +211,6 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
                             paid_etc= round(baseline$responders * forecast(ets_paidetc, h=n)$mean, 2),
                             iupdate= round(baseline$responders * forecast(ets_iupdate, h=n)$mean, 2))
   
-  projections <- holiday_adj(cur_forecasts= projections, beg_year= beg_year, end_year= end_year,
-                             call_hist= call_hist)
-  
   # 06. Error checks for extreme points
   # if any < 0, set to weekly average (based on seasonal_wks)
   # if max values, cap
@@ -221,47 +220,62 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
     projections$mkt_direct <- adj_replace(calls15, projections$mkt_direct, call_name= "mkt_direct",
                   seasonal_wks= seasonal_wks, wkday1= wkday1, wks= wks, extra= extra)
   } 
-  projections$mkt_direct <- ifelse(projections$mkt_direct > quantile(calls15$mkt_direct, .975, na.rm=T),
-                                   quantile(calls15$mkt_direct, .975, na.rm=T), projections$mkt_direct)
+  projections$mkt_direct <- windsor_day_week(calls15, data.frame(call_date= projections$call_date,
+                                                                 mkt_direct= projections$mkt_direct),
+                                             call_name= "mkt_direct", x_name= "mkt_direct",
+                                             windsor.q = windsor.q)
   
   # db_ivr 
   projections$db_ivr <- ifelse(projections$db_ivr < 0, 1, projections$db_ivr)
-  projections$db_ivr <- ifelse(projections$db_ivr > quantile(calls15$db_ivr, .975, na.rm=T),
-                                   quantile(calls15$db_ivr, .975, na.rm=T), projections$db_ivr)
+  projections$db_ivr <- ifelse(projections$db_ivr > quantile(calls15$db_ivr, windsor.q[2], na.rm=T),
+                                   quantile(calls15$db_ivr, windsor.q[2], na.rm=T), projections$db_ivr)
   
   # dandb.com
   if (any(projections$dandb.com <= 0)) { 
     projections$dandb.com <- adj_replace(calls15, projections$dandb.com, call_name= "dandb_com",
                   seasonal_wks= seasonal_wks, wkday1= wkday1, wks= wks, extra= extra)
   }
-  projections$dandb.com <- ifelse(projections$dandb.com > quantile(calls15$dandb_com, .975, na.rm=T),
-                                   quantile(calls15$dandb_com, .975, na.rm=T), projections$dandb.com)
+  projections$dandb.com <- windsor_day_week(calls15, data.frame(call_date= projections$call_date,
+                                                                 dandb.com= projections$dandb.com),
+                                             call_name= "dandb_com", x_name= "dandb.com",
+                                             windsor.q = windsor.q)
   
   # organic
   if (any(projections$organic <= 0)) { 
     projections$organic <- adj_replace(calls15, projections$organic, call_name= "organic",
                   seasonal_wks= seasonal_wks, wkday1= wkday1, wks= wks, extra= extra)
   }
-  projections$organic <- ifelse(projections$organic > quantile(calls15$organic, .975, na.rm=T),
-                                  quantile(calls15$organic, .975, na.rm=T), projections$organic)
+  projections$organic <- windsor_day_week(calls15, data.frame(call_date= projections$call_date,
+                                                              organic= projections$organic),
+                                             call_name= "organic", x_name= "organic",
+                                             windsor.q = windsor.q)
   
   # paid_etc
   if (any(projections$paid_etc <= 0)) { 
     projections$paid_etc <- adj_replace(calls15, projections$paid_etc, call_name= "paid_etc",
                   seasonal_wks= seasonal_wks, wkday1= wkday1, wks= wks, extra= extra)
   }
-  projections$paid_etc <- ifelse(projections$paid_etc > quantile(calls15$paid_etc, .975, na.rm=T),
-                                quantile(calls15$paid_etc, .975, na.rm=T), projections$paid_etc)
+  projections$paid_etc <- windsor_day_week(calls15, data.frame(call_date= projections$call_date,
+                                                               paid_etc= projections$paid_etc),
+                                          call_name= "paid_etc", x_name= "paid_etc",
+                                          windsor.q = windsor.q)
   
   # iupdate
   if (any(projections$iupdate <= 0)) { 
     projections$iupdate <- adj_replace(calls15, projections$iupdate, call_name= "iupdate",
                   seasonal_wks= seasonal_wks, wkday1= wkday1, wks= wks, extra= extra)
   }
-  projections$iupdate <- ifelse(projections$iupdate > quantile(calls15$iupdate, .975, na.rm=T),
-                                 quantile(calls15$iupdate, .975, na.rm=T), projections$iupdate)
+  projections$iupdate <- windsor_day_week(calls15, data.frame(call_date= projections$call_date,
+                                                              iupdate= projections$iupdate),
+                                           call_name= "iupdate", x_name= "iupdate",
+                                           windsor.q = windsor.q)
   
-  # 07. Finalize and return
+  # 07. Examine and adjust for holiday effects
+  #--------------------------------------------------------------
+  projections <- holiday_adj(cur_forecasts= projections, beg_year= beg_year, end_year= end_year,
+                             call_hist= call_hist)
+  
+  # 08. Finalize and return
   #--------------------------------------------------------------
   return(list(projections= projections, ets_mod= ets1$method))
 }
@@ -272,7 +286,7 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
 #' @description Internal function repeatedly used for replacing problematic values
 #' with weekly averages
 #' @param calls15 Should be the calls15 \code{data.frame} internal to adj_base_forecasts
-#' @param x The vector of ou wish to adjust / replace errors
+#' @param x The vector you wish to adjust / replace errors
 #' @param call_name String denoting the appropriate column in calls15
 #' @param seasonal_wks An integer for the number of trailing weeks used to calculate
 #' replacement values.
@@ -293,5 +307,26 @@ adj_replace <- function(calls15, x, call_name, seasonal_wks= 4,
     }
     x[which(x <= 0)] <- (adj[which(x <= 0)])
   }
+  
   return(x)
+}
+
+#' @title Windsorize forecasts by day of week
+#' @description Windsorize forecasts by day of week. This is a needlessly obfuscated function
+#' @param calls15 Should be the calls15 \code{data.frame} internal to adj_base_forecasts
+#' @param x A \code{data.frame} of call_dates and the vector of you wish to windsorize
+#' @param call_name String denoting the appropriate column in calls15
+#' @param x_name String denoting the appropriat column of x
+#' @param windsor.q A numeric vector of length 2 in (0,1) for windsorizing forecasts.
+windsor_day_week <- function(calls15, x, call_name, x_name, windsor.q= windsor.q) {
+  x$wday <- wday(x$call_date)
+  
+  q_s <- do.call("rbind", tapply(calls15[[call_name]], wday(calls15$call_date), 
+                                 quantile, windsor.q, na.rm=TRUE))
+  for (j in 1:7) {
+    x[[x_name]][wday(x$call_date) == j] <- ifelse(x[[x_name]][wday(x$call_date) == j] < q_s[j,1] , q_s[j,1],
+                                     ifelse(x[[x_name]][wday(x$call_date) == j] > q_s[j,2] , q_s[j,2], 
+                                            x[[x_name]][wday(x$call_date) == j]))
+  }
+  return(x[[x_name]])
 }

@@ -7,7 +7,7 @@
 adj_base_forecasts(baseline, calls, camp_tot, seasonal_wks = 4,
   seasonal_adj_type = c("stl", "ets", "wk_avg", "ensemble", "wk_stl"),
   call_hist, beg_year = 2014, end_year = year(Sys.Date()),
-  etsmodel = "ZZZ")
+  etsmodel = "ZZZ", windsor.q = c(0.25, 0.75))
 }
 \arguments{
 \item{baseline}{A \code{data.frame} of aggregate forecasts. One of the return
@@ -36,6 +36,8 @@ of Hyndman et al. (2002) and Hyndman et al. (2008). The first letter denotes the
 or "Z"); the second letter denotes the trend type ("N","A","M" or "Z"); and the third letter denotes
 the season type ("N","A","M" or "Z"). In all cases, "N"=none, "A"=additive, "M"=multiplicative and
 "Z"=automatically selected.}
+
+\item{windsor.q}{A numeric vector of length 2 in (0,1) for windsorizing forecasts.}
 }
 \value{
 A \code{data.frame} of call projections by category for the month.

@@ -7,6 +7,7 @@ source("./testing_functions.R")
 
 library(callProjection)
 library(dplyr)
+library(ggplot2)
 
 # 1. pull in call data 
 #----------------------------------------------------------
@@ -121,7 +122,7 @@ save.image("./testing_data.Rdata")
 # 4. Examine specific month -- April / July
 #----------------------------------------------------------
 model_data <- get_model_data(channel= "c2g", historical= TRUE, 
-                             hist_yr= 2015, hist_mo= 7)
+                             hist_yr= 2015, hist_mo= 5)
 
 camp_complete_imp <- impute_zero_resp_all(dat= model_data$camp_complete, days_tracking= 90, comp_camp= TRUE)
 
@@ -145,24 +146,126 @@ projections <- adj_base_forecasts(base_forecasts[[2]], called,
                                   rbind(model_data$camp_complete, model_data$camp_outstanding), 
                                   seasonal_adj_type= "ensemble", call_hist= called)
 
-rmse(actual[[7]]$act_mkt, projections[[1]]$mkt_direct) / mean(actual[[7]]$act_mkt)
-mnAD(actual[[7]]$act_mkt, projections[[1]]$mkt_direct) / mean(actual[[4]]$act_mkt)
+rmse(actual[[5]]$act_mkt, projections[[1]]$mkt_direct) / mean(actual[[5]]$act_mkt)
+mnAD(actual[[5]]$act_mkt, projections[[1]]$mkt_direct) / mean(actual[[5]]$act_mkt)
 
 
 # 5. Create some plots
 #----------------------------------------------------------
 proj <- rbindlist(lapply(projections.ens, function(x) {x[[1]]$wday <- NULL; return(x[[1]])}), fill=TRUE)
 act <- rbindlist(actual)
+act$call_date <- as.Date(as.POSIXct(act$call_date, "PST")) # not right
+act_proj <- merge(proj, act, by= "call_date")
+act_proj$mkt_d <- abs(act_proj$act_mkt - act_proj$mkt_direct)
+
+
+head(act_proj[, .(call_date, act_mkt, mkt_direct, mkt_d, holiday)][order(-mkt_d)], 59)
+act_proj[call_date >= as.Date("2015-02-10", format= "%Y-%m-%d") & 
+           call_date < as.Date("2015-02-25", format= "%Y-%m-%d"), .(call_date, act_mkt, mkt_direct, mkt_d, holiday)]
+
 
 library(ggplot2)
 
+png("mkt_direct.png", height= 500, width= 600, units= "px")
 ggplot(proj, aes(x= act$act_mkt, y= proj$mkt_direct)) + geom_point() + geom_smooth() +
   labs(x= "Actual Calls", y= "Projected Calls",
-       title= "Marketing Direct")
+       title= "Marketing Direct") + ylim(c(0, 1500)) + xlim(c(0, 2250)) +
+  theme(axis.title= element_text(face= "bold"), plot.title= element_text(face="bold", size= rel(1.5))) +
+  geom_segment(aes(x=1500, y= 590, xend= 1500, yend= 1500), colour= "red") +
+  geom_segment(aes(x=1500, y= 590, xend= 2250, yend= 590), colour= "red") +
+  geom_text(data=NULL, x= 1500, y= 1250, colour= "red", hjust= 0, label= "Biggest Errors \n at high call volumes") +
+  geom_text(data= NULL, x= 900, y= 150, hjust=0, label= "Mothers day 2015", colour= "red") +
+  geom_text(data= NULL, x= 550, y= 250, hjust=0, label= "Washington's Bday 2015", colour= "red")
+dev.off()
+
 ggplot(proj, aes(x= act$act_dbivr, y= proj$db_ivr)) + geom_point() + geom_smooth()
 ggplot(proj, aes(x= act$act_dandb, y= proj$dandb.com)) + geom_point() + geom_smooth()
 ggplot(proj, aes(x= act$act_iupdate, y= proj$iupdate)) + geom_point() + geom_smooth()
 ggplot(proj, aes(x= act$act_org, y= proj$organic)) + geom_point() + geom_smooth()
 ggplot(proj, aes(x= act$act_paid, y= proj$paid_etc)) + geom_point() + geom_smooth()
 
-knitr::kable(acc_ens[,-3,1])
+knitr::kable(round(acc_ets[,-3,1], 1))
+
+# 6. Accuracy of 4wk average
+#----------------------------------------------------------
+setwd("G:/Whitworth_Alex/2015-08 Call_Projection/")
+load("./testing_data.Rdata")
+source("./testing_functions.R")
+
+pred4wk <- read.csv("./avg_4wks/avg_4wk_data.csv", header=T, stringsAsFactors = FALSE)
+names(pred4wk) <- c("date", "iupdate", "mkt_direct", "paid_etc", "organic", "dandb_com", "db_ivr")
+pred4wk$date <- as.Date(pred4wk$date, format= "%m/%d/%Y")
+pred4wk$month <- lubridate::month(pred4wk$date)
+
+act$call_date <- as.Date(act$call_date)
+
+pred4wk <- merge(pred4wk, act, by.x= "date", by.y= "call_date")
+list.4wk <- split(pred4wk, pred4wk$month)
+
+# mkt direct
+x <- do.call("rbind", lapply(list.4wk, function(x) {
+  c(rmse(x$act_mkt, x$mkt_direct),
+    mnAD(x$act_mkt, x$mkt_direct),
+    mxAD(x$act_mkt, x$mkt_direct))
+}))
+
+dimnames(x) <- list(dimnames(acc_ets)[[1]], dimnames(acc_ets)[[2]][-3])
+knitr::kable(round(x, 1))
+
+
+# db ivr
+x <- do.call("rbind", lapply(list.4wk, function(x) {
+  c(rmse(x$act_dbivr, x$db_ivr),
+    mnAD(x$act_dbivr, x$db_ivr),
+    mxAD(x$act_dbivr, x$db_ivr))
+}))
+
+dimnames(x) <- list(dimnames(acc_ets)[[1]], dimnames(acc_ets)[[2]][-3])
+knitr::kable(round(x, 1))
+
+# dandb
+x <- do.call("rbind", lapply(list.4wk, function(x) {
+  c(rmse(x$act_dandb, x$dandb_com),
+    mnAD(x$act_dandb, x$dandb_com),
+    mxAD(x$act_dandb, x$dandb_com))
+}))
+
+dimnames(x) <- list(dimnames(acc_ets)[[1]], dimnames(acc_ets)[[2]][-3])
+knitr::kable(round(x, 1))
+
+# organic
+x <- do.call("rbind", lapply(list.4wk, function(x) {
+  c(rmse(x$act_org, x$organic),
+    mnAD(x$act_org, x$organic),
+    mxAD(x$act_org, x$organic))
+}))
+
+dimnames(x) <- list(dimnames(acc_ets)[[1]], dimnames(acc_ets)[[2]][-3])
+knitr::kable(round(x, 1))
+
+# paid_etc
+x <- do.call("rbind", lapply(list.4wk, function(x) {
+  c(rmse(x$act_paid, x$paid_etc),
+    mnAD(x$act_paid, x$paid_etc),
+    mxAD(x$act_paid, x$paid_etc))
+}))
+
+dimnames(x) <- list(dimnames(acc_ets)[[1]], dimnames(acc_ets)[[2]][-3])
+knitr::kable(round(x, 1))
+
+# iupdate
+x <- do.call("rbind", lapply(list.4wk, function(x) {
+  c(rmse(x$act_iupdate, x$iupdate),
+    mnAD(x$act_iupdate, x$iupdate),
+    mxAD(x$act_iupdate, x$iupdate))
+}))
+
+dimnames(x) <- list(dimnames(acc_ets)[[1]], dimnames(acc_ets)[[2]][-3])
+knitr::kable(round(x, 1))
+
+
+library(ggplot2)
+
+ggplot(pred4wk, aes(x= act_mkt, y= mkt_direct)) + geom_point() + geom_smooth() +
+  labs(x= "Actual Calls", y= "Projected Calls",
+       title= "Marketing Direct")
