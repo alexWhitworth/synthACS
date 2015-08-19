@@ -59,3 +59,28 @@ compute_acc <- function(projections.list, actuals.list) {
   return(acc.list)
 }
 
+extract_acc <- function(acc_list, name) {
+  p <- length(acc_list)
+  
+  mat <- matrix(NA, nrow= 9, ncol= 3, dimnames= list(1:p, c("avg_rmse", "avg_mnAD", "avg_mxAD")))
+  
+  for (i in 1:p) {
+    mat[i,] <- apply(acc_list[[i]][,-3, name], 2, mean, na.rm=TRUE)
+  }
+  return(mat)
+}
+
+extract_acc_wrap <- function(all_acc_lists, name) {
+  mat <- do.call("rbind", lapply(all_acc_lists, extract_acc, name= name))
+  return(mat)
+}
+
+extract_acc_2xwrap <- function(all_acc_lists, name_vec) {
+  len <- length(name_vec)
+  l <- vector(mode= "list", length= len)
+  for (j in 1:len) {
+    l[[j]] <- extract_acc_wrap(all_acc_lists, name= name_vec[j])
+  }
+  names(l) <- name_vec
+  return(l)
+}

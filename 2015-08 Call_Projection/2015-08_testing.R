@@ -25,8 +25,8 @@ library(ggplot2)
 # setnames(calls, old= names(calls), new= c("call_date", "act_calls", "act_dandb", "act_dbivr",
 #                                           "act_iupdate", "act_mkt", "act_org", "act_paid"))
 # rm(calls_by_day_cat)
-
-# save.image("./testing_data.Rdata")
+# 
+# save.image("./testing_base.Rdata")
 
 # 2. initialize needed params and loop
 #----------------------------------------------------------
@@ -156,12 +156,15 @@ proj <- rbindlist(lapply(projections.ens, function(x) {x[[1]]$wday <- NULL; retu
 act <- rbindlist(actual)
 act$call_date <- as.Date(as.POSIXct(act$call_date, "PST")) # not right
 act_proj <- merge(proj, act, by= "call_date")
+# deltas
 act_proj$mkt_d <- abs(act_proj$act_mkt - act_proj$mkt_direct)
-
+act_proj$dbcom_d <- abs(act_proj$act_dandb - act_proj$dandb.com)
 
 head(act_proj[, .(call_date, act_mkt, mkt_direct, mkt_d, holiday)][order(-mkt_d)], 59)
 act_proj[call_date >= as.Date("2015-02-10", format= "%Y-%m-%d") & 
            call_date < as.Date("2015-02-25", format= "%Y-%m-%d"), .(call_date, act_mkt, mkt_direct, mkt_d, holiday)]
+
+head(act_proj[, .(call_date, act_dandb, dandb.com, dbcom_d, holiday)][order(-dbcom_d)], 20)
 
 
 library(ggplot2)
