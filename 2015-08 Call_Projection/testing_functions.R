@@ -62,7 +62,8 @@ compute_acc <- function(projections.list, actuals.list) {
 extract_acc <- function(acc_list, name) {
   p <- length(acc_list)
   
-  mat <- matrix(NA, nrow= 9, ncol= 3, dimnames= list(1:p, c("avg_rmse", "avg_mnAD", "avg_mxAD")))
+  mat <- matrix(NA, nrow= length(acc_list), ncol= 3)
+  colnames(mat) <- c("avg_rmse", "avg_mnAD", "avg_mxAD")
   
   for (i in 1:p) {
     mat[i,] <- apply(acc_list[[i]][,-3, name], 2, mean, na.rm=TRUE)

@@ -123,7 +123,7 @@ for (j in 1:length(hist_yr)) {
   rm(model_data, camp_complete_imp, top_ongoing, camp_comp_stats, base_forecasts); gc(verbose= FALSE)
 }
 
-rm(j, hist_yr, hist_mo, hist_names)
+rm(j, hist_yr, hist_mo, hist_names, i, len)
 
 # Evaluate
 #----------------------------------------------------------
@@ -172,9 +172,6 @@ wk_stl$a <- lapply(wk_stl$p, function(x) {
   compute_acc(x, actual)
 })
 
-
-
-
 rm(rmse, mnAD, mxAD, wmnAD, compute_acc)
 
 #----------------------------------------------------------
@@ -186,12 +183,12 @@ results <- extract_acc_2xwrap(list(ensemble$a, ets$a, stl$a, wks$a, wk_stl$a),
 rm(extract_acc, extract_acc_wrap, extract_acc_2xwrap)
 save.image("./testing_data_full3.Rdata")
 
-apply(results[[1]], 2, function(x) {which(x == min(x))}) # any model, 6 wks, 65% 
-apply(results[[2]], 2, function(x) {which(x == min(x))}) # any model, 6 wks, 55%
-apply(results[[3]], 2, function(x) {which(x == min(x))}) # any model, 2 wks, 55% -- 2 wks important
+apply(results[[1]], 2, function(x) {which(x == min(x))}) # any model, 5 wks, 65% 
+apply(results[[2]], 2, function(x) {which(x == min(x))}) # any model, 5 wks, 50%
+apply(results[[3]], 2, function(x) {which(x == min(x))}) # any model, 2 wks, 60% -- 55% best at 5 weeks
 apply(results[[4]], 2, function(x) {which(x == min(x))}) # any model, 6 wks, 70% -- pretty minor differnce at 65%
-apply(results[[5]], 2, function(x) {which(x == min(x))}) # any model, 6 wks, 55%
-apply(results[[6]], 2, function(x) {which(x == min(x))}) # any model, 6 wks, 55%
+apply(results[[5]], 2, function(x) {which(x == min(x))}) # any model, 5 wks, 55%
+apply(results[[6]], 2, function(x) {which(x == min(x))}) # any model, 6 wks, 60%
 
 mkt_direct <- data.frame(wks= season_wk_param, pct= cap_param, results[[1]])
 db_ivr <- data.frame(wks= season_wk_param, pct= cap_param, results[[2]])
@@ -226,12 +223,67 @@ interaction.plot(x.factor= iupdate$wks, trace.factor= iupdate$pct, response= iup
 #----------------------------------------------------------
 
 library(ggplot2)
-proj <- rbindlist(lapply(ets$p[[3]], function(x) {x[[1]]$wday <- NULL; return(x[[1]])}), fill=TRUE)
+proj <- rbindlist(lapply(ets$p[[17]], function(x) {x[[1]]$wday <- NULL; return(x[[1]])}), fill=TRUE)
 act <- rbindlist(actual)
 act$call_date <- as.Date(as.POSIXct(act$call_date, "PST")) 
 act_proj <- merge(proj, act, by= "call_date")
 # deltas
 act_proj$mkt_d <- abs(act_proj$act_mkt - act_proj$mkt_direct)
 act_proj$dbcom_d <- abs(act_proj$act_dandb - act_proj$dandb.com)
+act_proj$org_d <- abs(act_proj$act_org - act_proj$organic)
 
 head(act_proj[, .(call_date, act_mkt, mkt_direct, mkt_d, holiday)][order(-mkt_d)], 20)
+head(act_proj[, .(call_date, act_org, organic, org_d, holiday)][order(-org_d)], 20)
+
+# mkt direct
+png("mkt_direct.png", height= 500, width= 600, units= "px")
+ggplot(proj, aes(x= act$act_mkt, y= proj$mkt_direct)) + geom_point() + geom_smooth() +
+  labs(x= "Actual Calls", y= "Projected Calls",
+       title= "Marketing Direct") + ylim(c(0, 1500)) + xlim(c(0, 1500)) +
+  theme(axis.title= element_text(face= "bold"), plot.title= element_text(face="bold", size= rel(1.5))) 
+dev.off()
+
+# dbivr
+png("db_ivr.png", height= 500, width= 600, units= "px")
+ggplot(proj, aes(x= act$act_dbivr, y= proj$db_ivr)) + geom_point() + geom_smooth() +
+  labs(x= "Actual Calls", y= "Projected Calls",
+       title= "DB IVR") + ylim(c(0, 150)) + xlim(c(0, 200)) +
+  theme(axis.title= element_text(face= "bold"), plot.title= element_text(face="bold", size= rel(1.5))) 
+dev.off()
+
+# dandb.com
+png("db_com.png", height= 500, width= 600, units= "px")
+ggplot(proj, aes(x= act$act_dandb, y= proj$db_ivr)) + geom_point() + geom_smooth() +
+  labs(x= "Actual Calls", y= "Projected Calls",
+       title= "DandB.com") + ylim(c(0, 150)) + xlim(c(0, 350)) +
+  theme(axis.title= element_text(face= "bold"), plot.title= element_text(face="bold", size= rel(1.5))) 
+dev.off()
+
+# organic
+png("organic.png", height= 500, width= 600, units= "px")
+ggplot(proj, aes(x= act$act_org, y= proj$organic)) + geom_point() + geom_smooth() +
+  labs(x= "Actual Calls", y= "Projected Calls",
+       title= "Organic") + ylim(c(0, 90)) + xlim(c(0, 250)) +
+  theme(axis.title= element_text(face= "bold"), plot.title= element_text(face="bold", size= rel(1.5))) +
+  geom_text(data= NULL, x= 200, y= 77, label= "July 13, 14, &15 2015", colour= "red") +
+  geom_text(data= NULL, x= 150, y= 30, label= "July 11 & 12 2015", colour= "red")
+dev.off()
+
+
+# paid_etc
+png("paid_etc.png", height= 500, width= 600, units= "px")
+ggplot(proj, aes(x= act$act_paid, y= proj$organic)) + geom_point() + geom_smooth() +
+  labs(x= "Actual Calls", y= "Projected Calls",
+       title= "Paid Media etc") + ylim(c(0, 100)) + xlim(c(0, 500)) +
+  theme(axis.title= element_text(face= "bold"), plot.title= element_text(face="bold", size= rel(1.5)),
+        axis.text= element_text(colour= "red"))
+dev.off()
+
+# iupdate
+png("iupdate.png", height= 500, width= 600, units= "px")
+ggplot(proj, aes(x= act$act_iupdate, y= proj$organic)) + geom_point() + geom_smooth() +
+  labs(x= "Actual Calls", y= "Projected Calls",
+       title= "iUpdate") + ylim(c(0, 100)) + xlim(c(0, 225)) +
+  theme(axis.title= element_text(face= "bold"), plot.title= element_text(face="bold", size= rel(1.5)),
+        axis.text= element_text(colour= "red"))
+dev.off()

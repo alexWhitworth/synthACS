@@ -154,13 +154,13 @@ mnAD(actual[[5]]$act_mkt, projections[[1]]$mkt_direct) / mean(actual[[5]]$act_mk
 #----------------------------------------------------------
 proj <- rbindlist(lapply(projections.ens, function(x) {x[[1]]$wday <- NULL; return(x[[1]])}), fill=TRUE)
 act <- rbindlist(actual)
-act$call_date <- as.Date(as.POSIXct(act$call_date, "PST")) # not right
+act$call_date <- as.Date(as.POSIXct(act$call_date, "PST")) 
 act_proj <- merge(proj, act, by= "call_date")
 # deltas
 act_proj$mkt_d <- abs(act_proj$act_mkt - act_proj$mkt_direct)
 act_proj$dbcom_d <- abs(act_proj$act_dandb - act_proj$dandb.com)
 
-head(act_proj[, .(call_date, act_mkt, mkt_direct, mkt_d, holiday)][order(-mkt_d)], 59)
+head(act_proj[, .(call_date, act_mkt, mkt_direct, mkt_d, holiday)][order(-mkt_d)], 20)
 act_proj[call_date >= as.Date("2015-02-10", format= "%Y-%m-%d") & 
            call_date < as.Date("2015-02-25", format= "%Y-%m-%d"), .(call_date, act_mkt, mkt_direct, mkt_d, holiday)]
 
@@ -172,7 +172,7 @@ library(ggplot2)
 png("mkt_direct.png", height= 500, width= 600, units= "px")
 ggplot(proj, aes(x= act$act_mkt, y= proj$mkt_direct)) + geom_point() + geom_smooth() +
   labs(x= "Actual Calls", y= "Projected Calls",
-       title= "Marketing Direct") + ylim(c(0, 1500)) + xlim(c(0, 2250)) +
+       title= "Marketing Direct") + ylim(c(0, 1500)) + xlim(c(0, 1500)) +
   theme(axis.title= element_text(face= "bold"), plot.title= element_text(face="bold", size= rel(1.5))) +
   geom_segment(aes(x=1500, y= 590, xend= 1500, yend= 1500), colour= "red") +
   geom_segment(aes(x=1500, y= 590, xend= 2250, yend= 590), colour= "red") +
