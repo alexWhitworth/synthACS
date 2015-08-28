@@ -14,7 +14,8 @@ library(dplyr)
 called <- pull_call_data(channel= "c2g", call_date= '4/01/2014') # use defaults
 
 # 2. Aggregate call data, pull / clean campaign tracking and response data
-model_data <- get_model_data(channel= "c2g", historical= FALSE)
+# model_data <- get_model_data(channel= "c2g", historical= FALSE)
+model_data <- get_model_data(channel= "c2g", historical= TRUE, hist_yr= 2015, hist_mo= 9)
 # 3. impute missing days response for complete campaigns
 camp_complete_imp <- impute_zero_resp_all(dat= model_data$camp_complete, days_tracking= 90, comp_camp= TRUE)
 # 4. calculate adjustment rate for top performing ongoing campaigns
@@ -41,10 +42,11 @@ base_forecasts <- create_baseline_forecasts(model_data$camp_proj, camp_comp_stat
 # and calculate / apply adjustments for holidays    -- aggregate level
 projections <- adj_base_forecasts(base_forecasts[[2]], called, 
                                   rbind(model_data$camp_complete, model_data$camp_outstanding), 
-                                  seasonal_adj_type= "ensemble", call_hist= called)
+                                  seasonal_adj_type= "ensemble", call_hist= called,
+                                  seasonal_wks = 5, windsor.q = c(.25, .65))
 
 
 # note 1: no seasonality of RR by date / month observed
 # note 2: Weekly calls: sat / sun roughly equivalent; M/T roughly equivalent; W-F roughly equivalent
 
-write.csv(projections[[1]], "./projections_aug-2015.csv", row.names= FALSE)
+write.csv(projections[[1]], "./projections_sept-2015.csv", row.names= FALSE)

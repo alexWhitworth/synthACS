@@ -227,13 +227,29 @@ proj <- rbindlist(lapply(ets$p[[17]], function(x) {x[[1]]$wday <- NULL; return(x
 act <- rbindlist(actual)
 act$call_date <- as.Date(as.POSIXct(act$call_date, "PST")) 
 act_proj <- merge(proj, act, by= "call_date")
+
+act_proj$proj_calls <- act_proj$mkt_direct + act_proj$db_ivr + act_proj$dandb.com + 
+  act_proj$organic + act_proj$paid_etc + act_proj$iupdate
+
 # deltas
 act_proj$mkt_d <- abs(act_proj$act_mkt - act_proj$mkt_direct)
 act_proj$dbcom_d <- abs(act_proj$act_dandb - act_proj$dandb.com)
 act_proj$org_d <- abs(act_proj$act_org - act_proj$organic)
+act_proj$all_d <- abs(act_proj$proj_calls - act_proj$act_calls)
 
 head(act_proj[, .(call_date, act_mkt, mkt_direct, mkt_d, holiday)][order(-mkt_d)], 20)
 head(act_proj[, .(call_date, act_org, organic, org_d, holiday)][order(-org_d)], 20)
+head(act_proj[, .(call_date, act_calls, proj_calls, all_d, holiday)][order(-all_d)], 20)
+
+png("all_calls.png", height= 500, width= 600, units= "px")
+ggplot(act_proj, aes(x= act_calls, y= proj_calls)) + geom_point() + geom_smooth() +
+  labs(x= "Actual Calls", y= "Projected Calls",
+       title= "All Calls") + ylim(c(0, 2000)) + xlim(c(0, 2500)) +
+  theme(axis.title= element_text(face= "bold"), plot.title= element_text(face="bold", size= rel(1.5))) +
+  geom_segment(data= NULL, aes(x = 2000, xend= 2500, y= 1275, yend= 1275, colour= "red")) + 
+  geom_segment(data= NULL, aes(x = 2000, xend= 2000, y= 1275, yend= 2000, colour= "red")) +
+  geom_text(data= NULL, x= 2200, y= 1900, label= "Explicitly miss \n these maximum \nvalues", colour= "red")
+dev.off()
 
 # mkt direct
 png("mkt_direct.png", height= 500, width= 600, units= "px")

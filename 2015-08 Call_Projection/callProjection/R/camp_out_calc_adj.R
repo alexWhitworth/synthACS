@@ -56,6 +56,13 @@ camp_out_calc_adj <- function(camp_out, channel= "c2g") {
   
   # top_campaigns -- cell codes and data from campaign_response
   top_camp <- extract_top(camp_comp, comp_rr, channel= channel)
+  
+  # [AW 8/28] remove campaigns that haven't mailed yet
+  # This is needed for use with future projection -- there are campaigns in here that haven't mailed yet
+  # EDGE CASE!!
+  top_camp$top <- lapply(top_camp$top, function(x) return(x[!is.na(x$days_to_response), ]))
+  top_camp$all <- lapply(top_camp$all, function(x) return(x[!is.na(x$days_to_response), ]))
+  
   # impute missing resonse dates to 0
   top_camp$top <- lapply(top_camp$top, function(x) {impute_zero_resp_all(dat= x)}) # use other defaults
   top_camp$all <- lapply(top_camp$all, function(x) {impute_zero_resp_all(dat= x)}) # use other defaults
