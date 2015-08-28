@@ -7,7 +7,7 @@
 adj_base_forecasts(baseline, calls, camp_tot, seasonal_wks = 4,
   seasonal_adj_type = c("stl", "ets", "wk_avg", "ensemble", "wk_stl"),
   call_hist, beg_year = 2014, end_year = year(Sys.Date()),
-  etsmodel = "ZZZ", windsor.q = c(0.25, 0.75))
+  etsmodel = "ZZZ", windsor.q = c(0.25, 0.75), future = FALSE)
 }
 \arguments{
 \item{baseline}{A \code{data.frame} of aggregate forecasts. One of the return
@@ -38,6 +38,8 @@ the season type ("N","A","M" or "Z"). In all cases, "N"=none, "A"=additive, "M"=
 "Z"=automatically selected.}
 
 \item{windsor.q}{A numeric vector of length 2 in (0,1) for windsorizing forecasts.}
+
+\item{future}{Logical. Passed to \code{holiday_adj()}.}
 }
 \value{
 A \code{data.frame} of call projections by category for the month.

@@ -5,7 +5,7 @@
 \title{Define and apply holiday adjustments to forecasts}
 \usage{
 holiday_adj(cur_forecasts, beg_year = 2014, end_year = year(Sys.Date()),
-  call_hist)
+  call_hist, future = FALSE)
 }
 \arguments{
 \item{cur_forecasts}{A \code{data.frame} of the current, unadjusted (for holidays), forecasts.}
@@ -16,6 +16,8 @@ holiday_adj(cur_forecasts, beg_year = 2014, end_year = year(Sys.Date()),
 Defaults to the current year.}
 
 \item{call_hist}{A \code{data.frame} of historical calls data on which to examine holiday patterns.}
+
+\item{future}{Logical. If \code{TRUE} current month is increased by 1.}
 }
 \value{
 A \code{data.frame} of forecasts that have been adjusted for holidays.

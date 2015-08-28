@@ -21,12 +21,14 @@
 #' the season type ("N","A","M" or "Z"). In all cases, "N"=none, "A"=additive, "M"=multiplicative and 
 #' "Z"=automatically selected. 
 #' @param windsor.q A numeric vector of length 2 in (0,1) for windsorizing forecasts.
+#' @param future Logical. Passed to \code{holiday_adj()}.
 #' @return A \code{data.frame} of call projections by category for the month.
 #' @export
 adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
                                seasonal_adj_type= c("stl", "ets", "wk_avg", "ensemble", "wk_stl"),
                                call_hist, beg_year= 2014, end_year= year(Sys.Date()),
-                               etsmodel= "ZZZ", windsor.q= c(.25, .75)) {
+                               etsmodel= "ZZZ", windsor.q= c(.25, .75),
+                               future= FALSE) {
   
   # 00. Initiate
   seasonal_adj_type <- match.arg(seasonal_adj_type, several.ok= FALSE)
@@ -273,7 +275,7 @@ adj_base_forecasts <- function(baseline, calls, camp_tot, seasonal_wks= 4,
   # 07. Examine and adjust for holiday effects
   #--------------------------------------------------------------
   projections <- holiday_adj(cur_forecasts= projections, beg_year= beg_year, end_year= end_year,
-                             call_hist= call_hist)
+                             call_hist= call_hist, future= future)
   
   # 08. Finalize and return
   #--------------------------------------------------------------

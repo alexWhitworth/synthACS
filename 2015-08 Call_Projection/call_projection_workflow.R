@@ -43,7 +43,7 @@ base_forecasts <- create_baseline_forecasts(model_data$camp_proj, camp_comp_stat
 projections <- adj_base_forecasts(base_forecasts[[2]], called, 
                                   rbind(model_data$camp_complete, model_data$camp_outstanding), 
                                   seasonal_adj_type= "ensemble", call_hist= called,
-                                  seasonal_wks = 5, windsor.q = c(.25, .65))
+                                  seasonal_wks = 5, windsor.q = c(.25, .65), future=TRUE)
 
 
 # note 1: no seasonality of RR by date / month observed

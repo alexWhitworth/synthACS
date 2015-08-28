@@ -7,9 +7,10 @@
 #' @param end_year An \code{integer} specifying the last year in which you would like holidays. 
 #' Defaults to the current year.
 #' @param call_hist A \code{data.frame} of historical calls data on which to examine holiday patterns.
+#' @param future Logical. If \code{TRUE} current month is increased by 1.
 #' @return A \code{data.frame} of forecasts that have been adjusted for holidays.
 #' @export
-holiday_adj <- function(cur_forecasts, beg_year= 2014, end_year= year(Sys.Date()), call_hist) {
+holiday_adj <- function(cur_forecasts, beg_year= 2014, end_year= year(Sys.Date()), call_hist, future= FALSE) {
  
   require(data.table)
   
@@ -40,7 +41,7 @@ holiday_adj <- function(cur_forecasts, beg_year= 2014, end_year= year(Sys.Date()
   
   calls$holiday <- ifelse(is.na(calls$holiday), "no holiday", calls$holiday)
   calls$holiday <- relevel(as.factor(calls$holiday), ref= "no holiday") 
-  projections$holiday <- ifelse(is.na(projections$holiday), "no holiday", projections$holiday)
+  projections$holiday <- factor(ifelse(is.na(projections$holiday), "no holiday", projections$holiday))
   projections$holiday <- relevel(as.factor(projections$holiday), ref= "no holiday") 
   
   # 02. Determine holiday effect by holiday
@@ -48,6 +49,8 @@ holiday_adj <- function(cur_forecasts, beg_year= 2014, end_year= year(Sys.Date()
   # Note2: currently not looking at past holidays to back-adjust / normalize historical data 
   #--------------------------------------------------------------
   cur_mo <- month(cur_forecasts$call_date[1]); cur_yr <- year(cur_forecasts$call_date[1])
+  if (future == TRUE) {cur_mo <- cur_mo + 1}
+  
   projections$flag <- ifelse(month(projections$call_date) == cur_mo & year(projections$call_date) == cur_yr &
                                projections$holiday != "no holiday", TRUE, NA)
   
