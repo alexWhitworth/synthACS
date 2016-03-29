@@ -1,0 +1,18 @@
+Package: synthACS
+Title: Builds synthetic microdatasets from ACS data (via API) at any specified
+    geographic level.
+Version: 0.1.6
+Authors@R: person("Alex", "Whitworth", email = "whitworth.alex@gmail.com", role = c("aut", "cre"))
+Description: What the package does (one paragraph).
+Depends:
+    R (>= 3.2.3),
+    acs (>= 1.2),
+    parallel (>= 3.2.3),
+    data.table (>= 1.9.6)
+License: Copyright Alex Whitworth 2016. All Rights Reserved
+LazyData: true
+Suggests:
+    testthat
+RoxygenNote: 5.0.1
+LinkingTo: Rcpp
+Imports: Rcpp

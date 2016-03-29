@@ -1,0 +1,61 @@
+
+
+library(testthat)
+library(synthACS)
+
+context("derive synthetic microdata for geography set")
+
+test_that("disaggregate_md works", {
+  # load geography data, run disaggregation
+  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
+  m_dat <- synthACS:::disaggregate_md(ca_dat$estimates)
+  
+  # test outputs
+  expect_equal(length(m_dat), nrow(ca_dat$estimates[[1]]))
+  expect_true(all(lapply(m_dat, length) == length(ca_dat$estimates)))
+  expect_equal(names(m_dat[[1]]), names(ca_dat$estimates))
+  expect_equal(sapply(m_dat[[10]], names), sapply(ca_dat$estimates, names))
+  expect_true(all(unlist(lapply(m_dat[[30]], is.numeric))))
+  
+})
+
+
+test_that("error checking", {
+  data(diamonds, package= "ggplot2")
+  expect_error(derive_synth_datasets(diamonds, parallel= FALSE))
+  
+  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
+  expect_error(derive_synth_datasets(ca_dat, parallel= TRUE, leave_cores= -1L))
+  expect_error(derive_synth_datasets(ca_dat, parallel= TRUE, leave_cores= 2.5))
+})
+
+
+test_that("get correct results", {
+  # geography
+  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
+  
+  ## parallel == FALSE
+  # parallel works, commenting out for testing purposes
+  #syn <- derive_synth_datasets(ca_dat, parallel= FALSE)
+  
+  ## parallel == TRUE
+  syn <- derive_synth_datasets(ca_dat, parallel= TRUE)
+  
+  # test class, structure, dimensions, etc
+  expect_equal(class(syn), "list")
+  expect_true(all(unlist(lapply(syn[[2]], is.macro_micro))))
+  expect_equal(class(syn[[1]]), "macroACS")
+  expect_equal(nrow(ca_dat$estimates[[1]]), length(syn[[2]]))
+  expect_true(all(unlist(lapply(syn[[2]], length)) == 2))
+  expect_true(all(unlist(lapply(syn[[2]], function(l) ncol(l[[2]]))) == length(ca_dat$estimates) + 1))
+  expect_true(all.equal(lapply(syn[[2]], function(l) names(l[[2]])),
+               replicate(length(syn[[2]]), 
+                 c("age", "gender", "marital_status", "edu_attain", "emp_status", "nativity", 
+                   "pov_status", "geog_mobility", "ind_income", "race", "p"), simplify=FALSE), 
+               check.attributes= FALSE))
+  
+  # test total probabilities
+  expect_true(all.equal(unlist(lapply(syn[[2]], function(l) sum(l[[2]]$p))), rep(1,58), 
+                        tolerance= 1e-14, check.attributes= FALSE))
+  
+})
