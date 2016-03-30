@@ -9,7 +9,7 @@ synth_data_emp <- function(agme_dat, emp_status_vec) {
   # 1. create hash table of age/gender ages to employment status ages
   age_ht <- data.frame(age_gen= agme_dat[[2]],
                        emp= c(NA, "16_19", "20_24", "25_29", "30_34", rep("35_44",2), rep("45_54",2),
-                              "55_59", "60_64", "65_69", "70_74", rep("75up", 3)))
+                              "55_59", "60_64", "65_69", "70_74", rep("75up", 3)), stringsAsFactors = FALSE)
   
   # 2. create age/gender buckets on which to condition
   ag_list <- split(dat, dat$gender)
@@ -33,8 +33,7 @@ synth_data_emp <- function(agme_dat, emp_status_vec) {
                                   emp_v= emp_f, emp_levels= emp_levels))
   
   dat <- do.call("rbind", ag_list)
-  dat <- dat[complete.cases(dat) & dat$p > 0,]
-  rownames(dat) <- NULL
+  dat <- factor_return(dat, prob_name= "p")
   return(list(dat, levels(dat$age)))
 }
   

@@ -36,8 +36,7 @@ test_that("creates expected result", {
   expect_true(is.data.frame(ca_ag2[[1]]))
   expect_true(is.data.frame(ca_ag3[[1]]))
   expect_true(is.list(ca_ag1))
-  expect_equal(length(ca_ag2), 2)
-  expect_equal(levels(ca_ag1[[1]]$age), ca_ag2[[2]])
+  expect_equal(length(ca_ag2), 1)
   
   expect_equal(ncol(ca_ag1[[1]]), ncol(ca_ag2[[1]]))
   expect_equal(ncol(ca_ag1[[1]]), ncol(ca_ag3[[1]]))

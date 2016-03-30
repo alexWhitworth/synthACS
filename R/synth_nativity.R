@@ -10,7 +10,7 @@ synth_data_nativ <- function(agmee_dat, nativity_vec) {
   # 1. create hash table of age/gender ages to employment status ages
   age_ht <- data.frame(age= agmee_dat[[2]],
               nativity= c(rep("u18",2), "18_24", rep("25_34", 2), rep("35_44", 2), rep("45_54", 2),
-                          "55_59", "60_64", rep("65_74", 2), rep("75up", 3)))
+                          "55_59", "60_64", rep("65_74", 2), rep("75up", 3)), stringsAsFactors = FALSE)
   # 2. create age buckets on which to condition
   ag_list <- split(dat, dat$age)
   
@@ -20,24 +20,23 @@ synth_data_nativ <- function(agmee_dat, nativity_vec) {
   ag_list <- do.call("rbind", lapply(ag_list, nat_lapply, ht= age_ht, 
                                  v= nativity_vec, levels= nat_levels))
   
-  ag_list <- ag_list[complete.cases(ag_list) & ag_list$p > 0,]
-  rownames(ag_list) <- NULL
-  ag_list <- factor_all(ag_list, prob_name= "p")
+  ag_list <- factor_return(ag_list, prob_name= "p")
   return(list(ag_list, levels(ag_list$age)))
 }
 
 
 # helper function for synth_data_nativ. 
 nat_lapply <- function(l, ht, v, levels) {
-    l_age_comp <- ht[,2][which(l$age[1] == ht[,1])]
-    comp <- v[which(grepl(l_age_comp, names(v)))]
-    if (sum(comp) > 0) comp <- (comp / sum(comp)) 
-    
-    dat <- replicate(length(levels), l, simplify = FALSE)
-    dat <- do.call("rbind", mapply(mapply_synth, dat= dat, prob_name= "p", attr_pct= comp, 
-                                   attr_name= "nativity", level= levels,
-                                   SIMPLIFY = FALSE))
-    return(dat)
+  if (nrow(l) < 1) return(l)
+  l_age_comp <- ht[,2][which(l$age[1] == ht[,1])]
+  comp <- v[which(grepl(l_age_comp, names(v)))]
+  if (sum(comp) > 0) comp <- (comp / sum(comp)) 
+  
+  dat <- replicate(length(levels), l, simplify = FALSE)
+  dat <- do.call("rbind", mapply(mapply_synth, dat= dat, prob_name= "p", attr_pct= comp, 
+                                 attr_name= "nativity", level= levels,
+                                 SIMPLIFY = FALSE))
+  return(dat)
 }
 
 # helper function for synth_data_nativ. Internal to nat_lapply

@@ -12,7 +12,8 @@ synth_data_inc <- function(agmeenpg_dat, inc_nat_vec) {
   
   # 1. create hash table for mapping educational attainment
   ht <- data.frame(prior_dat= c("born_other_state","born_out_us", "born_state_residence", "foreigner"),
-                   new_dat= c("cit_born_other_st", "cit_born_out_us", "cit_born_st_res", "foreign_born"))
+                   new_dat= c("cit_born_other_st", "cit_born_out_us", "cit_born_st_res", "foreign_born"),
+                   stringsAsFactors = FALSE)
   
   # 2. create buckets on which to condition
   ag_list <- split(dat, dat$pov_status)
@@ -44,16 +45,14 @@ synth_data_inc <- function(agmeenpg_dat, inc_nat_vec) {
   
   
   ag_list <- do.call("rbind", ag_list)
-  
-  ag_list <- ag_list[complete.cases(ag_list) & ag_list$p > 0,]
-  rownames(ag_list) <- NULL
-  ag_list <- factor_all(ag_list, prob_name= "p")
+  ag_list <- factor_return(ag_list, prob_name= "p")
   return(list(ag_list))
 }
 
 
 # helper function 
 inc_lapply <- function(l, ht, v, levels) { # need to normalize by poverty rates w/in groups
+  if (nrow(l) < 1) return(l)
   levels(l$nativity) <- c("born_other_state","born_out_us", "born_state_residence", "foreigner")
   l_comp <- ht[,2][which(l$nativity[1] == ht[,1])]
   comp <- v[which(grepl(l_comp, names(v)))]

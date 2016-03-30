@@ -11,7 +11,8 @@ synth_data_pov <- function(agmeen_dat, pov_ge_vec) {
   # 1. create age hash table, marginalize pov by employment status / gender
   age_ht <- data.frame(age_dat= agmeen_dat[[2]],
                        age_new= c("15_17", "15_17", "18_24", rep("25_34", 2), rep("35_44",2), rep("45_54", 2),
-                                  rep("55_64", 2), rep("65_75", 2), rep("75up", 3)))
+                                  rep("55_64", 2), rep("65_75", 2), rep("75up", 3)),
+                       stringsAsFactors = FALSE)
   
   # marginalize pov by gender/employment status by emp status (sep by gender)
   pv_m <- pov_ge_vec[which(substr(names(pov_ge_vec), 1,1) == "m")]
@@ -35,10 +36,7 @@ synth_data_pov <- function(agmeen_dat, pov_ge_vec) {
                                           levels= pov_levels))
   
   dat <- do.call("rbind", ag_list)
-  
-  dat <- dat[complete.cases(dat) & dat$p > 0,]
-  rownames(dat) <- NULL
-  dat <- factor_all(dat, prob_name= "p")
+  dat <- factor_return(dat, prob_name= "p")
   return(list(dat, levels(dat$edu_attain)))
 }
 
@@ -49,7 +47,7 @@ synth_data_pov <- function(agmeen_dat, pov_ge_vec) {
 # @param levels the levels of the new variable to be added (poverty in this case)
 # @param emp_marg the poverty rates by employment type
 pov_lapply <- function(l, levels, emp_marg) {
-  
+  if (nrow(l) < 1) return(l)
   emp_levels <- names(table(l$emp_status))[table(l$emp_status) > 0]
   comp <- emp_marg[which(names(emp_marg) %in% emp_levels)]
   comp <- c(comp, 1-comp)

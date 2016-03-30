@@ -31,8 +31,13 @@ is.macro_micro <- function(x) {
 
 
 # helper function to coerce all non-probability vectors to factors
-factor_all <- function(df, prob_name) {
+# and do some other basic scrubbing
+factor_return <- function(df, prob_name) {
   fact_ind <- which(names(df) != prob_name)
-  df[,fact_ind] <- lapply(df[,fact_ind], factor)
-  return(df)
+  df[,fact_ind] <- lapply(df[fact_ind], function(l) {
+    if (!is.factor(l)) return(factor(l))
+    else return(l)
+  })
+  rownames(df) <- NULL
+  return(df[complete.cases(df) & df[prob_name] > 0,])
 }

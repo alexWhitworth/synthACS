@@ -22,9 +22,7 @@ synth_data_race <- function(agmeenpgi_dat, race_vec) {
   ag_list <- do.call("rbind", ag_list)
   
   # final cleaning, etc, return
-  ag_list <- ag_list[complete.cases(ag_list) & ag_list$p > 0,]
-  rownames(ag_list) <- NULL
-  ag_list <- factor_all(ag_list, prob_name= "p")
+  ag_list <- factor_return(ag_list, prob_name= "p")
   if (!is.micro_synthetic(ag_list)) class(ag_list) <- c(class(ag_list), "micro_synthetic")
   return(ag_list)
 }

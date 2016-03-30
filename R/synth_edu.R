@@ -7,8 +7,11 @@ synth_data_edu <- function(agm_dat, edu_vec) {
   dat <- agm_dat[[1]]
   
   # 1. create hash table of age/gender ages to education ages
-  age_ht <- data.frame(age_gen= agm_dat[[2]],
-              edu= c(NA, NA, "18_24", rep("25_34",2), rep("35_44", 2), rep("45_64", 4), rep("65up",5)))
+  age_ht <- data.frame(
+              age_gen= c("under15", "15_17", "18_24", "25_29", "30_34","35_39", "40_44", 
+                         "45_49", "50_54", "55_59", "60_64", "65_69","70_74", "75_79", "80_84", "85up"),
+              edu= c(NA, NA, "18_24", rep("25_34",2), rep("35_44", 2), rep("45_64", 4), rep("65up",5)),
+              stringsAsFactors = FALSE)
   
   # 2. create age/gender buckets on which to condition
   agm_list <- split(dat, dat$gender)
@@ -29,9 +32,7 @@ synth_data_edu <- function(agm_dat, edu_vec) {
        lapply(agm_list[[2]], edu_lapply, ht= age_ht, edu_v= edu_f, edu_levels= edu_levels))
   
   dat <- do.call("rbind", agm_list)
-  dat <- dat[complete.cases(dat) & dat$p > 0,]
-  rownames(dat) <- NULL
-  dat <- factor_all(dat, prob_name= "p")
+  dat <- factor_return(dat, prob_name= "p")
   return(list(dat, levels(dat$age)))
 }
 

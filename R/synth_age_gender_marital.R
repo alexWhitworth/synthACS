@@ -26,9 +26,8 @@ synth_data_ag <- function(age_gender_vec) {
   p_gender_age <- ag_vec / cnt_total
   
   dat <- data.frame(expand.grid(age=age_labels, gender= gender_labels), p=p_gender_age)
-  dat <- factor_all(dat, prob_name= "p")
-  dat <- dat[complete.cases(dat) & dat$p > 0,]
-  return(list(dat, levels(dat$age)))
+  dat <- factor_return(dat, prob_name= "p")
+  return(list(dat))
 }
 
 # @param ag_dat a list equivalent to the output of \code{synth_data_ag} (above)
@@ -46,7 +45,8 @@ synth_data_mar <- function(ag_dat, mar_status_vec) {
   
   dat <- ag_dat[[1]]
   # 1. create hash table of age/gender ages to employment status ages
-  ht <- data.frame(age_old= ag_dat[[2]],
+  ht <- data.frame(age_old= c("under15", "15_17", "18_24", "25_29", "30_34","35_39", "40_44", 
+                              "45_49", "50_54", "55_59", "60_64", "65_69","70_74", "75_79", "80_84", "85up"),
                    age_new= c(NA, "15_17", "18_24", "25_29", "30_34", "35_39", "40_44", "45_49",
                               "50_54", "55_59", "60_64", rep("65_74", 2), rep("75_84", 2), "85up"))
   
@@ -68,9 +68,7 @@ synth_data_mar <- function(ag_dat, mar_status_vec) {
                                  v= f_mar_vec, levels= mar_levels))
   
   dat <- do.call("rbind", ag_list)
-  dat <- dat[complete.cases(dat) & dat$p > 0,] # remove zero probs.
-  rownames(dat) <- NULL
-  dat <- factor_all(dat, prob_name= "p")
+  dat <- factor_return(dat, prob_name= "p")
   return(list(dat, levels(dat$age)))
 }
 
