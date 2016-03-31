@@ -36,12 +36,13 @@ synth_data_inc <- function(agmeenpg_dat, inc_nat_vec) {
   ag_list[[2]] <- do.call("rbind", lapply(ag_list[[2]], inc_lapply, ht= ht, 
                                      v= nonpov_inc_vec, levels= inc_levels_nonpov))
   # normalize probabilities to account for % < pov , pct >= pov
-  pov_rates <- tapply(dat$p, dat$pov_status, sum)
+  pov_rates <- tapply(dat$p, dat$pov_status, sum, na.rm=TRUE)
+  pov_rates <- ifelse(is.na(pov_rates), 0, pov_rates)
   ag_names <- names(ag_list)
-  if (sum(ag_list[[1]]$p) < pov_rates[which(names(pov_rates) == names(ag_list)[1])]) {
-    ag_list[[1]]$p <- ag_list[[1]]$p * (pov_rates[1] / sum(ag_list[[1]]$p)) }
-  if (sum(ag_list[[2]]$p) < pov_rates[which(names(pov_rates) == names(ag_list)[2])]) {
-    ag_list[[2]]$p <- ag_list[[2]]$p * (pov_rates[2] / sum(ag_list[[2]]$p)) }
+  if (sum(ag_list[[1]]$p, na.rm=TRUE) < pov_rates[which(names(pov_rates) == names(ag_list)[1])]) {
+    ag_list[[1]]$p <- ag_list[[1]]$p * (pov_rates[1] / sum(ag_list[[1]]$p, na.rm=TRUE)) }
+  if (sum(ag_list[[2]]$p, na.rm=TRUE) < pov_rates[which(names(pov_rates) == names(ag_list)[2])]) {
+    ag_list[[2]]$p <- ag_list[[2]]$p * (pov_rates[2] / sum(ag_list[[2]]$p, na.rm=TRUE)) }
   
   
   ag_list <- do.call("rbind", ag_list)

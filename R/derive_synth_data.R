@@ -105,7 +105,7 @@ synthesize <- function(l) {
   temp <- synth_data_edu(   temp, edu_vec= l$edu)
   temp <- synth_data_emp(   temp, emp_status_vec= l$emp_status)
   temp <- synth_data_nativ( temp, nativity_vec= l$nativity)
-  temp <- synth_data_pov(   temp, pov_ge_vec= l$pov_status1)
+  temp <- synth_data_pov(   temp, pov_ge_vec= l$pov_status1, total_pop= l$age_by_sex[1])
   temp <- synth_data_geomob(temp, geomob_vec= l$geo_mob_edu)
   temp <- synth_data_inc(   temp, inc_nat_vec= l$by_inc_12mo)
   temp <- synth_data_race(  temp, race_vec= l$pop_by_race)

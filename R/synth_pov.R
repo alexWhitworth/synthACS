@@ -5,9 +5,20 @@
 # as well as counts breaking out the counts by gender and employment status. 
 # should be: \code{unlist(<synth_data>$estimates$pov_status1[<row i>,])}
 # NOTE: employment status is determined by Age/gender
-synth_data_pov <- function(agmeen_dat, pov_ge_vec) {
-  dat <- agmeen_dat[[1]]
+synth_data_pov <- function(agmeen_dat, pov_ge_vec, total_pop) {
   
+  # 0. check population on which poverty reported vs total population
+  # if (pop / pov_pop) > 3) | (pop / pov_pov > 2 & pov_pov < 100) --> make 100% >= pov line
+  pov_pop <- pov_ge_vec[1]
+  if (total_pop / pov_pop > 3 | (total_pop / pov_pop > 2 & pov_pop < 100)) {
+    message("Data on poverty status is underreported. Marking all individauls as >= poverty line.")
+    dat <- mapply_synth(dat= agmeen_dat[[1]], prob_name= "p", attr_pct= 1.0, attr_name= "pov_status",
+                        level="at_above_pov_level")
+    dat$pov_status <- factor(dat$pov_status, levels= c("below_pov_level", "at_above_pov_level"))
+    return(list(dat, levels(dat$edu_attain)))
+  }
+  
+  dat <- agmeen_dat[[1]]
   # 1. create age hash table, marginalize pov by employment status / gender
   age_ht <- data.frame(age_dat= agmeen_dat[[2]],
                        age_new= c("15_17", "15_17", "18_24", rep("25_34", 2), rep("35_44",2), rep("45_54", 2),
