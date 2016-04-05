@@ -1,7 +1,7 @@
 Package: synthACS
 Title: Builds synthetic microdatasets from ACS data (via API) at any specified
     geographic level.
-Version: 0.2.0
+Version: 0.2.3
 Authors@R: person("Alex", "Whitworth", email = "whitworth.alex@gmail.com", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 Depends:

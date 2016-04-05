@@ -269,3 +269,57 @@ test_that("function works appropriately -- unconditionally", {
   expect_true(all(levels %in% levels(factor(syn$variable))))
   expect_true(all(levels(factor(syn$variable)) %in% levels))
 })
+
+
+#----------------------------------------------------------
+context("Synthetic new attribute -- in parallel")
+#----------------------------------------------------------
+
+
+test_that("can add extra attributes in parallel", {
+  # create test data / elements
+  # create example data
+  set.seed(567L)
+  df <- data.frame(gender= factor(sample(c("m", "f"), size= 100, replace=T)),
+                   age= factor(sample(1:5, size= 100, replace=T)),
+                   pov= factor(sample(c("below poverty", "at above poverty"), 
+                                      size= 100, replace=T, prob= c(.15,.85))),
+                   p= runif(100))
+  df$p <- df$p / sum(df$p)
+  class(df) <- c("data.frame", "micro_synthetic")
+  
+  # and example test elements
+  cond_v <- c("gender", "pov")
+  ht_list <- list(data.frame(old= levels(df$gender), regex= c("f_", "m_")),
+                  data.frame(old= levels(df$pov), regex= c("gt_eq_pov", "lt_pov")))
+  
+  levels <- c("employed", "unemp", "not_in_labor_force")
+  at_v <- structure(c(52, 8, 268, 72, 12, 228, 1338, 93, 297, 921, 
+                      105, 554), 
+                    .Names = c("m_lt_pov_employed", "m_lt_pov_unemp", "m_lt_pov_not_in_labor_force", "f_lt_pov_employed", 
+                               "f_lt_pov_unemp", "f_lt_pov_not_in_labor_force", "m_gt_eq_pov_employed", 
+                               "m_gt_eq_pov_unemp", "m_gt_eq_pov_not_in_labor_force", "f_gt_eq_pov_employed", 
+                               "f_gt_eq_pov_unemp", "f_gt_eq_pov_not_in_labor_force"))
+  
+  df_list <- replicate(10, df, simplify= FALSE)
+  at_v_list <- replicate(10, at_v, simplify= FALSE)
+  
+  # run
+  syn <- all_geog_synthetic_new_attribute(df_list, prob_name= "p", attr_name= "variable",
+                                          attr_vector_list= at_v_list, attr_levels= levels, 
+                                          conditional_vars= cond_v,ht_list= ht_list)
+  
+  # test output structure
+  expect_true(all(unlist(lapply(syn, is.micro_synthetic))))
+  expect_true(all(unlist(lapply(syn, is.data.frame))))
+  
+  # test ouput probabilities
+  expect_true(all(unlist(lapply(syn, function(l) sum(l$p) == 1))))
+  expect_equal(lapply(syn, function(l) {tapply(l$p, l$gender, sum)}),
+               lapply(df_list, function(l) {tapply(l$p, l$gender, sum)}))
+  expect_equal(lapply(syn, function(l) {tapply(l$p, l$pov, sum)}),
+             lapply(df_list, function(l) {tapply(l$p, l$pov, sum)}))
+  
+  
+  
+})

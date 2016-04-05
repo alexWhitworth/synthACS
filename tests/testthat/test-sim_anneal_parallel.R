@@ -51,7 +51,7 @@ test_that("optimization works", {
   
   # test output
   expect_true(is.list(opt_geog$best_fit))
-  expect_true(all(lapply(opt_geog$best_fit, is.data.table)))
+  expect_true(all(unlist(lapply(opt_geog$best_fit, is.data.table))))
   expect_true(all(unlist(opt_geog$iter) <= 10L))
   expect_true(all(unlist(opt_geog$tae) > 0))
   expect_true(all(unlist(opt_geog$tae) %% 1 == 0))

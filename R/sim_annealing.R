@@ -236,17 +236,17 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
   ## 03. Anneal to convergence
   #------------------------------------
     con_names <- names(constraint_list)
-    resample_size <- min(resample_size, sz / upscale_100 * .5) # check for small geogs
+    resample_size <- min(resample_size, round(sz / upscale_100 * .5,0)) # check for small geogs
     repeat {
       ##  (A) drop obs, grab new ones
       if (iter < 100) { # initially, take larger jumps
-        drop_ind <- sample(1:nrow(cur_samp), size= resample_size * upscale_100, replace=FALSE)
+        drop_ind <- sample.int(nrow(cur_samp), size= resample_size * upscale_100, replace=FALSE)
         new_obs  <- sample_micro(micro_data, resample_size * upscale_100, prob_name)
       } else if (iter %% 500 == 0) { # every 500 iterations, take a big jump in the sample space
-        drop_ind <- sample(1:nrow(cur_samp), size= round(sz * .5, 0), replace=FALSE)
+        drop_ind <- sample.int(nrow(cur_samp), size= round(sz * .5, 0), replace=FALSE)
         new_obs  <- sample_micro(micro_data, round(sz * .5, 0), prob_name)  
       } else {
-        drop_ind <- sample(1:nrow(cur_samp), size= resample_size, replace=FALSE)
+        drop_ind <- sample.int(nrow(cur_samp), size= resample_size, replace=FALSE)
         new_obs  <- sample_micro(micro_data, resample_size, prob_name)  
       }
       
@@ -264,20 +264,21 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
       
       if (tae_1[[1]] < tae_0[[1]]) {
         cur_samp <- rbind(cur_samp[-drop_ind, ], new_obs) # P(Accept | \delta E <0) == 1
+        tae_0 <- tae_1
       } else { # P(Accept | \delta E > 0) \propto d_tae * U(0,1)
         tae_rel <- tae_1[[1]] / tae_0[[1]]
         if(runif(1, 0, 1 * tae_rel) < p_accept) {
           cur_samp <- rbind(cur_samp[-drop_ind, ], new_obs)
-        }
+          tae_0 <- tae_1
+        } # else -- stays the same
       }
       
       ## (C) check to exit
-      if (tae_1[[1]] < tolerance | iter >= max_iter) {
-        return(list(best_fit= cur_samp, tae= tae_1[[1]], call= mc, p_accept= p_accept, 
+      if (tae_0[[1]] < tolerance | iter >= max_iter) {
+        return(list(best_fit= cur_samp, tae= tae_0[[1]], call= mc, p_accept= p_accept, 
                     upscale_100= upscale_100, iter= iter, max_iter= max_iter, seed= seed))
       } else { # (d) update for next iteration
         iter <- iter + 1
-        tae_0 <- tae_1
       }
     }
   }
@@ -285,6 +286,6 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
 
 # helper function to save typing
 sample_micro <- function(df, size, prob_name) {
-  data.table::data.table(df[sample(1L:nrow(df), size= size, replace= TRUE, prob= df[[prob_name]]),
+  data.table::data.table(df[sample.int(nrow(df), size= size, replace= TRUE, prob= df[[prob_name]]),
                 -which(names(df) == prob_name)])
 }

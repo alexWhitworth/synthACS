@@ -28,7 +28,7 @@ all_geogs_add_constraint <- function(attr_name= "variable", attr_total_list, mac
   if (is.list(attr_total_list) &
       (!all(unlist(lapply(attr_total_list, is.numeric))) | 
       !all(unlist(lapply(attr_total_list, function(l) all(l %% 1 == 0)))) |
-      all(unlist(lapply(attr_total_list, function(l) is.null(names(l)))))))
+      any(unlist(lapply(attr_total_list, function(l) is.null(names(l)))))))
     stop("attr_totals_list must a list of named numeric integer vectors.")
   
   if ( # similar check to \code{\link{add_constraint}} but across lists
@@ -124,4 +124,71 @@ all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_
   
   return(list(best_fit= best_fits, tae= taes, call= mc, p_accept= p_accept, 
               upscale_100= upscale_100, iter= iters, max_iter= max_iter, seed= seed))
+}
+
+
+
+
+
+
+
+#' @title Add a new attribute to a set (ie list) of synthetic_micro datasets
+#' @description Add a new attribute to a set (ie list) of synthetic_micro datasets using conditional 
+#' relationships between the new attribute and existing attributes (eg. wage rate conditioned on age 
+#' and education level). The same attribute is added to *each* synthetic_micro dataset, where each
+#' dataset is supplied a distinct relationship for attribute creation.
+#' @param df_list A \code{list} of R objects each of class "synthetic_micro". 
+#' @param prob_name A string specifying the column name of each \code{data.frame} in \code{df_list} 
+#' containing the probabilities for each synthetic observation.
+#' @param attr_name A string specifying the desired name of the new attribute to be added to the data.
+#' @param attr_vector_list A \code{list} of named vectors with each specifying the counts or 
+#' percentages of the new attribute, or variable, to be added. Names must include appropriate 
+#' naming for expression matching.
+#' @param attr_levels A character vector specifying the complete set of levels for the new 
+#' attribute.
+#' @param conditional_vars An character vector specifying the existing variables, if any, on which 
+#' the new attribute (variable) is to be conditioned on for each dataset. Variables must be specified 
+#' in order. Defaults to \code{NULL} ie- an unconditional new attribute.
+#' @param ht_list A \code{list} of equal length to \code{conditional_vars}. Each element \code{k} of
+#' \code{ht_list} is a \code{data.frame} constructed as a hash-table with one-to-one correspondence  
+#' between \code{ht_list[[k]]} and \code{conditional_vars[k]}. Of the key-value pair, the key is
+#' the first column and the value is the second column. See \code{\link{synthetic_new_attribute}}.
+#' @return A list of new synthetic_micro datasets each with class "synthetic_micro".
+#' @seealso \code{\link{synthetic_new_attribute}}
+#' @export
+all_geog_synthetic_new_attribute <- function(df_list, prob_name= "p",
+                                             attr_name= "variable",
+                                             attr_vector_list, attr_levels, 
+                                             conditional_vars= NULL,
+                                             ht_list= NULL) {
+ 
+  # 01. error checking
+  #------------------------------------
+  if (!is.list(df_list) | !all(unlist(lapply(df_list, is.micro_synthetic)))) 
+    stop("df_list must be supplied as a list of with each element of class 'micro_synthetic'.")
+ 
+  # 02. wrap synthetic_new_attribute in parallel
+  #------------------------------------
+  len <- length(df_list)
+  
+  if (!is.null(conditional_vars)) { # need to replicate() these for clusterMap since they are already lists
+    conditional_vars <- replicate(len, conditional_vars, simplify= FALSE)
+    ht_list <- replicate(len, ht_list, simplify= FALSE)
+  }
+  
+  nnodes <- min(detectCores() - 1, len)
+  if (grepl("Windows", sessionInfo()$running)) {cl <- makeCluster(nnodes, type= "PSOCK")}
+  else {cl <- makeCluster(nnodes, type= "FORK")}
+  
+  synthethic_data <- clusterMap(cl, RECYCLE= TRUE, SIMPLIFY= FALSE, .scheduling= "dynamic",
+                                fun= synthetic_new_attribute,
+                                df= df_list, prob_name= prob_name, attr_name= attr_name,
+                                attr_vector= attr_vector_list, attr_levels= attr_levels, 
+                                conditional_vars= conditional_vars,
+                                ht_list= ht_list)
+  
+  stopCluster(cl)
+  # 03. return
+  #------------------------------------
+  return(synthethic_data) 
 }
