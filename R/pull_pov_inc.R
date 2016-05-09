@@ -16,28 +16,25 @@
 pull_pov_inc <- function(endyear, span, geography) {
   # 00 -- error checking
   #----------------------------------------------
-  if (! span %in% c(1,3,5)) stop("The ACS API only supports data spans of 1, 3, and 5 years.")
-  if (endyear %% 1 != 0 | endyear < 2009) stop("endyear must be an integer >= 2009 (when ACS data begins).")
-  # other span/endyear issues handled by library(acs)
-  if (!is.geo.set(geography)) stop("Supply valid geography -- class 'geo.set'.")
+  check_geo_inputs(endyear= endyear, span= span, geography= geography)
   
   # 01 -- pull data and move to lists
   #----------------------------------------------
-  pov_status <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  pov_status <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                     table.number = "B17001", col.names= "pretty")
-#   pov_to_inc <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+#   pov_to_inc <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
 #                     table.number = "B17002", col.names= "pretty")
-  pov_to_work <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  pov_to_work <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                     table.number = "B17004", col.names= "pretty")
-  dis_by_age <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  dis_by_age <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                     table.number = "B18101", col.names= "pretty")
-  hh_inc <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  hh_inc <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                     table.number = "B19001", col.names= "pretty")
-  med_hh_inc <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  med_hh_inc <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                       table.number = "B19013", col.names= "pretty")
-  hh_ss_inc <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  hh_ss_inc <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                       table.number = "B19055", col.names= "pretty")
-  hh_psa_inc <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  hh_psa_inc <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                       table.number = "B19057", col.names= "pretty")
   
   est <- list(pov_status= data.frame(pov_status@estimate),

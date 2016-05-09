@@ -15,29 +15,29 @@
 pull_transit_work <- function(endyear, span, geography) {
   # 00 -- error checking
   #----------------------------------------------
-  
+  check_geo_inputs(endyear= endyear, span= span, geography= geography)
   
   # 01 -- pull data and move to lists
   #----------------------------------------------
-  travel_to_work <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  travel_to_work <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                               table.number = "B08012", col.names= "pretty")
   
-  mode_travel_to_work <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  mode_travel_to_work <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                                    table.number = "B08101", col.names= "pretty")
   
-  mode_transit_earn <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  mode_transit_earn <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                                  table.number = "B08121", col.names= "pretty")
   
-  med_age_transit <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  med_age_transit <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                                table.number = "B08103", col.names= "pretty")
   
-  transit_by_occ <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  transit_by_occ <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                               table.number = "B08124", col.names= "pretty")
   
-  place_of_work_msa <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  place_of_work_msa <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                                  table.number = "B08016", col.names= "pretty")
   
-  place_of_work_microsa <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  place_of_work_microsa <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                                      table.number = "B08017", col.names= "pretty")
   
   est <- list(time_to_work_by_age= data.frame(travel_to_work@estimate),

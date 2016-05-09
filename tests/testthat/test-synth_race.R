@@ -5,10 +5,13 @@ library(synthACS)
 context("synth - race")
 
 test_that("get correct results", {
-  # geography
+  ##---------------------------------------------------------------------------
+  ## 01. build out test datasets
+  ##---------------------------------------------------------------------------
+  # load
   load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
   
-  # multiple examples
+  # then create multiple examples
   ca <- synthACS:::synth_data_inc(
     synthACS:::synth_data_geomob(synthACS:::synth_data_pov(synthACS:::synth_data_nativ(
       synthACS:::synth_data_emp(synthACS:::synth_data_edu(synthACS:::synth_data_mar(
@@ -18,7 +21,7 @@ test_that("get correct results", {
         unlist(ca_dat$estimates$edu[26,])),
         unlist(ca_dat$estimates$emp_status[26,])),
       unlist(ca_dat$estimates$nativity[26,])),
-      unlist(ca_dat$estimates$pov_status1[26,])),
+      pov_ge_vec= unlist(ca_dat$estimates$pov_status1[26,]), total_pop= ca_dat$estimates$age_by_sex[26,1]),
       unlist(ca_dat$estimates$geo_mob_edu[26,])),
     unlist(ca_dat$estimates$by_inc_12mo[26,]))
   
@@ -30,11 +33,13 @@ test_that("get correct results", {
         unlist(ca_dat$estimates$edu[1,])),
         unlist(ca_dat$estimates$emp_status[1,])),
       unlist(ca_dat$estimates$nativity[1,])),
-      unlist(ca_dat$estimates$pov_status1[1,])),
+      pov_ge_vec= unlist(ca_dat$estimates$pov_status1[1,]), total_pop= ca_dat$estimates$age_by_sex[1,1]),
       unlist(ca_dat$estimates$geo_mob_edu[1,])),
     unlist(ca_dat$estimates$by_inc_12mo[1,])),
     unlist(ca_dat$estimates$pop_by_race[1,]))
+  
   ca_ag2 <- synthACS:::synth_data_race(ca, unlist(ca_dat$estimates$pop_by_race[26,]))
+  
   ca_ag3 <- synthACS:::synth_data_race(synthACS:::synth_data_inc(
     synthACS:::synth_data_geomob(synthACS:::synth_data_pov(synthACS:::synth_data_nativ(
       synthACS:::synth_data_emp(synthACS:::synth_data_edu(synthACS:::synth_data_mar(
@@ -43,11 +48,13 @@ test_that("get correct results", {
         unlist(ca_dat$estimates$edu[50,])),
         unlist(ca_dat$estimates$emp_status[50,])),
       unlist(ca_dat$estimates$nativity[50,])),
-      unlist(ca_dat$estimates$pov_status1[50,])),
+      pov_ge_vec= unlist(ca_dat$estimates$pov_status1[50,]), total_pop= ca_dat$estimates$age_by_sex[50,1]),
       unlist(ca_dat$estimates$geo_mob_edu[50,])),
     unlist(ca_dat$estimates$by_inc_12mo[50,])),
     unlist(ca_dat$estimates$pop_by_race[50,]))
-  
+  ##---------------------------------------------------------------------------
+  ## 02. Tests
+  ##---------------------------------------------------------------------------
   # test classes, names, dimensions
   expect_true(is.data.frame(ca_ag1))
   expect_true(is.data.frame(ca_ag2))

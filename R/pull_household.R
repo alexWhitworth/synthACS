@@ -16,34 +16,31 @@
 pull_household <- function(endyear, span, geography) {
   # 00 -- error checking
   #----------------------------------------------
-  if (! span %in% c(1,3,5)) stop("The ACS API only supports data spans of 1, 3, and 5 years.")
-  if (endyear %% 1 != 0 | endyear < 2009) stop("endyear must be an integer >= 2009 (when ACS data begins).")
-  # other span/endyear issues handled by library(acs)
-  if (!is.geo.set(geography)) stop("Supply valid geography -- class 'geo.set'.")
+  check_geo_inputs(endyear= endyear, span= span, geography= geography)
   
   # 01 -- pull data and move to lists
   #----------------------------------------------
-  hh_type_r <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  hh_type_r <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                          table.number = "B09019", col.names= "pretty")
-  hh_type_units <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  hh_type_units <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                          table.number = "B11011", col.names= "pretty")
-  hh_inc <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  hh_inc <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                      table.number = "B19081", col.names= "pretty")
-  hh_occ <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  hh_occ <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                       table.number = "B25002", col.names= "pretty")
-  hh_tenure <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  hh_tenure <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                       table.number = "B25003", col.names= "pretty")
-  hh_vacancy <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  hh_vacancy <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                       table.number = "B25004", col.names= "pretty")
-  hh_num_units <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  hh_num_units <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B25024", col.names= "pretty")
-  hh_rent <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  hh_rent <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                             table.number = "B25056", col.names= "pretty")
-  hh_med_rent <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  hh_med_rent <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                        table.number = "B25058", col.names= "pretty")
-  hh_med_rent_v_inc <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  hh_med_rent_v_inc <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                            table.number = "B25071", col.names= "pretty")
-  health_ins <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  health_ins <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B27001", col.names= "pretty")
   
   # --- these tables not available

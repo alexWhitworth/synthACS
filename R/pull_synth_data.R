@@ -17,35 +17,32 @@
 pull_synth_data <- function(endyear, span, geography) {
   # 00 -- error checking
   #----------------------------------------------
-  if (! span %in% c(1,3,5)) stop("The ACS API only supports data spans of 1, 3, and 5 years.")
-  if (endyear %% 1 != 0 | endyear < 2009) stop("endyear must be an integer >= 2009 (when ACS data begins).")
-  # other span/endyear issues handled by library(acs)
-  if (!is.geo.set(geography)) stop("Supply valid geography -- class 'geo.set'.")
+  check_geo_inputs(endyear= endyear, span= span, geography= geography)
   
   # 01 -- pull data
   #----------------------------------------------
-  age_by_sex <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  age_by_sex <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B01001", col.names= "pretty") # total pop
   pop_by_race <- pull_race_data(endyear= endyear, span= span, geography= geography)
-  marital_status <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  marital_status <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                                  table.number = "B12002", col.names = "pretty") # (age 15+, by age and gender)
-  edu <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  edu <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                       table.number = "B15001", col.names = "pretty") # (age 18+, by age and gender)
-  nativity <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  nativity <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                         table.number = "B06001", col.names = "pretty") # by age
-  by_inc_12mo <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  by_inc_12mo <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                            table.number = "B06010", col.names = "pretty")
-  # geo_mob_mar_stat <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  # geo_mob_mar_stat <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
   #                          table.number = "B07008", col.names = "pretty") # 15+
-  geo_mob_inc <- acs.fetch(endyear = endyear, span= span, geography = geography,
+  geo_mob_inc <- acs::acs.fetch(endyear = endyear, span= span, geography = geography,
                            table.number = "B07010", col.names = "pretty") # 15+
-  geo_mob_edu <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  geo_mob_edu <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                            table.number = "B07009", col.names = "pretty") # 25+
-  emp_status <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  emp_status <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                           table.number = "B23001", col.names = "pretty") # 16+ by age/sex
-  pov_status1 <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  pov_status1 <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                              table.number = "B17005", col.names = "pretty") # (age 16+, by sex & employment status)
-  # pov_status2 <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  # pov_status2 <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
   #                          table.number = "B17007", col.names = "pretty") # B17007 - age 15+, by age and gender ... 
   
   # 02 -- create lists of EST and SE -- as data.frames

@@ -5,10 +5,13 @@ library(synthACS)
 context("synth - employment")
 
 test_that("get correct results", {
-  # geography
+  ##---------------------------------------------------------------------------
+  ## 01. build out test datasets
+  ##---------------------------------------------------------------------------
+  # load
   load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
   
-  # multiple examples
+  # then create multiple examples
   ca <- synthACS:::synth_data_edu(synthACS:::synth_data_mar(synthACS:::synth_data_ag(
       unlist(ca_dat$estimates$age_by_sex[26,])),
     unlist(ca_dat$estimates$marital_status[26,])),
@@ -26,6 +29,9 @@ test_that("get correct results", {
       unlist(ca_dat$estimates$edu[50,])),
       unlist(ca_dat$estimates$emp_status[50,]))
   
+  ##---------------------------------------------------------------------------
+  ## 02. Tests
+  ##---------------------------------------------------------------------------
   # test classes, names, dimensions
   expect_true(is.data.frame(ca_ag1[[1]]))
   expect_true(is.data.frame(ca_ag2[[1]]))

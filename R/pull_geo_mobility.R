@@ -17,26 +17,23 @@
 pull_geo_mobility <- function(endyear, span, geography) {
   # 00 -- error checking
   #----------------------------------------------
-  if (! span %in% c(1,3,5)) stop("The ACS API only supports data spans of 1, 3, and 5 years.")
-  if (endyear %% 1 != 0 | endyear < 2009) stop("endyear must be an integer >= 2009 (when ACS data begins).")
-  # other span/endyear issues handled by library(acs)
-  if (!is.geo.set(geography)) stop("Supply valid geography -- class 'geo.set'.")
+  check_geo_inputs(endyear= endyear, span= span, geography= geography)
   
   # 01 -- pull data
   #----------------------------------------------
-  geo_by_age <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  geo_by_age <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B07001", col.names= "pretty")
   
-  geo_by_sex <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  geo_by_sex <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B07003", col.names= "pretty")
   
-  geo_by_mar <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  geo_by_mar <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B07008", col.names= "pretty")
   
-  geo_by_edu <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  geo_by_edu <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B07009", col.names= "pretty")
   
-  geo_by_inc <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  geo_by_inc <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B07010", col.names= "pretty")
   
   est <- list(by_age= data.frame(geo_by_age@estimate[, c(1,17:dim(geo_by_age@estimate)[[2]])]),

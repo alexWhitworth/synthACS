@@ -102,18 +102,18 @@ all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_
   
   if (verbose) message("Beginning parallel optimization...")
   
-  nnodes <- min(detectCores() - 1, length(micro_datas))
-  if (grepl("Windows", sessionInfo()$running)) {cl <- makeCluster(nnodes, type= "PSOCK")}
-  else {cl <- makeCluster(nnodes, type= "FORK")}
+  nnodes <- min(parallel::detectCores() - 1, length(micro_datas))
+  if (grepl("Windows", utils::sessionInfo()$running)) {cl <- parallel::makeCluster(nnodes, type= "PSOCK")}
+  else {cl <- parallel::makeCluster(nnodes, type= "FORK")}
   
-  geography_anneal <- clusterMap(cl, RECYCLE= TRUE, SIMPLIFY= FALSE, .scheduling= "dynamic",
+  geography_anneal <- parallel::clusterMap(cl, RECYCLE= TRUE, SIMPLIFY= FALSE, .scheduling= "dynamic",
                                  fun= optimize_microdata, 
                                  micro_data= micro_datas, prob_name= prob_name,
                                  constraint_list= constraint_list_list,
                                  upscale_100= upscale_100, p_accept= p_accept, max_iter= max_iter,
                                  seed= seed, verbose= FALSE)
   
-  stopCluster(cl)
+  parallel::stopCluster(cl)
   if (verbose) message("... Optimization complete")
   
   # 03. return
@@ -176,18 +176,18 @@ all_geog_synthetic_new_attribute <- function(df_list, prob_name= "p",
     ht_list <- replicate(len, ht_list, simplify= FALSE)
   }
   
-  nnodes <- min(detectCores() - 1, len)
-  if (grepl("Windows", sessionInfo()$running)) {cl <- makeCluster(nnodes, type= "PSOCK")}
-  else {cl <- makeCluster(nnodes, type= "FORK")}
+  nnodes <- min(parallel::detectCores() - 1, len)
+  if (grepl("Windows", utils::sessionInfo()$running)) {cl <- parallel::makeCluster(nnodes, type= "PSOCK")}
+  else {cl <- parallel::makeCluster(nnodes, type= "FORK")}
   
-  synthethic_data <- clusterMap(cl, RECYCLE= TRUE, SIMPLIFY= FALSE, .scheduling= "dynamic",
+  synthethic_data <- parallel::clusterMap(cl, RECYCLE= TRUE, SIMPLIFY= FALSE, .scheduling= "dynamic",
                                 fun= synthetic_new_attribute,
                                 df= df_list, prob_name= prob_name, attr_name= attr_name,
                                 attr_vector= attr_vector_list, attr_levels= attr_levels, 
                                 conditional_vars= conditional_vars,
                                 ht_list= ht_list)
   
-  stopCluster(cl)
+  parallel::stopCluster(cl)
   # 03. return
   #------------------------------------
   return(synthethic_data) 

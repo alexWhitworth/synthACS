@@ -19,30 +19,27 @@
 pull_pop_data <- function(endyear, span, geography, percentages= TRUE) {
   # 00 -- error checking
   #----------------------------------------------
-  if (! span %in% c(1,3,5)) stop("The ACS API only supports data spans of 1, 3, and 5 years.")
-  if (endyear %% 1 != 0 | endyear < 2009) stop("endyear must be an integer >= 2009 (when ACS data begins).")
-  # other span/endyear issues handled by library(acs)
-  if (!is.geo.set(geography)) stop("Supply valid geography -- class 'geo.set'.")
+  check_geo_inputs(endyear= endyear, span= span, geography= geography)
   
   # 01 -- pull data
   #----------------------------------------------
-  age_by_sex <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  age_by_sex <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B01001", col.names= "pretty")
-  med_age <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  med_age <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                        table.number = "B01002", col.names = "pretty")
-  pop_by_race <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  pop_by_race <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                            table.number = "B02001", col.names = "pretty")
-  birth_and_language <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  birth_and_language <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                                   table.number = "B06007", col.names = "pretty")
-  by_marital_status <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  by_marital_status <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                                  table.number = "B06008", col.names = "pretty")
-  by_edu <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  by_edu <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                       table.number = "B06009", col.names = "pretty")
-  by_inc_12mo <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  by_inc_12mo <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                            table.number = "B06010", col.names = "pretty")
-  med_inc_12mo <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  med_inc_12mo <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                             table.number = "B06011", col.names = "pretty")
-  by_pov_status <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  by_pov_status <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                              table.number = "B06012", col.names = "pretty")
   
   # 02 -- create lists of EST and SE -- as data.frames

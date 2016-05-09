@@ -15,24 +15,21 @@
 pull_edu <- function(endyear, span, geography) {
   # 00 -- error checking
   #----------------------------------------------
-  if (! span %in% c(1,3,5)) stop("The ACS API only supports data spans of 1, 3, and 5 years.")
-  if (endyear %% 1 != 0 | endyear < 2009) stop("endyear must be an integer >= 2009 (when ACS data begins).")
-  # other span/endyear issues handled by library(acs)
-  if (!is.geo.set(geography)) stop("Supply valid geography -- class 'geo.set'.")
+  check_geo_inputs(endyear= endyear, span= span, geography= geography)
   
   # 01 -- pull data and move to lists
   #----------------------------------------------
-  edu_enroll <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  edu_enroll <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                               table.number = "B14001", col.names= "pretty")
-  enroll_details <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  enroll_details <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B14003", col.names= "pretty")
-  edu_attain18 <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  edu_attain18 <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B15001", col.names= "pretty")
-  edu_attain25 <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  edu_attain25 <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B15002", col.names= "pretty")
-#   deg_major25 <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+#   deg_major25 <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
 #                           table.number = "B15010", col.names= "pretty"))
-#   edu_internet <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+#   edu_internet <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
 #                             table.number = "B28006", col.names= "pretty")
   
   est <- list(edu_enroll= data.frame(edu_enroll@estimate[,-2]),

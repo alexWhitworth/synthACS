@@ -16,28 +16,25 @@
 pull_inc_earnings <- function(endyear, span, geography) {
   # 00 -- error checking
   #----------------------------------------------
-  if (! span %in% c(1,3,5)) stop("The ACS API only supports data spans of 1, 3, and 5 years.")
-  if (endyear %% 1 != 0 | endyear < 2009) stop("endyear must be an integer >= 2009 (when ACS data begins).")
-  # other span/endyear issues handled by library(acs)
-  if (!is.geo.set(geography)) stop("Supply valid geography -- class 'geo.set'.")
+  check_geo_inputs(endyear= endyear, span= span, geography= geography)
   
   # 01 -- pull data and move to lists
   #----------------------------------------------
-  gini <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  gini <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                     table.number = "B19083", col.names= "pretty")
-  inc_pc <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  inc_pc <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                     table.number = "B19301", col.names= "pretty")
-  med_inc <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  med_inc <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                       table.number = "B19326", col.names= "pretty")
-  vet_status <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  vet_status <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                        table.number = "B21001", col.names= "pretty")
-  snap <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  snap <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B22001", col.names= "pretty")
-  mean_hrs_work <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  mean_hrs_work <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B23020", col.names= "pretty")
-  med_earn <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+  med_earn <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B24011", col.names= "pretty")
-#   inc_by_int <- acs.fetch(endyear= endyear, span= span, geography= geography, 
+#   inc_by_int <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
 #                           table.number = "B28004", col.names= "pretty")
   
   est <- list(gini= data.frame(gini@estimate),

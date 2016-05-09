@@ -14,18 +14,15 @@
 pull_bachelors <- function(endyear, span, geography) {
   # 00 -- error checking
   #----------------------------------------------
-  if (! span %in% c(1,3,5)) stop("The ACS API only supports data spans of 1, 3, and 5 years.")
-  if (endyear %% 1 != 0 | endyear < 2014) stop("endyear must be an integer. These tables only support data in >=2014.")
-  # other span/endyear issues handled by library(acs)
-  if (!is.geo.set(geography)) stop("Supply valid geography -- class 'geo.set'.")
+  check_geo_inputs(endyear= endyear, span= span, geography= geography)
   
   # 01 -- pull data and move to lists
   #----------------------------------------------
   # ba_deg25up <- acs.fetch(endyear= 2014, span= 5, geography= la_tracts, table.number = "C15010",
   #                    col.names= "pretty")
-  by_sex_age <- acs.fetch(endyear = endyear, span= span, geography = geography, table.number = "B15011",
+  by_sex_age <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, table.number = "B15011",
                      col.names = "pretty")
-  ba_total <- acs.fetch(endyear = endyear, span= span, geography = geography, table.number = "B15012",
+  ba_total <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, table.number = "B15012",
                      col.names = "pretty")
   
   

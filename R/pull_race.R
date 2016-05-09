@@ -15,30 +15,27 @@
 pull_race_data <- function(endyear, span, geography) {
   # 00 -- error checking
   #----------------------------------------------
-  if (! span %in% c(1,3,5)) stop("The ACS API only supports data spans of 1, 3, and 5 years.")
-  if (endyear %% 1 != 0 | endyear < 2009) stop("endyear must be an integer >= 2009 (when ACS data begins).")
-  # other span/endyear issues handled by library(acs)
-  if (!is.geo.set(geography)) stop("Supply valid geography -- class 'geo.set'.")
+  check_geo_inputs(endyear= endyear, span= span, geography= geography)
   
   # 01 -- pull data
   #----------------------------------------------
-  race_all <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  race_all <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                         table.number = "B02001", col.names = "pretty")
-  race_aa <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  race_aa <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                        table.number = "B01001B", col.names = "pretty")
-  race_nat <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  race_nat <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                         table.number = "B01001C", col.names = "pretty")
-  race_asian <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  race_asian <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                        table.number = "B01001D", col.names = "pretty")
-  race_isl <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  race_isl <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                        table.number = "B01001E", col.names = "pretty")
-  race_oth <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  race_oth <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                        table.number = "B01001F", col.names = "pretty")
-  race_2p <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  race_2p <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                         table.number = "B01001G", col.names = "pretty")
-  race_white <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  race_white <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                        table.number = "B01001H", col.names = "pretty")
-  race_hisp <- acs.fetch(endyear = endyear, span= span, geography = geography, 
+  race_hisp <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                        table.number = "B01001I", col.names = "pretty")
   
   

@@ -1,4 +1,4 @@
 library(testthat)
 library(synthACS)
 
-test_check("synthACS")
+# test_check("synthACS")

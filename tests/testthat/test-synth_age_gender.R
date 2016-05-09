@@ -24,13 +24,20 @@ test_that("accurately named vector", {
 
 
 test_that("creates expected result", {
-  # geography
+  ##---------------------------------------------------------------------------
+  ## 01. build out test datasets
+  ##---------------------------------------------------------------------------
+  # load
   load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
   
-  # multiple examples
+  # then create multiple examples
   ca_ag1 <- synthACS:::synth_data_ag(unlist(ca_dat$estimates$age_by_sex[1,]))
   ca_ag2 <- synthACS:::synth_data_ag(unlist(ca_dat$estimates$age_by_sex[20,]))
   ca_ag3 <- synthACS:::synth_data_ag(unlist(ca_dat$estimates$age_by_sex[50,]))
+  
+  ##---------------------------------------------------------------------------
+  ## 02. Tests
+  ##---------------------------------------------------------------------------
   # test output
   expect_true(is.data.frame(ca_ag1[[1]]))
   expect_true(is.data.frame(ca_ag2[[1]]))

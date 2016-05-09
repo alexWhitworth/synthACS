@@ -52,9 +52,9 @@ derive_synth_datasets <- function(macro_data,
   #--------------------------------------------------------
   if (!is.macroACS(macro_data)) stop("Must input an appropriate macro_data object.")
   if (parallel == TRUE) {
-    if (leave_cores < 0 | leave_cores > detectCores() | leave_cores %% 1 != 0) {
+    if (leave_cores < 0 | leave_cores > parallel::detectCores() | leave_cores %% 1 != 0) {
       stop("leave_cores must be an integer between 0 (not recommended) 
-           and ", detectCores())
+           and ", parallel::detectCores())
     }
   }
   # 02. Pull needed macro data and separate sub geographies
@@ -66,13 +66,13 @@ derive_synth_datasets <- function(macro_data,
   #--------------------------------------------------------
   if (parallel) {
     # create cluster
-    nnodes <- min(n, detectCores() - leave_cores)
-    if (grepl("Windows", sessionInfo()$running)) {cl <- makeCluster(nnodes, type= "PSOCK")}
-    else {cl <- makeCluster(nnodes, type= "FORK")}
+    nnodes <- min(n, parallel::detectCores() - leave_cores)
+    if (grepl("Windows", utils::sessionInfo()$running)) {cl <- parallel::makeCluster(nnodes, type= "PSOCK")}
+    else {cl <- parallel::makeCluster(nnodes, type= "FORK")}
     
     # parallel load balanced option:
-    synth_data <- parLapplyLB(cl, macro_data2, synthesize)
-    stopCluster(cl)
+    synth_data <- parallel::parLapplyLB(cl, macro_data2, synthesize)
+    parallel::stopCluster(cl)
   } else {
     synth_data <- lapply(macro_data2, synthesize)
   }
