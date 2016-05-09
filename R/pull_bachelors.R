@@ -23,9 +23,9 @@ pull_bachelors <- function(endyear, span, geography) {
   #----------------------------------------------
   # ba_deg25up <- acs.fetch(endyear= 2014, span= 5, geography= la_tracts, table.number = "C15010",
   #                    col.names= "pretty")
-  by_sex_age <- acs.fetch(endyear = 2014, span= 5, geography = la_tracts, table.number = "B15011",
+  by_sex_age <- acs.fetch(endyear = endyear, span= span, geography = geography, table.number = "B15011",
                      col.names = "pretty")
-  ba_total <- acs.fetch(endyear = 2014, span= 5, geography = la_tracts, table.number = "B15012",
+  ba_total <- acs.fetch(endyear = endyear, span= span, geography = geography, table.number = "B15012",
                      col.names = "pretty")
   
   
