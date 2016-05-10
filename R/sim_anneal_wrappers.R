@@ -14,6 +14,29 @@
 #' @return A list of constraint lists.
 #' @seealso \code{\link{add_constraint}}
 #' @export
+#' 
+#' @examples \dontrun{
+#' # assumes that la_synthetic already exists in your environment
+#' 
+#' # 1. build constraints for gender and age
+#' g <- lapply(la_synthetic[[2]], function(l) {
+#'   v <- l[[1]]$age_by_sex[2:3]
+#'   names(v) <- c("Male", "Female")
+#'   return(v)
+#' })
+#' 
+#' a <- lapply(la_synthetic[[2]], function(l) {
+#'   v <- l[[1]]$age_by_sex[-c(1:3)]
+#'   v <- apply(cbind(v[1:16], v[17:32]), 1, sum)
+#'   names(v) <- levels(l[[2]]$age)
+#'   return(v)
+#' })
+#' # 2. bind constraints to geographies and macro-data
+#' cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a, macro_micro= la_syn[[2]])
+#' cll <- all_geogs_add_constraint(attr_name= "gender", attr_total_list= g, macro_micro= la_syn[[2]], 
+#'           constraint_list_list= cll)
+#' 
+#' }
 all_geogs_add_constraint <- function(attr_name= "variable", attr_total_list, macro_micro,
                                      constraint_list_list= NULL) {
   # 00. error checking
@@ -82,6 +105,13 @@ all_geogs_add_constraint <- function(attr_name= "variable", attr_total_list, mac
 #' @param verbose Logical. Do you wish to see verbose output? Defaults to \code{TRUE}
 #' @seealso \code{\link{optimize_microdata}}
 #' @export
+#' 
+#' @examples \dontrun{
+#'  # assumes that la_synthetic and cll already exist in your environment
+#'  # see: examples for derive_synth_datasets() and all_geogs_add_constraint()
+#'  optimized_la <- all_geog_optimize_microdata(la_synthetic[[2]], prob_name= "p", constraint_list_list= cll,
+#'                p_accept= 0.01, max_iter= 1000L)
+#' }
 all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_list_list, 
                                         upscale_100= 5L, p_accept= 0.05, max_iter= 10000L,
                                         seed= sample(1L:10000L, size=1, replace=FALSE),

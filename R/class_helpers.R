@@ -39,5 +39,5 @@ factor_return <- function(df, prob_name) {
     else return(l)
   })
   rownames(df) <- NULL
-  return(df[complete.cases(df) & df[prob_name] > 0,])
+  return(df[stats::complete.cases(df) & df[prob_name] > 0,])
 }

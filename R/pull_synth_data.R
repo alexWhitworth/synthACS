@@ -14,6 +14,13 @@
 #' and the geography metadata from \code{\link[acs]{acs.fetch}}.
 #' @seealso \code{\link[acs]{acs.fetch}}, \code{\link[acs]{geo.make}}
 #' @export
+#' 
+#' @examples \dontrun{
+#' # make geography
+#' la_geo <- acs::geo.make(state= "CA", county= "Los Angeles", tract= "*")
+#' # pull data elements for creating synthetic data
+#' la_dat <- pull_synth_data(2014, 5, la_geo)
+#' }
 pull_synth_data <- function(endyear, span, geography) {
   # 00 -- error checking
   #----------------------------------------------

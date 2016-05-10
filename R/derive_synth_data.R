@@ -1,7 +1,4 @@
 
-#' @useDynLib synthACS
-#' @importFrom Rcpp sourceCpp
-
 #' @title Derive synthetic micro datasets for a given geography.
 #' @description Derive synthetic micro datasets for each sub-geography of a given set of geographic 
 #' macro data constraining tabulations. See Details... By default, micro dataset generation is run 
@@ -44,6 +41,15 @@
 #' for urban and regional analysis: methods and examples." Environment and planning A 
 #' 20.12 (1988): 1645-1671.
 #' @export
+#' 
+#' @examples \dontrun{
+#' # make geography
+#' la_geo <- acs::geo.make(state= "CA", county= "Los Angeles", tract= "*")
+#' # pull data elements for creating synthetic data
+#' la_dat <- pull_synth_data(2014, 5, la_geo)
+#' # derive synthetic data
+#' la_synthetic <- derive_synth_datasets(la_dat, leave_cores= 0)
+#' }
 
 derive_synth_datasets <- function(macro_data,
                                   parallel= TRUE, leave_cores= 2) {

@@ -25,6 +25,14 @@ B01001, B02001, B12002, B15001, B06001, B06010, B23001, B17005, and B17005.
 These tables reference population counts by a number of slices.
 Multiple additional fields, mainly percentages and aggregations, are calculated.
 }
+\examples{
+\dontrun{
+# make geography
+la_geo <- acs::geo.make(state= "CA", county= "Los Angeles", tract= "*")
+# pull data elements for creating synthetic data
+la_dat <- pull_synth_data(2014, 5, la_geo)
+}
+}
 \seealso{
 \code{\link[acs]{acs.fetch}}, \code{\link[acs]{geo.make}}
 }

@@ -50,6 +50,16 @@ mobility in the prior year, individual income, and race. **Note** that these are
 they are not at the HOUSEHOLD level. Additional attributes which interest the user may be added 
 in a similar manner via \code{\link{synthetic_new_attribute}}.
 }
+\examples{
+\dontrun{
+# make geography
+la_geo <- acs::geo.make(state= "CA", county= "Los Angeles", tract= "*")
+# pull data elements for creating synthetic data
+la_dat <- pull_synth_data(2014, 5, la_geo)
+# derive synthetic data
+la_synthetic <- derive_synth_datasets(la_dat, leave_cores= 0)
+}
+}
 \references{
 Birkin, Mark, and M. Clarke. "SYNTHESIS-a synthetic spatial information system 
 for urban and regional analysis: methods and examples." Environment and planning A 
