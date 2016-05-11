@@ -32,9 +32,10 @@
 #'   return(v)
 #' })
 #' # 2. bind constraints to geographies and macro-data
-#' cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a, macro_micro= la_syn[[2]])
-#' cll <- all_geogs_add_constraint(attr_name= "gender", attr_total_list= g, macro_micro= la_syn[[2]], 
-#'           constraint_list_list= cll)
+#' cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a, 
+#'           macro_micro= la_syn[[2]])
+#' cll <- all_geogs_add_constraint(attr_name= "gender", attr_total_list= g, 
+#'           macro_micro= la_syn[[2]], constraint_list_list= cll)
 #' 
 #' }
 all_geogs_add_constraint <- function(attr_name= "variable", attr_total_list, macro_micro,
@@ -109,8 +110,8 @@ all_geogs_add_constraint <- function(attr_name= "variable", attr_total_list, mac
 #' @examples \dontrun{
 #'  # assumes that la_synthetic and cll already exist in your environment
 #'  # see: examples for derive_synth_datasets() and all_geogs_add_constraint()
-#'  optimized_la <- all_geog_optimize_microdata(la_synthetic[[2]], prob_name= "p", constraint_list_list= cll,
-#'                p_accept= 0.01, max_iter= 1000L)
+#'  optimized_la <- all_geog_optimize_microdata(la_synthetic[[2]], prob_name= "p", 
+#'      constraint_list_list= cll, p_accept= 0.01, max_iter= 1000L)
 #' }
 all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_list_list, 
                                         upscale_100= 5L, p_accept= 0.05, max_iter= 10000L,

@@ -46,9 +46,10 @@ a <- lapply(la_synthetic[[2]], function(l) {
   return(v)
 })
 # 2. bind constraints to geographies and macro-data
-cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a, macro_micro= la_syn[[2]])
-cll <- all_geogs_add_constraint(attr_name= "gender", attr_total_list= g, macro_micro= la_syn[[2]], 
-          constraint_list_list= cll)
+cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a, 
+          macro_micro= la_syn[[2]])
+cll <- all_geogs_add_constraint(attr_name= "gender", attr_total_list= g, 
+          macro_micro= la_syn[[2]], constraint_list_list= cll)
 
 }
 }

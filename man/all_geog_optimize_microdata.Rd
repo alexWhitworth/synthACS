@@ -40,8 +40,8 @@ simulated annealing and geographies are run in parallel.
 \dontrun{
  # assumes that la_synthetic and cll already exist in your environment
  # see: examples for derive_synth_datasets() and all_geogs_add_constraint()
- optimized_la <- all_geog_optimize_microdata(la_synthetic[[2]], prob_name= "p", constraint_list_list= cll,
-               p_accept= 0.01, max_iter= 1000L)
+ optimized_la <- all_geog_optimize_microdata(la_synthetic[[2]], prob_name= "p", 
+     constraint_list_list= cll, p_accept= 0.01, max_iter= 1000L)
 }
 }
 \seealso{
