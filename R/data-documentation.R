@@ -116,8 +116,8 @@
 #' \itemize{
 #' \item{The age-adjusted death rates are used to compare relative mortality risks among groups and 
 #' over time. They were computed by the direct method, which is defined 
-#' $$R'= \sum_{i} \frac{P_{si}}{P_{s}}R_i$$ where $P_{si}$ is the standard population for age group i,
-#' $P_s$ is the total US standard population and $R_i$ is the raw death rate for age group i.} 
+#' \deqn{R'= \sum_{i} \frac{P_{si}}{P_{s}}R_i} where \eqn{P_{si}} is the standard population for age group i,
+#' \eqn{P_s} is the total US standard population and \eqn{R_i} is the raw death rate for age group i.} 
 #' \item{Populations are based on census counts enumerated as of April 1 of the census year and estimated
 #' as of July 1 for non-census years.}
 #' }
