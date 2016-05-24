@@ -29,23 +29,9 @@ is.macro_micro <- function(x) {
   inherits(x, "macro_micro")
 }
 
-
-# helper function to coerce all non-probability vectors to factors
-# and do some other basic scrubbing
-factor_return <- function(df, prob_name) {
-  fact_ind <- which(names(df) != prob_name)
-  df[,fact_ind] <- lapply(df[fact_ind], function(l) {
-    if (!is.factor(l)) return(factor(l))
-    else return(l)
-  })
-  rownames(df) <- NULL
-  return(df[stats::complete.cases(df) & df[prob_name] > 0,])
-}
-
-
-
 ##---------------------------------------------------------
 ## Generics for class macroACS
+##---------------------------------------------------------
 # This set of generic fetches "estimate" or "standard error" data for each of the datasets
 # contained in the 'macroACS' class. One method is specified for each dataset
 ##---------------------------------------------------------

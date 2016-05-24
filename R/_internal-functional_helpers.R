@@ -12,3 +12,16 @@ check_geo_inputs <- function(endyear, span, geography) {
   
   # else okay; return
 }
+
+# helper function to coerce all non-probability vectors to factors
+# and do some other basic scrubbing
+factor_return <- function(df, prob_name) {
+  fact_ind <- which(names(df) != prob_name)
+  df[,fact_ind] <- lapply(df[fact_ind], function(l) {
+    if (!is.factor(l)) return(factor(l))
+    else return(l)
+  })
+  rownames(df) <- NULL
+  return(df[stats::complete.cases(df) & df[prob_name] > 0,])
+}
+
