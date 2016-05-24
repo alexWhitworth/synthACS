@@ -419,7 +419,6 @@ test_that("annealing works correctly", {
   expect_true(is.data.table(anneal1$best_fit))
   expect_true(is.numeric(anneal1$tae))
   expect_true(is.numeric(anneal1$p_accept))
-  expect_true(is.numeric(anneal1$upscale_100))
   expect_true(is.numeric(anneal1$iter))
   expect_true(is.numeric(anneal1$max_iter))
   expect_lte(anneal1$iter, anneal1$max_iter)

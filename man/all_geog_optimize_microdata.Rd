@@ -5,9 +5,8 @@
 \title{Optimize the selection of a micro data population for a set of geographies.}
 \usage{
 all_geog_optimize_microdata(macro_micro, prob_name = "p",
-  constraint_list_list, upscale_100 = 5L, p_accept = 0.05,
-  max_iter = 10000L, seed = sample(1L:10000L, size = 1, replace = FALSE),
-  verbose = TRUE)
+  constraint_list_list, p_accept = 0.05, max_iter = 10000L,
+  seed = sample(1L:10000L, size = 1, replace = FALSE), verbose = TRUE)
 }
 \arguments{
 \item{macro_micro}{The geographical dataset of macro and micro data. Should be of class 
@@ -19,8 +18,6 @@ of selection.}
 
 \item{constraint_list_list}{A list of constraint lists. See \code{\link{add_constraint}}, 
 \code{\link{all_geogs_add_constraint}}}
-
-\item{upscale_100}{Numeric. Controls the increase in \code{resample_size} for early iterations.}
 
 \item{p_accept}{The acceptance probability for the Metropolis acceptance criteria.}
 

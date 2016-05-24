@@ -99,7 +99,6 @@ all_geogs_add_constraint <- function(attr_name= "variable", attr_total_list, mac
 #' of selection.
 #' @param constraint_list_list A list of constraint lists. See \code{\link{add_constraint}}, 
 #' \code{\link{all_geogs_add_constraint}}
-#' @param upscale_100 Numeric. Controls the increase in \code{resample_size} for early iterations.
 #' @param p_accept The acceptance probability for the Metropolis acceptance criteria.
 #' @param max_iter The maximum number of allowable iterations. Defaults to \code{10000L}
 #' @param seed A seed for reproducibility. See \code{\link[base]{set.seed}}
@@ -114,7 +113,7 @@ all_geogs_add_constraint <- function(attr_name= "variable", attr_total_list, mac
 #'      constraint_list_list= cll, p_accept= 0.01, max_iter= 1000L)
 #' }
 all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_list_list, 
-                                        upscale_100= 5L, p_accept= 0.05, max_iter= 10000L,
+                                        p_accept= 0.05, max_iter= 10000L,
                                         seed= sample(1L:10000L, size=1, replace=FALSE),
                                         verbose= TRUE) {
   
@@ -122,7 +121,6 @@ all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_
   #------------------------------------
   if (!is.list(macro_micro) | !all(unlist(lapply(macro_micro, is.macro_micro)))) 
     stop("macro_micro must be supplied as a list of with each element of class 'macro_micro'.")
-  if (!is.numeric(upscale_100) | upscale_100 < 1) stop("upscale_100 must be numeric >=1.")
   if (!is.numeric(p_accept) | p_accept <= 0 | p_accept >= 1) stop("p_accept must be numeric in (0,1).")
   if ((max_iter %% 1 != 0) | max_iter < 1) stop("max_iter must be an integer.")
   
@@ -141,7 +139,7 @@ all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_
                                  fun= optimize_microdata, 
                                  micro_data= micro_datas, prob_name= prob_name,
                                  constraint_list= constraint_list_list,
-                                 upscale_100= upscale_100, p_accept= p_accept, max_iter= max_iter,
+                                 p_accept= p_accept, max_iter= max_iter,
                                  seed= seed, verbose= FALSE)
   
   parallel::stopCluster(cl)
@@ -154,7 +152,7 @@ all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_
   iters <- lapply(geography_anneal, function(l) return(l[["iter"]]))
   
   return(list(best_fit= best_fits, tae= taes, call= mc, p_accept= p_accept, 
-              upscale_100= upscale_100, iter= iters, max_iter= max_iter, seed= seed))
+              iter= iters, max_iter= max_iter, seed= seed))
 }
 
 

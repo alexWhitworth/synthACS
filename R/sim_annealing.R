@@ -154,13 +154,12 @@ tae_mapply <- function(samples, constraints) {
 #' 
 #' Optimization is done via simulated annealing, where we wish to minimize the total absolute error
 #' (TAE) between the micro-data and the macro-constraints. The annealing procedure is controlled by 
-#' the parameters \code{tolerance}, \code{resample_size}, \code{upscale_100}, \code{p_accept}, and 
+#' the parameters \code{tolerance}, \code{resample_size}, \code{p_accept}, and 
 #' \code{max_iter}. Specifically, \code{tolerance} indicates the maximum allowable TAE between the
 #' output micro-data and the macro-constraints within a given \code{max_iter} allowable iterations 
-#' to converge. \code{resample_size}, \code{upscale_100}, \code{p_accept} all control movement 
-#' about the candidate space. \code{resample_size} controls the jump size between neighboring 
-#' candidates, \code{upscale_100} controls the increase in jump size for early iterations, and
-#' \code{p_accept} controls the hill-climbing rate for exiting local minima.
+#' to converge. \code{resample_size} and \code{p_accept} control movement about the candidate space. 
+#' Specfically, \code{resample_size} controls the jump size between neighboring 
+#' candidates and \code{p_accept} controls the hill-climbing rate for exiting local minima.
 #' 
 #' Please see the references for a more detailed discussion of the simulated annealing procedure.
 #' 
@@ -174,7 +173,6 @@ tae_mapply <- function(samples, constraints) {
 #' @param resample_size An integer controlling the rate of movement about the candidate space. 
 #' Specifically, it specifies the number of observations to change between iterations. Defaults to 
 #' min(num_obs, max(0.1\% * nobs, 500))
-#' @param upscale_100 Numeric. Controls the increase in \code{resample_size} for early iterations.
 #' @param p_accept The acceptance probability for the Metropolis acceptance criteria.
 #' @param max_iter The maximum number of allowable iterations. Defaults to \code{10000L}
 #' @param seed A seed for reproducibility. See \code{\link[base]{set.seed}}
@@ -190,7 +188,7 @@ tae_mapply <- function(samples, constraints) {
 optimize_microdata <- function(micro_data, prob_name= "p", constraint_list, 
                                tolerance= round(sum(constraint_list[[1]]) * .0015 * length(constraint_list), 0),
                                resample_size= min(sum(constraint_list[[1]]), max(500, round(sum(constraint_list[[1]]) * .0001, 0))), 
-                               upscale_100= 5L, p_accept= 0.05, max_iter= 10000L, 
+                               p_accept= 0.05, max_iter= 10000L, 
                                seed= sample(1L:10000L, size=1, replace=FALSE),
                                verbose= TRUE) {
   ## 01. error checking
@@ -207,7 +205,6 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
     stop("constraint_list must be a named list of numeric vectors with corresponding attributes in micro_data.")
   if ((tolerance %% 1 != 0) | tolerance < 1 ) stop("tolerance must be specified as a positive integer.")
   if ((resample_size %% 1 != 0) | resample_size < 1) stop("resample_size must be specified as a positive integer.")
-  if (!is.numeric(upscale_100) | upscale_100 < 1) stop("upscale_100 must be numeric >=1.")
   if (!is.numeric(p_accept) | p_accept <= 0 | p_accept >= 1) stop("p_accept must be numeric in (0,1).")
   if ((max_iter %% 1 != 0) | max_iter < 1) stop("max_iter must be an integer.")
   
@@ -230,21 +227,21 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
   if (tae_0$tae < tolerance) {
     # got lucky, return:
     return(list(best_fit= cur_samp, tae= tae_0[[1]], call= mc, p_accept= p_accept, 
-                upscale_100= upscale_100, iter= iter, max_iter= max_iter, seed= seed))
+                iter= iter, max_iter= max_iter, seed= seed))
   } else {
     iter <- iter + 1L
   ## 03. Anneal to convergence
   #------------------------------------
     con_names <- names(constraint_list)
-    resample_size <- min(resample_size, round(sz / upscale_100 * .5,0)) # check for small geogs
+    resample_size <- min(resample_size, round(sz * .05,0)) # check for small geogs, never more than 5%
     repeat {
       ##  (A) drop obs, grab new ones
       if (iter < 100) { # initially, take larger jumps
-        drop_ind <- sample.int(nrow(cur_samp), size= resample_size * upscale_100, replace=FALSE)
-        new_obs  <- sample_micro(micro_data, resample_size * upscale_100, prob_name)
+        drop_ind <- sample.int(nrow(cur_samp), size= sz * 0.1, replace=FALSE)
+        new_obs  <- sample_micro(micro_data, sz * 0.1, prob_name)
       } else if (iter %% 500 == 0) { # every 500 iterations, take a big jump in the sample space
-        drop_ind <- sample.int(nrow(cur_samp), size= round(sz * .5, 0), replace=FALSE)
-        new_obs  <- sample_micro(micro_data, round(sz * .5, 0), prob_name)  
+        drop_ind <- sample.int(nrow(cur_samp), size= round(sz * 0.2, 0), replace=FALSE)
+        new_obs  <- sample_micro(micro_data, round(sz * 0.2, 0), prob_name)  
       } else {
         drop_ind <- sample.int(nrow(cur_samp), size= resample_size, replace=FALSE)
         new_obs  <- sample_micro(micro_data, resample_size, prob_name)  
@@ -276,7 +273,7 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
       ## (C) check to exit
       if (tae_0[[1]] < tolerance | iter >= max_iter) {
         return(list(best_fit= cur_samp, tae= tae_0[[1]], call= mc, p_accept= p_accept, 
-                    upscale_100= upscale_100, iter= iter, max_iter= max_iter, seed= seed))
+                    iter= iter, max_iter= max_iter, seed= seed))
       } else { # (d) update for next iteration
         iter <- iter + 1
       }

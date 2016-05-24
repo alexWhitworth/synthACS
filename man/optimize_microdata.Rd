@@ -7,9 +7,9 @@
 optimize_microdata(micro_data, prob_name = "p", constraint_list,
   tolerance = round(sum(constraint_list[[1]]) * 0.0015 *
   length(constraint_list), 0), resample_size = min(sum(constraint_list[[1]]),
-  max(500, round(sum(constraint_list[[1]]) * 1e-04, 0))), upscale_100 = 5L,
-  p_accept = 0.05, max_iter = 10000L, seed = sample(1L:10000L, size = 1,
-  replace = FALSE), verbose = TRUE)
+  max(500, round(sum(constraint_list[[1]]) * 1e-04, 0))), p_accept = 0.05,
+  max_iter = 10000L, seed = sample(1L:10000L, size = 1, replace = FALSE),
+  verbose = TRUE)
 }
 \arguments{
 \item{micro_data}{A \code{data.frame} of micro data observations.}
@@ -26,8 +26,6 @@ observations per constraint.}
 \item{resample_size}{An integer controlling the rate of movement about the candidate space. 
 Specifically, it specifies the number of observations to change between iterations. Defaults to 
 min(num_obs, max(0.1\% * nobs, 500))}
-
-\item{upscale_100}{Numeric. Controls the increase in \code{resample_size} for early iterations.}
 
 \item{p_accept}{The acceptance probability for the Metropolis acceptance criteria.}
 
@@ -53,13 +51,12 @@ datasets given a set of candidate observations and macro-level constraints.
 
 Optimization is done via simulated annealing, where we wish to minimize the total absolute error
 (TAE) between the micro-data and the macro-constraints. The annealing procedure is controlled by 
-the parameters \code{tolerance}, \code{resample_size}, \code{upscale_100}, \code{p_accept}, and 
+the parameters \code{tolerance}, \code{resample_size}, \code{p_accept}, and 
 \code{max_iter}. Specifically, \code{tolerance} indicates the maximum allowable TAE between the
 output micro-data and the macro-constraints within a given \code{max_iter} allowable iterations 
-to converge. \code{resample_size}, \code{upscale_100}, \code{p_accept} all control movement 
-about the candidate space. \code{resample_size} controls the jump size between neighboring 
-candidates, \code{upscale_100} controls the increase in jump size for early iterations, and
-\code{p_accept} controls the hill-climbing rate for exiting local minima.
+to converge. \code{resample_size} and \code{p_accept} control movement about the candidate space. 
+Specfically, \code{resample_size} controls the jump size between neighboring 
+candidates and \code{p_accept} controls the hill-climbing rate for exiting local minima.
 
 Please see the references for a more detailed discussion of the simulated annealing procedure.
 }
