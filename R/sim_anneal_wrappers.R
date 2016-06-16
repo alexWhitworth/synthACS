@@ -1,5 +1,5 @@
 
-#' @title Add new constraint to a set set of geographies
+#' @title Add new constraint to a set of geographies
 #' @description Add a new constraint to the mapping between a a set of macro datasets and a matching 
 #' set of micro dataset (supplied as class 'macro_micro'). May be called repeatedly to create a 
 #' set of constraints across the sub-geographies.
@@ -44,8 +44,8 @@ all_geogs_add_constraint <- function(attr_name= "variable", attr_total_list, mac
   #------------------------------------
   if (missing(attr_name)) 
     stop("attr_name must be supplied.")
-  if (!is.list(macro_micro) | !all(unlist(lapply(macro_micro, is.macro_micro)))) 
-    stop("macro_micro must be supplied as a list of with each element of class 'macro_micro'.")
+  if (!is.list(macro_micro) | !is.synthACS(macro_micro))
+    stop("macro_micro must be supplied as a class 'synthACS' object.")
   if (!is.character(attr_name)) stop("attr_name must be a string.")
   if (!all(unlist(lapply(macro_micro, function(l, nm) {exists(nm, as.environment(l[[2]]))}, nm= attr_name))))
     stop(paste("variable", attr_name, "is not contained in all elements of macro_micro.", sep= " "))
@@ -119,8 +119,8 @@ all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_
   
   # 01. error checking
   #------------------------------------
-  if (!is.list(macro_micro) | !all(unlist(lapply(macro_micro, is.macro_micro)))) 
-    stop("macro_micro must be supplied as a list of with each element of class 'macro_micro'.")
+  if (!is.list(macro_micro) | !is.synthACS(macro_micro))
+    stop("macro_micro must be supplied as a class 'synthACS' object.")
   if (!is.numeric(p_accept) | p_accept <= 0 | p_accept >= 1) stop("p_accept must be numeric in (0,1).")
   if ((max_iter %% 1 != 0) | max_iter < 1) stop("max_iter must be an integer.")
   
@@ -193,8 +193,8 @@ all_geog_synthetic_new_attribute <- function(df_list, prob_name= "p",
  
   # 01. error checking
   #------------------------------------
-  if (!is.list(df_list) | !all(unlist(lapply(df_list, is.micro_synthetic)))) 
-    stop("df_list must be supplied as a list of with each element of class 'micro_synthetic'.")
+  if (!is.list(df_list) | !is.synthACS(df_list))
+    stop("df_list must be supplied as a class 'synthACS' object.")
  
   # 02. wrap synthetic_new_attribute in parallel
   #------------------------------------

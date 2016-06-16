@@ -1,4 +1,8 @@
 
+##---------------------------------------------------------
+## CHECK IF OBJECT IS MEMBER OF CLASS
+##---------------------------------------------------------
+
 #' @title Check macroACS class
 #' @description Function that checks if the target object is a \code{macroACS} object.
 #' @param x any R object.
@@ -29,6 +33,17 @@ is.macro_micro <- function(x) {
   inherits(x, "macro_micro")
 }
 
+
+#' @title Check synthACS class
+#' @description Function that checks if the target object is a \code{synthACS} object.
+#' @param x any R object.
+#' @return Returns \code{TRUE} if its argument has class "synthACS" among its classes and
+#' \code{FALSE} otherwise.
+#' @export
+is.synthACS <- function(x) {
+  inherits(x, "synthACS")
+}
+
 ##---------------------------------------------------------
 ## Generics for class macroACS
 ##---------------------------------------------------------
@@ -55,7 +70,7 @@ validate_get_inputs <- function(acs, geography, dataset= c("estimate", "st.err")
   if (!is.character(geography)) {
     stop("geography must be specified as a character vector.")
   } else {
-    if (any(nchar(geography) < 4)) 
+    if (any(nchar(geography) < 4) & geography != "*") 
       stop("Please specify at least 4 characters for geography.")
   }
   # if no error, okay
@@ -80,7 +95,7 @@ fetch_data <- function(acs, dataset= c("estimate", "st.err"),
 #' by age and sex.
 #' @param acs An object of class \code{"macroACS"}.
 #' @param geography A character vector allowing string matching via \code{\link[base]{grep}} to 
-#' a set of specified geographies.
+#' a set of specified geographies. All values may be specified by \code{"*"}.
 #' @param dataset Either \code{"estimate"} or \code{"st.err"}. Do you want data on estimated 
 #' population counts or estimated standard errors?
 #' @export
@@ -93,8 +108,12 @@ get_age_by_sex.macroACS <- function(acs, geography, dataset= c("estimate", "st.e
   ## check inputs
   validate_get_inputs(acs, geography, dataset)
   ## execute return
-  rowid <- get_rowmatch(geography, acs$geography$NAME)
-  return(fetch_data(acs, dataset, choice= "age_by_sex")[rowid,])
+  if (geography != "*") {
+    rowid <- get_rowmatch(geography, acs$geography$NAME)
+    return(fetch_data(acs, dataset, choice= "age_by_sex")[rowid,])
+  } else {
+    return(fetch_data(acs, dataset, choice= "age_by_sex"))
+  }
 }
 
 
@@ -103,7 +122,7 @@ get_age_by_sex.macroACS <- function(acs, geography, dataset= c("estimate", "st.e
 #' by race.
 #' @param acs An object of class \code{"macroACS"}.
 #' @param geography A character vector allowing string matching via \code{\link[base]{grep}} to 
-#' a set of specified geographies.
+#' a set of specified geographies. All values may be specified by \code{"*"}.
 #' @param dataset Either \code{"estimate"} or \code{"st.err"}. Do you want data on estimated 
 #' population counts or estimated standard errors?
 #' @export
@@ -116,8 +135,12 @@ get_pop_by_race.macroACS <- function(acs, geography, dataset= c("estimate", "st.
   ## check inputs
   validate_get_inputs(acs, geography, dataset)
   ## execute return
-  rowid <- get_rowmatch(geography, acs$geography$NAME)
-  return(fetch_data(acs, dataset, choice= "pop_by_race")[rowid,])
+  if (geography != "*") {
+    rowid <- get_rowmatch(geography, acs$geography$NAME)
+    return(fetch_data(acs, dataset, choice= "pop_by_race")[rowid,])
+  } else {
+    return(fetch_data(acs, dataset, choice= "pop_by_race"))
+  }
 }
 
 #' @title Get Marital Status for Specified Geography
@@ -125,7 +148,7 @@ get_pop_by_race.macroACS <- function(acs, geography, dataset= c("estimate", "st.
 #' marital status by gender and age.
 #' @param acs An object of class \code{"macroACS"}.
 #' @param geography A character vector allowing string matching via \code{\link[base]{grep}} to 
-#' a set of specified geographies.
+#' a set of specified geographies. All values may be specified by \code{"*"}.
 #' @param dataset Either \code{"estimate"} or \code{"st.err"}. Do you want data on estimated 
 #' population counts or estimated standard errors?
 #' @export
@@ -138,8 +161,12 @@ get_marital_status.macroACS <- function(acs, geography, dataset= c("estimate", "
   ## check inputs
   validate_get_inputs(acs, geography, dataset)
   ## execute return
-  rowid <- get_rowmatch(geography, acs$geography$NAME)
-  return(fetch_data(acs, dataset, choice= "marital_status")[rowid,])
+  if (geography != "*") {
+    rowid <- get_rowmatch(geography, acs$geography$NAME)
+    return(fetch_data(acs, dataset, choice= "marital_status")[rowid,])
+  } else {
+    return(fetch_data(acs, dataset, choice= "marital_status"))
+  }
 }
 
 #' @title Get Educational Attainment for Specified Geography
@@ -147,7 +174,7 @@ get_marital_status.macroACS <- function(acs, geography, dataset= c("estimate", "
 #' educational attainment by gender and age.
 #' @param acs An object of class \code{"macroACS"}.
 #' @param geography A character vector allowing string matching via \code{\link[base]{grep}} to 
-#' a set of specified geographies.
+#' a set of specified geographies. All values may be specified by \code{"*"}.
 #' @param dataset Either \code{"estimate"} or \code{"st.err"}. Do you want data on estimated 
 #' population counts or estimated standard errors?
 #' @export
@@ -160,8 +187,12 @@ get_education.macroACS <- function(acs, geography, dataset= c("estimate", "st.er
   ## check inputs
   validate_get_inputs(acs, geography, dataset)
   ## execute return
-  rowid <- get_rowmatch(geography, acs$geography$NAME)
-  return(fetch_data(acs, dataset, choice= "edu")[rowid,])
+  if (geography != "*") {
+    rowid <- get_rowmatch(geography, acs$geography$NAME)
+    return(fetch_data(acs, dataset, choice= "edu")[rowid,])
+  } else {
+    return(fetch_data(acs, dataset, choice= "edu"))
+  }
 }
 
 #' @title Get Nativity Status for Specified Geography
@@ -169,7 +200,7 @@ get_education.macroACS <- function(acs, geography, dataset= c("estimate", "st.er
 #' nativity status by age.
 #' @param acs An object of class \code{"macroACS"}.
 #' @param geography A character vector allowing string matching via \code{\link[base]{grep}} to 
-#' a set of specified geographies.
+#' a set of specified geographies. All values may be specified by \code{"*"}.
 #' @param dataset Either \code{"estimate"} or \code{"st.err"}. Do you want data on estimated 
 #' population counts or estimated standard errors?
 #' @export
@@ -182,8 +213,12 @@ get_nativity.macroACS <- function(acs, geography, dataset= c("estimate", "st.err
   ## check inputs
   validate_get_inputs(acs, geography, dataset)
   ## execute return
-  rowid <- get_rowmatch(geography, acs$geography$NAME)
-  return(fetch_data(acs, dataset, choice= "nativity")[rowid,])
+  if (geography != "*") {
+    rowid <- get_rowmatch(geography, acs$geography$NAME)
+    return(fetch_data(acs, dataset, choice= "nativity")[rowid,])
+  } else {
+    return(fetch_data(acs, dataset, choice= "nativity"))
+  }
 }
 
 #' @title Get Nativity Status by Income for Specified Geography
@@ -191,7 +226,7 @@ get_nativity.macroACS <- function(acs, geography, dataset= c("estimate", "st.err
 #' nativity status by age and income in the previous 12 months.
 #' @param acs An object of class \code{"macroACS"}.
 #' @param geography A character vector allowing string matching via \code{\link[base]{grep}} to 
-#' a set of specified geographies.
+#' a set of specified geographies. All values may be specified by \code{"*"}.
 #' @param dataset Either \code{"estimate"} or \code{"st.err"}. Do you want data on estimated 
 #' population counts or estimated standard errors?
 #' @export
@@ -204,8 +239,12 @@ get_nativity_by_income.macroACS <- function(acs, geography, dataset= c("estimate
   ## check inputs
   validate_get_inputs(acs, geography, dataset)
   ## execute return
-  rowid <- get_rowmatch(geography, acs$geography$NAME)
-  return(fetch_data(acs, dataset, choice= "by_inc_12mo")[rowid,])
+  if (geography != "*") {
+    rowid <- get_rowmatch(geography, acs$geography$NAME)
+    return(fetch_data(acs, dataset, choice= "by_inc_12mo")[rowid,])
+  } else {
+    return(fetch_data(acs, dataset, choice= "by_inc_12mo"))
+  }
 }
 
 #' @title Get Geographic Mobility by Educational Attainment for Specified Geography
@@ -213,7 +252,7 @@ get_nativity_by_income.macroACS <- function(acs, geography, dataset= c("estimate
 #' geographic mobility by educational attainment.
 #' @param acs An object of class \code{"macroACS"}.
 #' @param geography A character vector allowing string matching via \code{\link[base]{grep}} to 
-#' a set of specified geographies.
+#' a set of specified geographies. All values may be specified by \code{"*"}.
 #' @param dataset Either \code{"estimate"} or \code{"st.err"}. Do you want data on estimated 
 #' population counts or estimated standard errors?
 #' @export
@@ -226,8 +265,12 @@ get_geographic_mobility.macroACS <- function(acs, geography, dataset= c("estimat
   ## check inputs
   validate_get_inputs(acs, geography, dataset)
   ## execute return
-  rowid <- get_rowmatch(geography, acs$geography$NAME)
-  return(fetch_data(acs, dataset, choice= "geo_mob_edu")[rowid,])
+  if (geography != "*") {
+    rowid <- get_rowmatch(geography, acs$geography$NAME)
+    return(fetch_data(acs, dataset, choice= "geo_mob_edu")[rowid,])
+  } else {
+    return(fetch_data(acs, dataset, choice= "geo_mob_edu"))
+  }
 }
 
 #' @title Get Individual Income for Specified Geography
@@ -235,7 +278,7 @@ get_geographic_mobility.macroACS <- function(acs, geography, dataset= c("estimat
 #' income in the past 12 months.
 #' @param acs An object of class \code{"macroACS"}.
 #' @param geography A character vector allowing string matching via \code{\link[base]{grep}} to 
-#' a set of specified geographies.
+#' a set of specified geographies. All values may be specified by \code{"*"}.
 #' @param dataset Either \code{"estimate"} or \code{"st.err"}. Do you want data on estimated 
 #' population counts or estimated standard errors?
 #' @export
@@ -248,8 +291,12 @@ get_ind_income.macroACS <- function(acs, geography, dataset= c("estimate", "st.e
   ## check inputs
   validate_get_inputs(acs, geography, dataset)
   ## execute return
-  rowid <- get_rowmatch(geography, acs$geography$NAME)
-  return(fetch_data(acs, dataset, choice= "ind_inc")[rowid,])
+  if (geography != "*") {
+    rowid <- get_rowmatch(geography, acs$geography$NAME)
+    return(fetch_data(acs, dataset, choice= "ind_inc")[rowid,])
+  } else {
+    return(fetch_data(acs, dataset, choice= "ind_inc"))
+  }
 }
 
 #' @title Get Employment Status for Specified Geography
@@ -257,7 +304,7 @@ get_ind_income.macroACS <- function(acs, geography, dataset= c("estimate", "st.e
 #' employment status in the prior 12 months by gender and age.
 #' @param acs An object of class \code{"macroACS"}.
 #' @param geography A character vector allowing string matching via \code{\link[base]{grep}} to 
-#' a set of specified geographies.
+#' a set of specified geographies. All values may be specified by \code{"*"}.
 #' @param dataset Either \code{"estimate"} or \code{"st.err"}. Do you want data on estimated 
 #' population counts or estimated standard errors?
 #' @export
@@ -279,7 +326,7 @@ get_employment_status.macroACS <- function(acs, geography, dataset= c("estimate"
 #' poverty status in the prior 12 months by gender and employment status.
 #' @param acs An object of class \code{"macroACS"}.
 #' @param geography A character vector allowing string matching via \code{\link[base]{grep}} to 
-#' a set of specified geographies.
+#' a set of specified geographies. All values may be specified by \code{"*"}.
 #' @param dataset Either \code{"estimate"} or \code{"st.err"}. Do you want data on estimated 
 #' population counts or estimated standard errors?
 #' @export
@@ -292,7 +339,67 @@ get_poverty_status.macroACS <- function(acs, geography, dataset= c("estimate", "
   ## check inputs
   validate_get_inputs(acs, geography, dataset)
   ## execute return
-  rowid <- get_rowmatch(geography, acs$geography$NAME)
-  return(fetch_data(acs, dataset, choice= "pov_status1")[rowid,])
+  if (geography != "*") {
+    rowid <- get_rowmatch(geography, acs$geography$NAME)
+    return(fetch_data(acs, dataset, choice= "pov_status1")[rowid,])
+  } else {
+    return(fetch_data(acs, dataset, choice= "pov_status1"))
+  }
+}
+
+##---------------------------------------------------------
+## GENERICS FOR CLASS "macro_micro" -- SPECIFICALLY ADDING CONSTRAINT LISTS
+## FOR THE 10 DEFAULT SYNTHETIC ATTRIBUTES / VARIABLES
+##---------------------------------------------------------
+
+# helper function to save typing
+# unsures that constraint population equals macro-population (for a geography)
+# is used in synthACS-methods when method= "synthetic" (see below functions)
+equal_constraint_populations <- function(constr_vec, geo_pop) {
+  if (sum(constr_vec) == geo_pop) {return(constr_vec)}
+  else if (sum(constr_vec) > geo_pop){ # equality from max
+    constr_vec[max(constr_vec)] <- constr_vec[max(constr_vec)] + (geo_pop - sum(constr_vec))
+    return(constr_vec)
+  } else if (sum(constr_vec) < geo_pop) {
+    constr_vec[min(constr_vec)] <- constr_vec[min(constr_vec)] + (geo_pop - sum(constr_vec))
+    return(constr_vec)
+  }
+}
+
+
+#' @title Add gender constraint to a set of geographies
+#' @description Add a new gender constraint to the mapping between a a set of macro datasets and a 
+#' matching set of micro dataset (supplied as class 'synthACS').
+#' @param obj An object of class \code{"synthACS"}.
+#' @param method One of \code{c("synthetic", "macro.table")}. Specifying \code{"synthetic"} indicates
+#' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
+#' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
+#' @export
+all_geog_constraint_gender <- function(obj, method= c("synthetic", "macro.table")) {
+  UseMethod("all_geog_constraint_gender", obj)
+}
+
+#' @export
+all_geog_constraint_gender.synthACS <- function(obj, method= c("synthetic", "macro.table")) {
+  method= match.arg(method, several.ok= FALSE)
+  
+  # A - synthetic
+  if (method == "synthetic") {
+    g_constraint <- lapply(obj, function(l) {
+      # marginalize probability vector by attribute, normalize by total_pop
+      constr_vec <- round(tapply(l[[2]]$p, l[[2]]$gender, sum) * l[[1]]$age_by_sex[1], 0)
+      # check that population matches macro pop and return
+      return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
+    })
+  }
+  # B - macro.table
+  else if (method == "macro.table") {
+    g_constraint <- lapply(obj, function(l) {
+      constr_vec <- l[[1]]$age_by_sex[2:3]
+      names(constr_vec) <- c("Male", "Female")
+      return(constr_vec)
+    })
+  }
+  return(g_constraint)
 }
 

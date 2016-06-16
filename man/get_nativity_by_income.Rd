@@ -10,7 +10,7 @@ get_nativity_by_income(acs, geography, dataset = c("estimate", "st.err"))
 \item{acs}{An object of class \code{"macroACS"}.}
 
 \item{geography}{A character vector allowing string matching via \code{\link[base]{grep}} to 
-a set of specified geographies.}
+a set of specified geographies. All values may be specified by \code{"*"}.}
 
 \item{dataset}{Either \code{"estimate"} or \code{"st.err"}. Do you want data on estimated 
 population counts or estimated standard errors?}
