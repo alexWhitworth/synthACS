@@ -2,7 +2,7 @@
 % Please edit documentation in R/sim_anneal_wrappers.R
 \name{all_geogs_add_constraint}
 \alias{all_geogs_add_constraint}
-\title{Add new constraint to a set set of geographies}
+\title{Add new constraint to a set of geographies}
 \usage{
 all_geogs_add_constraint(attr_name = "variable", attr_total_list, macro_micro,
   constraint_list_list = NULL)
@@ -30,26 +30,18 @@ set of constraints across the sub-geographies.
 }
 \examples{
 \dontrun{
-# assumes that la_synthetic already exists in your environment
+# assumes that micro_synthetic already exists in your environment
 
 # 1. build constraints for gender and age
-g <- lapply(la_synthetic[[2]], function(l) {
-  v <- l[[1]]$age_by_sex[2:3]
-  names(v) <- c("Male", "Female")
-  return(v)
-})
+g <- all_geog_constraint_gender(micro_synthetic, method= "macro.table")
 
-a <- lapply(la_synthetic[[2]], function(l) {
-  v <- l[[1]]$age_by_sex[-c(1:3)]
-  v <- apply(cbind(v[1:16], v[17:32]), 1, sum)
-  names(v) <- levels(l[[2]]$age)
-  return(v)
-})
+a <- all_geog_constraint_age(micro_synthetic, method= "macro.table")
+
 # 2. bind constraints to geographies and macro-data
 cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a, 
-          macro_micro= la_syn[[2]])
+          macro_micro= micro_synthetic)
 cll <- all_geogs_add_constraint(attr_name= "gender", attr_total_list= g, 
-          macro_micro= la_syn[[2]], constraint_list_list= cll)
+          macro_micro= micro_synthetic, constraint_list_list= cll)
 
 }
 }

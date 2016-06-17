@@ -16,26 +16,18 @@
 #' @export
 #' 
 #' @examples \dontrun{
-#' # assumes that la_synthetic already exists in your environment
+#' # assumes that micro_synthetic already exists in your environment
 #' 
 #' # 1. build constraints for gender and age
-#' g <- lapply(la_synthetic[[2]], function(l) {
-#'   v <- l[[1]]$age_by_sex[2:3]
-#'   names(v) <- c("Male", "Female")
-#'   return(v)
-#' })
+#' g <- all_geog_constraint_gender(micro_synthetic, method= "macro.table")
 #' 
-#' a <- lapply(la_synthetic[[2]], function(l) {
-#'   v <- l[[1]]$age_by_sex[-c(1:3)]
-#'   v <- apply(cbind(v[1:16], v[17:32]), 1, sum)
-#'   names(v) <- levels(l[[2]]$age)
-#'   return(v)
-#' })
+#' a <- all_geog_constraint_age(micro_synthetic, method= "macro.table")
+#' 
 #' # 2. bind constraints to geographies and macro-data
 #' cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a, 
-#'           macro_micro= la_syn[[2]])
+#'           macro_micro= micro_synthetic)
 #' cll <- all_geogs_add_constraint(attr_name= "gender", attr_total_list= g, 
-#'           macro_micro= la_syn[[2]], constraint_list_list= cll)
+#'           macro_micro= micro_synthetic, constraint_list_list= cll)
 #' 
 #' }
 all_geogs_add_constraint <- function(attr_name= "variable", attr_total_list, macro_micro,
@@ -107,9 +99,9 @@ all_geogs_add_constraint <- function(attr_name= "variable", attr_total_list, mac
 #' @export
 #' 
 #' @examples \dontrun{
-#'  # assumes that la_synthetic and cll already exist in your environment
+#'  # assumes that micro_synthetic and cll already exist in your environment
 #'  # see: examples for derive_synth_datasets() and all_geogs_add_constraint()
-#'  optimized_la <- all_geog_optimize_microdata(la_synthetic[[2]], prob_name= "p", 
+#'  optimized_la <- all_geog_optimize_microdata(micro_synthetic, prob_name= "p", 
 #'      constraint_list_list= cll, p_accept= 0.01, max_iter= 1000L)
 #' }
 all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_list_list, 
