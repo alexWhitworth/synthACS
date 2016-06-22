@@ -1,12 +1,12 @@
-# data-analysis
+# synthACS
 
-This is the root branch of the D&B Data Analysis repository. Individual projects are stored on branches.
-
-### Current contributors are:
-- Alex Whitworth (owner)
-
-
-### Current projects here:
-- **March 2015** - Synthetic microsimulation of ACS data
-- **August 2015** - Call Projection
-- **Sept/Oct 2015** - COS lead forecasting
+synthACS provides four main features. Firstly, it provides a wrapper
+  to library(acs) to access numerous American Community Survey (ACS) base tables
+  which may be of interest to many researchers. Secondly, it builds synthetic
+  microdatasets of ACS data (pulled via API) at any specified geographic level with
+  10 default individual attributes. Thirdly, synthACS provides funtionality for users
+  to add additional ACS & non-ACS synthetic data-attributes to micro-datasets based on
+  macro population characteristics. And finally, in addition to creating synthetic
+  data, synthACS also conducts spatial microsimulation modeling (SMSM) (ie- optimally
+  fits synthetic microdata to macrodata constraints) via simulated annealing.
+  SMSM is conducted in parallel by default.
