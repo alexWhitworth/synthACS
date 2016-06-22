@@ -234,6 +234,10 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
   #------------------------------------
     con_names <- names(constraint_list)
     resample_size <- min(resample_size, round(sz * .05,0)) # check for small geogs, never more than 5%
+    
+    # set cooling schedule
+    cool_rt <- seq(p_accept, 0.005, length.out= max_iter)
+    
     repeat {
       ##  (A) drop obs, grab new ones
       if (iter < 100) { # initially, take larger jumps
@@ -264,7 +268,7 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
         tae_0 <- tae_1
       } else { # P(Accept | \delta E > 0) \propto d_tae * U(0,1)
         tae_rel <- tae_1[[1]] / tae_0[[1]]
-        if(stats::runif(1, 0, 1 * tae_rel) < p_accept) {
+        if(stats::runif(1, 0, 1 * tae_rel) < p_accept * cool_rt[iter]) {
           cur_samp <- rbind(cur_samp[-drop_ind, ], new_obs)
           tae_0 <- tae_1
         } # else -- stays the same

@@ -255,7 +255,7 @@ test_that("race constraint creates successfully", {
   
   # run function
   #g <- all_geog_constraint_race(syn, method= "macro.table")
-  g2 <- all_geog_constraint_race(syn)
+  g2 <- all_geog_constraint_race(syn, method= "synthetic")
   
   # test outputs
   # expect_equal(class(g), "list")

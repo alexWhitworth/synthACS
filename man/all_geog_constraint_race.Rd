@@ -4,10 +4,14 @@
 \alias{all_geog_constraint_race}
 \title{Create race constraint list to a set of geographies}
 \usage{
-all_geog_constraint_race(obj)
+all_geog_constraint_race(obj, method = c("synthetic", "macro.table"))
 }
 \arguments{
 \item{obj}{An object of class \code{"synthACS"}.}
+
+\item{method}{One of \code{c("synthetic", "macro.table")}. Specifying \code{"synthetic"} indicates
+that constraints are built by marginalizing the synthetic micro datasets. Specifying 
+\code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.}
 }
 \description{
 Create a new race constraint list to the mapping between a a set 

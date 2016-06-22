@@ -360,14 +360,14 @@ get_poverty_status.macroACS <- function(acs, geography, dataset= c("estimate", "
 # unsures that constraint population equals macro-population (for a geography)
 # is used in synthACS-methods when method= "synthetic" (see below functions)
 equal_constraint_populations <- function(constr_vec, geo_pop) {
-  if (sum(constr_vec) == geo_pop) {return(constr_vec)}
-  else if (sum(constr_vec) > geo_pop){ # equality from max
+  if (sum(constr_vec, na.rm=TRUE) == geo_pop) {return(constr_vec)}
+  else if (sum(constr_vec, na.rm=TRUE) > geo_pop){ # equality from max
     idx <- which.max(constr_vec)
-    constr_vec[idx] <- constr_vec[idx] + (geo_pop - sum(constr_vec))
+    constr_vec[idx] <- constr_vec[idx] + (geo_pop - sum(constr_vec, na.rm=TRUE))
     return(constr_vec)
-  } else if (sum(constr_vec) < geo_pop) { # equality from min
+  } else if (sum(constr_vec, na.rm=TRUE) < geo_pop) { # equality from min
     idx <- which.min(constr_vec)
-    constr_vec[idx] <- constr_vec[idx] + (geo_pop - sum(constr_vec))
+    constr_vec[idx] <- constr_vec[idx] + (geo_pop - sum(constr_vec, na.rm=TRUE))
     return(constr_vec)
   }
 }
@@ -395,6 +395,7 @@ all_geog_constraint_gender.synthACS <- function(obj, method= c("synthetic", "mac
     constraint <- lapply(obj, function(l) {
       # marginalize probability vector by attribute, normalize by total_pop
       constr_vec <- as.numeric(round(tapply(l[[2]]$p, l[[2]]$gender, sum) * l[[1]]$age_by_sex[1], 0))
+      constr_vec <- ifelse(is.na(constr_vec), 0, constr_vec)
       names(constr_vec) <- c("Male", "Female")
       # check that population matches macro pop and return
       return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
@@ -434,6 +435,7 @@ all_geog_constraint_age.synthACS <- function(obj, method= c("synthetic", "macro.
     constraint <- lapply(obj, function(l) {
       # marginalize probability vector by attribute, normalize by total_pop
       constr_vec <- as.numeric(round(tapply(l[[2]]$p, l[[2]]$age, sum) * l[[1]]$age_by_sex[1], 0))
+      constr_vec <- ifelse(is.na(constr_vec), 0, constr_vec)
       names(constr_vec) <- levels(l[[2]]$age)
       # check that population matches macro pop and return
       return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
@@ -444,7 +446,7 @@ all_geog_constraint_age.synthACS <- function(obj, method= c("synthetic", "macro.
     constraint <- lapply(obj, function(l) {
       constr_vec <- l[[1]]$age_by_sex[-c(1:3)]
       constr_vec <- apply(cbind(constr_vec[1:16], constr_vec[17:32]), 1, sum)
-      names(constr_vec) <- names(tapply(l$synthetic_micro$p, l$synthetic_micro$age, sum))
+      names(constr_vec) <- levels(l[[2]]$age)
       return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
     })
   }
@@ -474,6 +476,7 @@ all_geog_constraint_marital_status.synthACS <- function(obj, method= c("syntheti
     constraint <- lapply(obj, function(l) {
       # marginalize probability vector by attribute, normalize by total_pop
       constr_vec <- as.numeric(round(tapply(l[[2]]$p, l[[2]]$marital_status, sum) * l[[1]]$age_by_sex[1], 0))
+      constr_vec <- ifelse(is.na(constr_vec), 0, constr_vec)
       names(constr_vec) <- levels(l[[2]]$marital_status)
       # check that population matches macro pop and return
       return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
@@ -524,6 +527,7 @@ all_geog_constraint_edu.synthACS <- function(obj, method= c("synthetic", "macro.
     constraint <- lapply(obj, function(l) {
       # marginalize probability vector by attribute, normalize by total_pop
       constr_vec <- as.numeric(round(tapply(l[[2]]$p, l[[2]]$edu_attain, sum) * l[[1]]$age_by_sex[1], 0))
+      constr_vec <- ifelse(is.na(constr_vec), 0, constr_vec)
       names(constr_vec) <- levels(l[[2]]$edu_attain)
       # check that population matches macro pop and return
       return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
@@ -581,6 +585,7 @@ all_geog_constraint_employment.synthACS <- function(obj, method= c("synthetic", 
     constraint <- lapply(obj, function(l) {
       # marginalize probability vector by attribute, normalize by total_pop
       constr_vec <- as.numeric(round(tapply(l[[2]]$p, l[[2]]$emp_status, sum) * l[[1]]$age_by_sex[1], 0))
+      constr_vec <- ifelse(is.na(constr_vec), 0, constr_vec)
       names(constr_vec) <- levels(l[[2]]$emp_status)
       # check that population matches macro pop and return
       return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
@@ -631,6 +636,7 @@ all_geog_constraint_nativity.synthACS <- function(obj, method= c("synthetic", "m
     constraint <- lapply(obj, function(l) {
       # marginalize probability vector by attribute, normalize by total_pop
       constr_vec <- as.numeric(round(tapply(l[[2]]$p, l[[2]]$nativity, sum) * l[[1]]$age_by_sex[1], 0))
+      constr_vec <- ifelse(is.na(constr_vec), 0, constr_vec)
       names(constr_vec) <- levels(l[[2]]$nativity)
       # check that population matches macro pop and return
       return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
@@ -677,6 +683,7 @@ all_geog_constraint_poverty.synthACS <- function(obj, method= c("synthetic", "ma
     constraint <- lapply(obj, function(l) {
       # marginalize probability vector by attribute, normalize by total_pop
       constr_vec <- as.numeric(round(tapply(l[[2]]$p, l[[2]]$pov_status, sum) * l[[1]]$age_by_sex[1], 0))
+      constr_vec <- ifelse(is.na(constr_vec), 0, constr_vec)
       names(constr_vec) <- levels(l[[2]]$pov_status)
       # check that population matches macro pop and return
       return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
@@ -724,6 +731,7 @@ all_geog_constraint_geog_mob.synthACS <- function(obj, method= c("synthetic", "m
     constraint <- lapply(obj, function(l) {
       # marginalize probability vector by attribute, normalize by total_pop
       constr_vec <- as.numeric(round(tapply(l[[2]]$p, l[[2]]$geog_mobility, sum) * l[[1]]$age_by_sex[1], 0))
+      constr_vec <- ifelse(is.na(constr_vec), 0, constr_vec)
       names(constr_vec) <- levels(l[[2]]$geog_mobility)
       # check that population matches macro pop and return
       return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
@@ -770,7 +778,8 @@ all_geog_constraint_geog_mob.synthACS <- function(obj, method= c("synthetic", "m
                       "same state"= same_st + round(pop_u15 * v[15] / same_house, 0) + 
                         round(pop_15_17 * v[16] / same_st, 0) + round(pop_18_24 * same_st / CNT, 0)) 
       
-      names(constr_vec) <- names(tapply(l$synthetic_micro$p, l$synthetic_micro$geog_mobility, sum))
+      constr_vec <- ifelse(is.na(constr_vec), 0, constr_vec)
+      names(constr_vec) <- levels(l[[2]]$geog_mobility)
       return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
     })
   }
@@ -799,6 +808,7 @@ all_geog_constraint_income.synthACS <- function(obj, method= c("synthetic", "mac
     constraint <- lapply(obj, function(l) {
       # marginalize probability vector by attribute, normalize by total_pop
       constr_vec <- as.numeric(round(tapply(l[[2]]$p, l[[2]]$ind_income, sum) * l[[1]]$age_by_sex[1], 0))
+      constr_vec <- ifelse(is.na(constr_vec), 0, constr_vec)
       names(constr_vec) <- levels(l[[2]]$ind_income)
       # check that population matches macro pop and return
       return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
@@ -823,7 +833,8 @@ all_geog_constraint_income.synthACS <- function(obj, method= c("synthetic", "mac
                       "gt75k"= v[10],
                       "no_income"= v[2] + round(pop_u15 * v[2] / sum(v[2:6]) , 0))
       
-      names(constr_vec) <- names(tapply(l$synthetic_micro$p, l$synthetic_micro$ind_income, sum))
+      constr_vec <- ifelse(is.na(constr_vec), 0, constr_vec)
+      names(constr_vec) <- levels(l[[2]]$ind_income)
       return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
     })
   }
@@ -834,55 +845,57 @@ all_geog_constraint_income.synthACS <- function(obj, method= c("synthetic", "mac
 #' @description Create a new race constraint list to the mapping between a a set 
 #' of macro datasets and a matching set of micro dataset (supplied as class 'synthACS').
 #' @param obj An object of class \code{"synthACS"}.
-# @param method One of \code{c("synthetic", "macro.table")}. Specifying \code{"synthetic"} indicates
-# that constraints are built by marginalizing the synthetic micro datasets. Specifying 
-# \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
+#' @param method One of \code{c("synthetic", "macro.table")}. Specifying \code{"synthetic"} indicates
+#' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
+#' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
 #' @export
-all_geog_constraint_race <- function(obj) {
+all_geog_constraint_race <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_race", obj)
 }
 
 #' @export
-all_geog_constraint_race.synthACS <- function(obj) {
-  #method= match.arg(method, several.ok= FALSE)
+all_geog_constraint_race.synthACS <- function(obj, method= c("synthetic", "macro.table")) {
+  method= match.arg(method, several.ok= FALSE)
   
   # A - synthetic
-  # if (method == "synthetic") {
-  constraint <- lapply(obj, function(l) {
-    # marginalize probability vector by attribute, normalize by total_pop
-    constr_vec <- as.numeric(round(tapply(l[[2]]$p, l[[2]]$race, sum) * l[[1]]$age_by_sex[1], 0))
-    names(constr_vec) <- levels(l[[2]]$race)
-    # check that population matches macro pop and return
-    return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
-  })
-  # }
-  # # B - macro.table
-  # else if (method == "macro.table") {
-  #   constraint <- lapply(obj, function(l) {
-  #     # done via name pattern matching and summing across age brackets
-  #     v <- l[[1]]$pop_by_race
-  #     # race includes breakout by white alone v hispanic white... need to reduce counts to match
-  #     # total (v[1] vs sum(v[3:10]))
-  #     white   <- round(sum(v[which(grepl("total_white_alone", names(v)))]) * v[1] / sum(v[3:10]), 0)
-  #     black   <- round(sum(v[which(grepl("total_black", names(v)))]) * v[1] / sum(v[3:10]), 0)
-  #     hisp    <- round(sum(v[which(grepl("total_hisp_lat", names(v)))]) * v[1] / sum(v[3:10]), 0)
-  #     asian   <- round(sum(v[which(grepl("total_asian", names(v)))]) * v[1] / sum(v[3:10]), 0)
-  #     native  <- round(sum(v[which(grepl("total_nat_amer", names(v)))]) * v[1] / sum(v[3:10]), 0)
-  #     pac     <- round(sum(v[which(grepl("total_pac_isl", names(v)))]) * v[1] / sum(v[3:10]), 0)
-  #     more2   <- round(sum(v[which(grepl("total_2p_races", names(v)))]) * v[1] / sum(v[3:10]), 0)
-  #     
-  #     constr_vec <- c("asian"= asian,
-  #                     "black, afr amer"= black,
-  #                     "hispanic, latino"= hisp,
-  #                     "native amer"= native,
-  #                     "pacific islander"= pac,
-  #                     "two or more races"= more2,
-  #                     "white alone"=  white)
-  #     
-  #     names(constr_vec) <- names(tapply(l$synthetic_micro$p, l$synthetic_micro$race, sum))
-  #     return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
-  #   })
-  # }
+  if (method == "synthetic") {
+    constraint <- lapply(obj, function(l) {
+      # marginalize probability vector by attribute, normalize by total_pop
+      constr_vec <- as.numeric(round(tapply(l[[2]]$p, l[[2]]$race, sum, na.rm=T) * l[[1]]$age_by_sex[1], 0))
+      constr_vec <- ifelse(is.na(constr_vec), 0, constr_vec)
+      names(constr_vec) <- levels(l[[2]]$race)
+      # check that population matches macro pop and return
+      return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
+    })
+  }
+  # B - macro.table
+  else if (method == "macro.table") {
+    constraint <- lapply(obj, function(l) {
+      # done via name pattern matching and summing across age brackets
+      v <- l[[1]]$pop_by_race
+      # race includes breakout by white alone v hispanic white... need to reduce counts to match
+      # total (v[1] vs sum(v[3:10]))
+      white   <- round(sum(v[which(grepl("total_white_alone", names(v)))]) * v[1] / sum(v[3:10]), 0)
+      black   <- round(sum(v[which(grepl("total_black", names(v)))]) * v[1] / sum(v[3:10]), 0)
+      hisp    <- round(sum(v[which(grepl("total_hisp_lat", names(v)))]) * v[1] / sum(v[3:10]), 0)
+      asian   <- round(sum(v[which(grepl("total_asian", names(v)))]) * v[1] / sum(v[3:10]), 0)
+      native  <- round(sum(v[which(grepl("total_nat_amer", names(v)))]) * v[1] / sum(v[3:10]), 0)
+      pac     <- round(sum(v[which(grepl("total_pac_isl", names(v)))]) * v[1] / sum(v[3:10]), 0)
+      more2   <- round(sum(v[which(grepl("total_2p_races", names(v)))]) * v[1] / sum(v[3:10]), 0)
+
+      constr_vec <- c("asian"= asian,
+                      "black, afr amer"= black,
+                      "hispanic, latino"= hisp,
+                      "native amer"= native,
+                      "pacific islander"= pac,
+                      "two or more races"= more2,
+                      "white alone"=  white)
+
+      constr_vec <- ifelse(is.na(constr_vec), 0, constr_vec)
+      names(constr_vec) <- levels(l[[2]]$race)
+      return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
+    })
+  }
   return(constraint)
 }

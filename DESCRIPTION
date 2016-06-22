@@ -1,6 +1,6 @@
 Package: synthACS
 Title: Synthetic Microdata and Spatial MicroSimulation Modeling for ACS Data
-Version: 0.4.1
+Version: 0.4.3
 Authors@R: person("Alex", "Whitworth",,email = "whitworth.alex@gmail.com", c("aut", "cre"))
 Description: synthACS provides four main features. Firstly, it provides a wrapper
   to library(acs) to access numerous American Community Survey (ACS) base tables
@@ -17,11 +17,16 @@ Depends:
     acs (>= 1.2),
     data.table (>= 1.9.6)
 Imports:
-    parallel (>= 3.2.3),
+    parallel (>= 3.2.3)
 License: MIT + file LICENSE
 LazyData: true
 Suggests:
-    testthat
+    testthat,
+    tigris (>= 0.3),
+    sp (>= 1.2),
+    leaflet (>= 1.0),
+    shiny (>= 0.13),
+    rgdal (>= 1.1)
 RoxygenNote: 5.0.1
 LinkingTo: Rcpp
 Imports: Rcpp
