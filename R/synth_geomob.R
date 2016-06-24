@@ -11,7 +11,7 @@ synth_data_geomob <- function(agmeenp_dat, geomob_vec) {
   
   # 1. create hash table for mapping educational attainment
   ht <- data.frame(prior_dat= agmeenp_dat[[2]],
-                   new_dat= c(rep("lt_hs", 2), rep("high_sch",3), "bachelors", "graduate"),
+                   new_dat= c(rep("lt_hs", 2), "high_sch", rep("some_col",2), "bachelors", "graduate"),
                    stringsAsFactors = FALSE)
   # 2. create age buckets on which to condition
   ag_list <- split(dat, dat$edu_attain)

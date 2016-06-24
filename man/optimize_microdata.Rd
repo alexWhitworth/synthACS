@@ -7,8 +7,8 @@
 optimize_microdata(micro_data, prob_name = "p", constraint_list,
   tolerance = round(sum(constraint_list[[1]]) * 0.0015 *
   length(constraint_list), 0), resample_size = min(sum(constraint_list[[1]]),
-  max(500, round(sum(constraint_list[[1]]) * 1e-04, 0))), p_accept = 0.05,
-  max_iter = 10000L, seed = sample(1L:10000L, size = 1, replace = FALSE),
+  max(500, round(sum(constraint_list[[1]]) * 1e-04, 0))), p_accept = 0.2,
+  max_iter = 5000L, seed = sample.int(10000L, size = 1, replace = FALSE),
   verbose = TRUE)
 }
 \arguments{
@@ -29,7 +29,7 @@ min(num_obs, max(0.1\% * nobs, 500))}
 
 \item{p_accept}{The acceptance probability for the Metropolis acceptance criteria.}
 
-\item{max_iter}{The maximum number of allowable iterations. Defaults to \code{10000L}}
+\item{max_iter}{The maximum number of allowable iterations. Defaults to \code{5000L}}
 
 \item{seed}{A seed for reproducibility. See \code{\link[base]{set.seed}}}
 

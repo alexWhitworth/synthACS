@@ -174,7 +174,7 @@ tae_mapply <- function(samples, constraints) {
 #' Specifically, it specifies the number of observations to change between iterations. Defaults to 
 #' min(num_obs, max(0.1\% * nobs, 500))
 #' @param p_accept The acceptance probability for the Metropolis acceptance criteria.
-#' @param max_iter The maximum number of allowable iterations. Defaults to \code{10000L}
+#' @param max_iter The maximum number of allowable iterations. Defaults to \code{5000L}
 #' @param seed A seed for reproducibility. See \code{\link[base]{set.seed}}
 #' @param verbose Logical. Do you wish to see verbose output? Defaults to \code{TRUE}
 #'
@@ -188,8 +188,8 @@ tae_mapply <- function(samples, constraints) {
 optimize_microdata <- function(micro_data, prob_name= "p", constraint_list, 
                                tolerance= round(sum(constraint_list[[1]]) * .0015 * length(constraint_list), 0),
                                resample_size= min(sum(constraint_list[[1]]), max(500, round(sum(constraint_list[[1]]) * .0001, 0))), 
-                               p_accept= 0.05, max_iter= 10000L, 
-                               seed= sample(1L:10000L, size=1, replace=FALSE),
+                               p_accept= 0.20, max_iter= 5000L, 
+                               seed= sample.int(10000L, size=1, replace=FALSE),
                                verbose= TRUE) {
   ## 01. error checking
   #------------------------------------
@@ -236,7 +236,7 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
     resample_size <- min(resample_size, round(sz * .05,0)) # check for small geogs, never more than 5%
     
     # set cooling schedule
-    cool_rt <- seq(p_accept, 0.005, length.out= max_iter)
+    cool_rt <- p_accept * exp(-1/20 * seq(length.out= max_iter) / length(constraint_list))
     
     repeat {
       ##  (A) drop obs, grab new ones

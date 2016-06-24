@@ -1,7 +1,7 @@
 
 # @param agmeen_dat a \code{list} equivalent to the output of \code{synth_data_nativ}
 # @param pov_ge_vec A vector containing counts of the total population 
-# (individuals 15 years and over for whom poverty status is determined)
+# (civilian individuals 16+ years for whom poverty status is determined)
 # as well as counts breaking out the counts by gender and employment status. 
 # should be: \code{unlist(<synth_data>$estimates$pov_status1[<row i>,])}
 # NOTE: employment status is determined by Age/gender
@@ -27,7 +27,7 @@ synth_data_pov <- function(agmeen_dat, pov_ge_vec, total_pop) {
   
   # marginalize pov by gender/employment status by emp status (sep by gender)
   pv_m <- pov_ge_vec[which(substr(names(pov_ge_vec), 1,1) == "m")]
-  pv_f <- pov_ge_vec[which(substr(names(pov_ge_vec), 1,1) == "m")]
+  pv_f <- pov_ge_vec[which(substr(names(pov_ge_vec), 1,1) == "f")]
   
   emp_lvls <- levels(agmeen_dat[[1]]$emp_status)
   emp_marg_m <- marginalize_emp_status(pv_m, emp_lvls)
@@ -70,8 +70,8 @@ pov_lapply <- function(l, levels, emp_marg) {
   return(dat)
 }
 
-# after first splitting the vector of poverty status by gender/employment status by
-# gender, this function takes a vector of poverty statuses by employment status (joint density)
+# after first splitting the vector of poverty status by gender/employment status 
+# this function takes a vector of poverty statuses by employment status (joint density)
 # for a single gender and produces the marginal density by of poverty for each 
 # employment status
 # the result is a vector of poverty status by 

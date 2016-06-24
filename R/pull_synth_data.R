@@ -36,9 +36,9 @@ pull_synth_data <- function(endyear, span, geography) {
   edu <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                       table.number = "B15001", col.names = "pretty") # (age 18+, by age and gender)
   nativity <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
-                        table.number = "B06001", col.names = "pretty") # by age
+                        table.number = "B06001", col.names = "pretty") # by age; total US population
   by_inc_12mo <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
-                           table.number = "B06010", col.names = "pretty")
+                           table.number = "B06010", col.names = "pretty") #  15+ years by nativity status
   # geo_mob_mar_stat <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
   #                          table.number = "B07008", col.names = "pretty") # 15+
   geo_mob_inc <- acs::acs.fetch(endyear = endyear, span= span, geography = geography,
