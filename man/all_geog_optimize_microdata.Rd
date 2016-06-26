@@ -5,8 +5,8 @@
 \title{Optimize the selection of a micro data population for a set of geographies.}
 \usage{
 all_geog_optimize_microdata(macro_micro, prob_name = "p",
-  constraint_list_list, p_accept = 0.05, max_iter = 10000L,
-  seed = sample(1L:10000L, size = 1, replace = FALSE), verbose = TRUE)
+  constraint_list_list, p_accept = 0.4, max_iter = 10000L,
+  seed = sample.int(10000L, size = 1, replace = FALSE), verbose = TRUE)
 }
 \arguments{
 \item{macro_micro}{The geographical dataset of macro and micro data. Should be of class 

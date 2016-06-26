@@ -4,7 +4,7 @@
 \alias{pull_pop_data}
 \title{Pull ACS population data}
 \usage{
-pull_pop_data(endyear, span, geography, percentages = TRUE)
+pull_pop_data(endyear, span, geography)
 }
 \arguments{
 \item{endyear}{An integer, indicating the latest year of the data in the survey.}
@@ -13,9 +13,6 @@ pull_pop_data(endyear, span, geography, percentages = TRUE)
 
 \item{geography}{a valid \code{geo.set} object specifying the census geography or 
 geographies to be fetched.}
-
-\item{percentages}{Logical. Do you wish percentages to be calculated? Defaults
-to \code{TRUE}}
 }
 \value{
 A \code{list} containing the endyear, span, a \code{data.frame} of estimates,

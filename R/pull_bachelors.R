@@ -51,12 +51,13 @@ pull_bachelors <- function(endyear, span, geography) {
   
   # 03 -- combine and return
   #----------------------------------------------
-  est <- do.call("cbind", est)
-  se  <- do.call("cbind", se)
-  
-  return(list(endyear= endyear, span= span,
+  ret <- list(endyear= endyear, span= span,
               estimates= est,
               standard_error= se,
-              geography= geo))
+              geography= geo,
+              geo_title= unlist(geography@geo.list))
+  class(ret) <- "macroACS"
+  names(ret$estimates) <- names(ret$standard_error) <- c("degrees_by_age_sex", "degrees_by_field")
+  return(ret)
   
 }

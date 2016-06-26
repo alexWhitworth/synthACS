@@ -172,13 +172,14 @@ pull_pov_inc <- function(endyear, span, geography) {
   
   # 03 -- combine and return
   #----------------------------------------------
-  est <- do.call("cbind", est)
-  se  <- do.call("cbind", se)
-  
-  return(list(endyear= endyear, span= span,
+  ret <- list(endyear= endyear, span= span,
               estimates= est,
               standard_error= se,
-              acs_colnames= orig_colnames,
-              geography= geo))
+              geography= geo,
+              geo_title= unlist(geography@geo.list))
+  class(ret) <- "macroACS"
+  names(ret$estimates) <- names(ret$standard_error) <- c("pov_status_by_age_sex", "pov_status_by_work_exp",
+    "sex_age_disability_status", "hh_inc", "median_hh_inc", "soc_sec_inc_hh", "pub_assist_inc_hh")
   
+  return(ret)
 }

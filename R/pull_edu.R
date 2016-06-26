@@ -147,12 +147,14 @@ pull_edu <- function(endyear, span, geography) {
   
   # 03 -- combine and return
   #----------------------------------------------
-  est <- do.call("cbind", est)
-  se  <- do.call("cbind", se)
-  
-  return(list(endyear= endyear, span= span,
+  ret <- list(endyear= endyear, span= span,
               estimates= est,
               standard_error= se,
-              acs_colnames= orig_colnames,
-              geography= geo))
+              geography= geo,
+              geo_title= unlist(geography@geo.list))
+  class(ret) <- "macroACS"
+  names(ret$estimates) <- names(ret$standard_error) <- c("school_enrollment_by_type", 
+      "school_enrollment_by_age", "edu_attain_by_age_sex18", "edu_attain_age25up")
+  return(ret)
+  
 }

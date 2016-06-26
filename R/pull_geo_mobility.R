@@ -193,12 +193,15 @@ pull_geo_mobility <- function(endyear, span, geography) {
   
   # 07 -- combine and return
   #----------------------------------------------
-  est <- do.call("cbind", est)
-  se  <- do.call("cbind", se)
-  
-  return(list(endyear= endyear, span= span,
+  ret <- list(endyear= endyear, span= span,
               estimates= est,
               standard_error= se,
-              acs_colnames= orig_colnames,
-              geography= geo))
+              geography= geo,
+              geo_title= unlist(geography@geo.list))
+  class(ret) <- "macroACS"
+  names(ret$estimates) <- names(ret$standard_error) <- c("geo_mob_by_age", "geo_mob_by_sex",
+    "geo_mob_by_mar_status", "geo_mob_by_edu_attain", "geo_mob_by_income", "geo_mob_by_pov_status")
+  
+  return(ret)
 }
+

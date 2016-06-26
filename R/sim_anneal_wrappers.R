@@ -105,8 +105,8 @@ all_geogs_add_constraint <- function(attr_name= "variable", attr_total_list, mac
 #'      constraint_list_list= cll, p_accept= 0.01, max_iter= 1000L)
 #' }
 all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_list_list, 
-                                        p_accept= 0.05, max_iter= 10000L,
-                                        seed= sample(1L:10000L, size=1, replace=FALSE),
+                                        p_accept= 0.40, max_iter= 10000L,
+                                        seed= sample.int(10000L, size=1, replace=FALSE),
                                         verbose= TRUE) {
   
   # 01. error checking

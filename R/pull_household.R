@@ -302,12 +302,16 @@ pull_household <- function(endyear, span, geography) {
   
   # 03 -- combine and return
   #----------------------------------------------
-  est <- do.call("cbind", est)
-  se  <- do.call("cbind", se)
-  
-  return(list(endyear= endyear, span= span,
+  ret <- list(endyear= endyear, span= span,
               estimates= est,
               standard_error= se,
-              acs_colnames= orig_colnames,
-              geography= geo))
+              geography= geo,
+              geo_title= unlist(geography@geo.list))
+  class(ret) <- "macroACS"
+  names(ret$estimates) <- names(ret$standard_error) <- c("hh_type_by_relationship", "hh_type_by_units",
+    "mean_hh_inc_quintiles", "hh_occ_status", "hh_tenure", "hh_vacancy_status", "avg_hh_size",
+    "units_in_structure", "contract_rent", "median_contract_rent", "median_rent_pct_hh_inc",
+    "hh_ins_by_sex_age")
+  
+  return(ret)
 }

@@ -16,14 +16,12 @@
 #' @param span An integer in \code{c(1,3,5)} indicating the span of the desired data.
 #' @param geography a valid \code{geo.set} object specifying the census geography or 
 #' geographies to be fetched.
-#' @param percentages Logical. Do you wish percentages to be calculated? Defaults
-#' to \code{TRUE}
 #' @return A \code{list} containing the endyear, span, a \code{data.frame} of estimates,
 #' a \code{data.frame} of standard errors, a character vector of the original column names,
 #' and a \code{data.frame} of the geography metadata from \code{\link[acs]{acs.fetch}}.
 #' @seealso \code{\link[acs]{acs.fetch}}, \code{\link[acs]{geo.make}}
 #' @export
-pull_pop_data <- function(endyear, span, geography, percentages= TRUE) {
+pull_pop_data <- function(endyear, span, geography) {
   # 00 -- error checking
   #----------------------------------------------
   check_geo_inputs(endyear= endyear, span= span, geography= geography)
@@ -212,43 +210,42 @@ pull_pop_data <- function(endyear, span, geography, percentages= TRUE) {
   
   # 04 -- calc percentages
   #----------------------------------------------
-  if (percentages) {
-    est$pop_by_race$pct_white <- est$pop_by_race$white / est$pop_by_race$total
-    est$pop_by_race$pct_black <- est$pop_by_race$black_AA / est$pop_by_race$total
-    est$pop_by_race$pct_nat_amer <- est$pop_by_race$nat_amer / est$pop_by_race$total
-    est$pop_by_race$pct_asian <- est$pop_by_race$asian / est$pop_by_race$total
-    est$pop_by_race$pct_pac_isl <- est$pop_by_race$pac_isl / est$pop_by_race$total
-    est$pop_by_race$pct_other <- est$pop_by_race$other / est$pop_by_race$total
-    
-    se$pop_by_race$pct_white <- sqrt(se$pop_by_race$white^2 - (
-      (est$pop_by_race$white / est$pop_by_race$total)^2 * se$pop_by_race$total^2)) / est$pop_by_race$total
-    
-    se$pop_by_race$pct_black <- sqrt(se$pop_by_race$black_AA^2 - (
-      (est$pop_by_race$black_AA / est$pop_by_race$total)^2 * se$pop_by_race$total^2)) / est$pop_by_race$total
-    
-    se$pop_by_race$pct_nat_amer <- sqrt(se$pop_by_race$nat_amer^2 - (
-      (est$pop_by_race$nat_amer / est$pop_by_race$total)^2 * se$pop_by_race$total^2)) / est$pop_by_race$total
-    
-    se$pop_by_race$pct_asian <- sqrt(se$pop_by_race$asian^2 - (
-      (est$pop_by_race$asian / est$pop_by_race$total)^2 * se$pop_by_race$total^2)) / est$pop_by_race$total
-    
-    se$pop_by_race$pct_pac_isl <- sqrt(se$pop_by_race$pac_isl^2 - (
-      (est$pop_by_race$pac_isl / est$pop_by_race$total)^2 * se$pop_by_race$total^2)) / est$pop_by_race$total
-    
-    se$pop_by_race$pct_other <- sqrt(se$pop_by_race$other^2 - (
-      (est$pop_by_race$other / est$pop_by_race$total)^2 * se$pop_by_race$total^2)) / est$pop_by_race$total
-  }
+  est$pop_by_race$pct_white <- est$pop_by_race$white / est$pop_by_race$total
+  est$pop_by_race$pct_black <- est$pop_by_race$black_AA / est$pop_by_race$total
+  est$pop_by_race$pct_nat_amer <- est$pop_by_race$nat_amer / est$pop_by_race$total
+  est$pop_by_race$pct_asian <- est$pop_by_race$asian / est$pop_by_race$total
+  est$pop_by_race$pct_pac_isl <- est$pop_by_race$pac_isl / est$pop_by_race$total
+  est$pop_by_race$pct_other <- est$pop_by_race$other / est$pop_by_race$total
+  
+  se$pop_by_race$pct_white <- sqrt(se$pop_by_race$white^2 - (
+    (est$pop_by_race$white / est$pop_by_race$total)^2 * se$pop_by_race$total^2)) / est$pop_by_race$total
+  
+  se$pop_by_race$pct_black <- sqrt(se$pop_by_race$black_AA^2 - (
+    (est$pop_by_race$black_AA / est$pop_by_race$total)^2 * se$pop_by_race$total^2)) / est$pop_by_race$total
+  
+  se$pop_by_race$pct_nat_amer <- sqrt(se$pop_by_race$nat_amer^2 - (
+    (est$pop_by_race$nat_amer / est$pop_by_race$total)^2 * se$pop_by_race$total^2)) / est$pop_by_race$total
+  
+  se$pop_by_race$pct_asian <- sqrt(se$pop_by_race$asian^2 - (
+    (est$pop_by_race$asian / est$pop_by_race$total)^2 * se$pop_by_race$total^2)) / est$pop_by_race$total
+  
+  se$pop_by_race$pct_pac_isl <- sqrt(se$pop_by_race$pac_isl^2 - (
+    (est$pop_by_race$pac_isl / est$pop_by_race$total)^2 * se$pop_by_race$total^2)) / est$pop_by_race$total
+  
+  se$pop_by_race$pct_other <- sqrt(se$pop_by_race$other^2 - (
+    (est$pop_by_race$other / est$pop_by_race$total)^2 * se$pop_by_race$total^2)) / est$pop_by_race$total
   
   # 05 -- combine and return
   #----------------------------------------------
-  est <- do.call("cbind", est)
-  se  <- do.call("cbind", se)
-  
-  return(list(endyear= endyear, span= span,
+  ret <- list(endyear= endyear, span= span,
               estimates= est,
               standard_error= se,
-              acs_colnames= orig_colnames,
-              geography= geo))
+              geography= geo,
+              geo_title= unlist(geography@geo.list))
+  class(ret) <- "macroACS"
+  names(ret$estimates) <- names(ret$standard_error) <- c("sex_by_age", "median_age_by_sex", "pop_by_race",
+    "place_birth_by_lang_at_home", "place_birth_by_mar_status", "place_birth_by_edu_attain",
+    "place_birth_by_income", "median_income_by_place_birth", "place_birth_by_pov_status")
   
+  return(ret)
 }
-

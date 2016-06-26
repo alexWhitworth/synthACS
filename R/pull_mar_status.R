@@ -104,13 +104,14 @@ pull_mar_status <- function(endyear, span, geography) {
   
   # 03 -- combine and return
   #----------------------------------------------
-  est <- do.call("cbind", est)
-  se  <- do.call("cbind", se)
-  
-  return(list(endyear= endyear, span= span,
+  ret <- list(endyear= endyear, span= span,
               estimates= est,
               standard_error= se,
-              acs_colnames= orig_colnames,
-              geography= geo))
+              geography= geo,
+              geo_title= unlist(geography@geo.list))
+  class(ret) <- "macroACS"
+  names(ret$estimates) <- names(ret$standard_error) <- c("mar_status_by_sex", 
+    "mar_status_by_labor_participation", "median_age_first_marriage", "marriages_last_year_by_sex_by_status")
   
+  return(ret)
 }

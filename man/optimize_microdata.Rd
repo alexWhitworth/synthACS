@@ -5,10 +5,10 @@
 \title{Optimize the selection of a micro data population.}
 \usage{
 optimize_microdata(micro_data, prob_name = "p", constraint_list,
-  tolerance = round(sum(constraint_list[[1]]) * 0.0015 *
+  tolerance = round(sum(constraint_list[[1]]) * 5e-04 *
   length(constraint_list), 0), resample_size = min(sum(constraint_list[[1]]),
-  max(500, round(sum(constraint_list[[1]]) * 1e-04, 0))), p_accept = 0.2,
-  max_iter = 5000L, seed = sample.int(10000L, size = 1, replace = FALSE),
+  max(500, round(sum(constraint_list[[1]]) * 1e-04, 0))), p_accept = 0.4,
+  max_iter = 10000L, seed = sample.int(10000L, size = 1, replace = FALSE),
   verbose = TRUE)
 }
 \arguments{
@@ -20,8 +20,8 @@ of selection.}
 
 \item{constraint_list}{A \code{list} of constraining macro data attributes. See \code{\link{add_constraint}}}
 
-\item{tolerance}{An integer giving the maximum acceptable loss (TAE). Defaults to 0.15\% of the 
-observations per constraint.}
+\item{tolerance}{An integer giving the maximum acceptable loss (TAE), enabling early stopping.
+Defaults to 0.05\% of the observations per constraint.}
 
 \item{resample_size}{An integer controlling the rate of movement about the candidate space. 
 Specifically, it specifies the number of observations to change between iterations. Defaults to 
@@ -29,7 +29,7 @@ min(num_obs, max(0.1\% * nobs, 500))}
 
 \item{p_accept}{The acceptance probability for the Metropolis acceptance criteria.}
 
-\item{max_iter}{The maximum number of allowable iterations. Defaults to \code{5000L}}
+\item{max_iter}{The maximum number of allowable iterations. Defaults to \code{10000L}}
 
 \item{seed}{A seed for reproducibility. See \code{\link[base]{set.seed}}}
 

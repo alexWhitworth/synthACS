@@ -79,10 +79,13 @@ pull_race_data <- function(endyear, span, geography) {
   
   # 04 -- combine and return
   #----------------------------------------------
-  return(list(endyear= endyear, span= span,
+  ret <- list(endyear= endyear, span= span,
               estimates= est,
               standard_error= se,
-              geography= geo))
+              geography= geo,
+              geo_title= unlist(geography@geo.list))
+  class(ret) <- "macroACS"
+  return(ret)
   
 }
 

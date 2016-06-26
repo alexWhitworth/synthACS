@@ -168,13 +168,13 @@ tae_mapply <- function(samples, constraints) {
 #' of occurance. This string specifies the variable within \code{micro_data} that contains the probability
 #' of selection.
 #' @param constraint_list A \code{list} of constraining macro data attributes. See \code{\link{add_constraint}}
-#' @param tolerance An integer giving the maximum acceptable loss (TAE). Defaults to 0.15\% of the 
-#' observations per constraint.
+#' @param tolerance An integer giving the maximum acceptable loss (TAE), enabling early stopping.
+#' Defaults to 0.05\% of the observations per constraint. 
 #' @param resample_size An integer controlling the rate of movement about the candidate space. 
 #' Specifically, it specifies the number of observations to change between iterations. Defaults to 
 #' min(num_obs, max(0.1\% * nobs, 500))
 #' @param p_accept The acceptance probability for the Metropolis acceptance criteria.
-#' @param max_iter The maximum number of allowable iterations. Defaults to \code{5000L}
+#' @param max_iter The maximum number of allowable iterations. Defaults to \code{10000L}
 #' @param seed A seed for reproducibility. See \code{\link[base]{set.seed}}
 #' @param verbose Logical. Do you wish to see verbose output? Defaults to \code{TRUE}
 #'
@@ -186,9 +186,9 @@ tae_mapply <- function(samples, constraints) {
 #' (1987): 157-162.
 #' @export
 optimize_microdata <- function(micro_data, prob_name= "p", constraint_list, 
-                               tolerance= round(sum(constraint_list[[1]]) * .0015 * length(constraint_list), 0),
+                               tolerance= round(sum(constraint_list[[1]]) * .0005 * length(constraint_list), 0),
                                resample_size= min(sum(constraint_list[[1]]), max(500, round(sum(constraint_list[[1]]) * .0001, 0))), 
-                               p_accept= 0.20, max_iter= 5000L, 
+                               p_accept= 0.40, max_iter= 10000L, 
                                seed= sample.int(10000L, size=1, replace=FALSE),
                                verbose= TRUE) {
   ## 01. error checking

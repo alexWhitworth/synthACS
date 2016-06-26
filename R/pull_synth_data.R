@@ -378,13 +378,11 @@ pull_synth_data <- function(endyear, span, geography) {
   
   # 05 -- combine and return
   #----------------------------------------------
-  #est <- do.call("cbind", est)
-  #se  <- do.call("cbind", se)
-  
   ret <- list(endyear= endyear, span= span,
        estimates= est,
        standard_error= se,
-       geography= geo)
+       geography= geo,
+       geo_title= unlist(geography@geo.list))
   class(ret) <- "macroACS"
   
   return(ret)

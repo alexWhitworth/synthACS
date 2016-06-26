@@ -110,13 +110,15 @@ pull_inc_earnings <- function(endyear, span, geography) {
   
   # 03 -- combine and return
   #----------------------------------------------
-  est <- do.call("cbind", est)
-  se  <- do.call("cbind", se)
-  
-  return(list(endyear= endyear, span= span,
+  ret <- list(endyear= endyear, span= span,
               estimates= est,
               standard_error= se,
-              acs_colnames= orig_colnames,
-              geography= geo))
+              geography= geo,
+              geo_title= unlist(geography@geo.list))
+  class(ret) <- "macroACS"
+  names(ret$estimates) <- names(ret$standard_error) <- c("gini_index", "income_per_capita", 
+    "med_inc_by_sex_work_exp", "vet_status_by_sex_age", "snap_receipt", "mean_hrs_worked",
+    "occ_by_median_earn")
   
+  return(ret)
 }
