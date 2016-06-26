@@ -119,12 +119,12 @@ fetch_data.macroACS <- function(acs, geography, dataset= c("estimate", "st.err")
 #' @description Get the data collection span from a "macroACS" object
 #' @param acs An object of class \code{"macroACS"}.
 #' @export
-span <- function(acs) {
-  UseMethod("span", acs)
+get_span <- function(acs) {
+  UseMethod("get_span", acs)
 }
 
 #' @export
-span.macroACS <- function(acs) {
+get_span.macroACS <- function(acs) {
   return(acs$span)
 }
 
@@ -132,12 +132,12 @@ span.macroACS <- function(acs) {
 #' @description Get the data collection endyear from a "macroACS" object
 #' @param acs An object of class \code{"macroACS"}.
 #' @export
-endyear <- function(acs) {
-  UseMethod("endyear", acs)
+get_endyear <- function(acs) {
+  UseMethod("get_endyear", acs)
 }
 
 #' @export
-endyear.macroACS <- function(acs) {
+get_endyear.macroACS <- function(acs) {
   return(acs$endyear)
 }
 
@@ -145,12 +145,12 @@ endyear.macroACS <- function(acs) {
 #' @description Get the summary information of the geography selected from a "macroACS" object
 #' @param acs An object of class \code{"macroACS"}.
 #' @export
-geography <- function(acs) {
-  UseMethod("geography", acs)
+get_geography <- function(acs) {
+  UseMethod("get_geography", acs)
 }
 
 #' @export
-geography.macroACS <- function(acs) {
+get_geography.macroACS <- function(acs) {
   return(acs$geo_title)
 }
 

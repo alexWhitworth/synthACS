@@ -177,12 +177,12 @@ test_that("span, endyear, geography", {
   load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
   rm(list=ls()[-which(ls() == "ca_dat")])
   
-  sp <- span(ca_dat)
+  sp <- get_span(ca_dat)
   expect_equal(sp, ca_dat$span)
   
-  end <- endyear(ca_dat)
+  end <- get_endyear(ca_dat)
   expect_equal(end, ca_dat$endyear)
   
-  g <- geography(ca_dat)
+  g <- get_geography(ca_dat)
   expect_equal(g, ca_dat$geo_title)
 })
