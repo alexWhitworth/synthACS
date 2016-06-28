@@ -805,14 +805,10 @@ all_geog_constraint_race.synthACS <- function(obj, method= c("synthetic", "macro
 #' @param object An object of class \code{'smsm_set'}, typically a result of call to 
 #' \code{\link{all_geog_optimize_microdata}}
 #' @export
-summary <- function(object) {
-  UseMethod("summary")
-}
-
-#' @export
 summary.smsm_set <- function(object) {
   
   tae_q <- round(quantile(unlist(object$tae) / unlist(lapply(object$best_fit, nrow)) / object$D), 6)
+  names(tae_q) <- c("0%", "25%", "50%", "75%", "100%")
   n_early <- sum(unlist(object$iter) < object$max_iter)
   
   cat("\n Call: \n", paste(deparse(object$call), collapse= "\n"),
