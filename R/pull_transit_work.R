@@ -40,7 +40,7 @@ pull_transit_work <- function(endyear, span, geography) {
   place_of_work_microsa <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                                      table.number = "B08017", col.names= "pretty")
   
-  est <- list(time_to_work_by_age= data.frame(travel_to_work@estimate),
+  est <- list(time_to_work_by_sex= data.frame(travel_to_work@estimate),
               mode_to_work_by_age= data.frame(mode_travel_to_work@estimate),
               transit_med_earn= data.frame(mode_transit_earn@estimate),
               mode_by_med_age= data.frame(med_age_transit@estimate),
@@ -48,21 +48,13 @@ pull_transit_work <- function(endyear, span, geography) {
               msa_place= data.frame(place_of_work_msa@estimate),
               microsa_place= data.frame(place_of_work_microsa@estimate))
   
-  se <- list(time_to_work_by_age= data.frame(travel_to_work@standard.error),
+  se <- list(time_to_work_by_sex= data.frame(travel_to_work@standard.error),
               mode_to_work_by_age= data.frame(mode_travel_to_work@standard.error),
               transit_med_earn= data.frame(mode_transit_earn@standard.error),
               mode_by_med_age= data.frame(med_age_transit@standard.error),
               by_occ= data.frame(transit_by_occ@standard.error),
               msa_place= data.frame(place_of_work_msa@standard.error),
               microsa_place= data.frame(place_of_work_microsa@standard.error))
-  
-  orig_colnames <- list(time_to_work_by_age= travel_to_work@acs.colnames,
-                       mode_to_work_by_age= mode_travel_to_work@acs.colnames,
-                       transit_med_earn= mode_transit_earn@acs.colnames,
-                       mode_by_med_age= med_age_transit@acs.colnames,
-                       by_occ= transit_by_occ@acs.colnames,
-                       msa_place= place_of_work_msa@acs.colnames,
-                       microsa_place= place_of_work_microsa@acs.colnames)
   
   geo <- travel_to_work@geography
   
@@ -71,44 +63,44 @@ pull_transit_work <- function(endyear, span, geography) {
   
   
   ## 02 -- (A) combine columns and (B) calc percentages
-  ### time_to_work_by_age
+  ### time_to_work_by_sex
   #----------------------------------------------
-  est$time_to_work_by_age$tr_lt10      <- apply(est$time_to_work_by_age[, 2:3], 1, sum)
-  est$time_to_work_by_age$tr_10_lt30   <- apply(est$time_to_work_by_age[, 4:7], 1, sum)
-  est$time_to_work_by_age$tr_30_lt45   <- apply(est$time_to_work_by_age[, 8:10], 1, sum)
-  est$time_to_work_by_age$tr_lt10_m    <- apply(est$time_to_work_by_age[, 15:16], 1, sum)
-  est$time_to_work_by_age$tr_10_lt30_m <- apply(est$time_to_work_by_age[, 17:20], 1, sum)
-  est$time_to_work_by_age$tr_30_lt45_m <- apply(est$time_to_work_by_age[, 21:23], 1, sum)
-  est$time_to_work_by_age$tr_lt10_f    <- apply(est$time_to_work_by_age[, 28:29], 1, sum)
-  est$time_to_work_by_age$tr_10_lt30_f <- apply(est$time_to_work_by_age[, 30:33], 1, sum)
-  est$time_to_work_by_age$tr_30_lt45_f <- apply(est$time_to_work_by_age[, 34:36], 1, sum)
-  est$time_to_work_by_age <- est$time_to_work_by_age[, c(1, 40:42, 11:14, 43:45, 24:27, 46:48,37:39)]
+  est$time_to_work_by_sex$tr_lt10      <- apply(est$time_to_work_by_sex[, 2:3], 1, sum)
+  est$time_to_work_by_sex$tr_10_lt30   <- apply(est$time_to_work_by_sex[, 4:7], 1, sum)
+  est$time_to_work_by_sex$tr_30_lt45   <- apply(est$time_to_work_by_sex[, 8:10], 1, sum)
+  est$time_to_work_by_sex$tr_lt10_m    <- apply(est$time_to_work_by_sex[, 15:16], 1, sum)
+  est$time_to_work_by_sex$tr_10_lt30_m <- apply(est$time_to_work_by_sex[, 17:20], 1, sum)
+  est$time_to_work_by_sex$tr_30_lt45_m <- apply(est$time_to_work_by_sex[, 21:23], 1, sum)
+  est$time_to_work_by_sex$tr_lt10_f    <- apply(est$time_to_work_by_sex[, 28:29], 1, sum)
+  est$time_to_work_by_sex$tr_10_lt30_f <- apply(est$time_to_work_by_sex[, 30:33], 1, sum)
+  est$time_to_work_by_sex$tr_30_lt45_f <- apply(est$time_to_work_by_sex[, 34:36], 1, sum)
+  est$time_to_work_by_sex <- est$time_to_work_by_sex[, c(1, 40:42, 11:14, 43:45, 24:27, 46:48,37:39)]
   
-  se$time_to_work_by_age$tr_lt10      <- sqrt(apply(se$time_to_work_by_age[, 2:3]^2, 1, sum))
-  se$time_to_work_by_age$tr_10_lt30   <- sqrt(apply(se$time_to_work_by_age[, 4:7]^2, 1, sum))
-  se$time_to_work_by_age$tr_30_lt45   <- sqrt(apply(se$time_to_work_by_age[, 8:10]^2, 1, sum))
-  se$time_to_work_by_age$tr_lt10_m    <- sqrt(apply(se$time_to_work_by_age[, 15:16]^2, 1, sum))
-  se$time_to_work_by_age$tr_10_lt30_m <- sqrt(apply(se$time_to_work_by_age[, 17:20]^2, 1, sum))
-  se$time_to_work_by_age$tr_30_lt45_m <- sqrt(apply(se$time_to_work_by_age[, 21:23]^2, 1, sum))
-  se$time_to_work_by_age$tr_lt10_f    <- sqrt(apply(se$time_to_work_by_age[, 28:29]^2, 1, sum))
-  se$time_to_work_by_age$tr_10_lt30_f <- sqrt(apply(se$time_to_work_by_age[, 30:33]^2, 1, sum))
-  se$time_to_work_by_age$tr_30_lt45_f <- sqrt(apply(se$time_to_work_by_age[, 34:36]^2, 1, sum))
-  se$time_to_work_by_age <- se$time_to_work_by_age[, c(1, 40:42, 11:14, 43:45, 24:27, 46:48,37:39)]
+  se$time_to_work_by_sex$tr_lt10      <- sqrt(apply(se$time_to_work_by_sex[, 2:3]^2, 1, sum))
+  se$time_to_work_by_sex$tr_10_lt30   <- sqrt(apply(se$time_to_work_by_sex[, 4:7]^2, 1, sum))
+  se$time_to_work_by_sex$tr_30_lt45   <- sqrt(apply(se$time_to_work_by_sex[, 8:10]^2, 1, sum))
+  se$time_to_work_by_sex$tr_lt10_m    <- sqrt(apply(se$time_to_work_by_sex[, 15:16]^2, 1, sum))
+  se$time_to_work_by_sex$tr_10_lt30_m <- sqrt(apply(se$time_to_work_by_sex[, 17:20]^2, 1, sum))
+  se$time_to_work_by_sex$tr_30_lt45_m <- sqrt(apply(se$time_to_work_by_sex[, 21:23]^2, 1, sum))
+  se$time_to_work_by_sex$tr_lt10_f    <- sqrt(apply(se$time_to_work_by_sex[, 28:29]^2, 1, sum))
+  se$time_to_work_by_sex$tr_10_lt30_f <- sqrt(apply(se$time_to_work_by_sex[, 30:33]^2, 1, sum))
+  se$time_to_work_by_sex$tr_30_lt45_f <- sqrt(apply(se$time_to_work_by_sex[, 34:36]^2, 1, sum))
+  se$time_to_work_by_sex <- se$time_to_work_by_sex[, c(1, 40:42, 11:14, 43:45, 24:27, 46:48,37:39)]
   
-  names(est$time_to_work_by_age) <- names(se$time_to_work_by_age) <-
+  names(est$time_to_work_by_sex) <- names(se$time_to_work_by_sex) <-
     paste(rep(c("all", "m", "f"), each= 7),
           rep(c("cnt", "lt10", "10_lt30", "30_lt45", "45_lt60", "60_lt90", "90up"), 3), sep= "_")
   
   ### pcts
-  est$time_to_work_by_age$pct_lt30 <- apply(est$time_to_work_by_age[, 2:3], 1, sum) / est$time_to_work_by_age$all_cnt
-  est$time_to_work_by_age$pct_lt60 <- apply(est$time_to_work_by_age[, 2:5], 1, sum) / est$time_to_work_by_age$all_cnt
+  est$time_to_work_by_sex$pct_lt30 <- apply(est$time_to_work_by_sex[, 2:3], 1, sum) / est$time_to_work_by_sex$all_cnt
+  est$time_to_work_by_sex$pct_lt60 <- apply(est$time_to_work_by_sex[, 2:5], 1, sum) / est$time_to_work_by_sex$all_cnt
   
-  se$time_to_work_by_age$pct_lt30 <- sqrt(apply(se$time_to_work_by_age[, 2:3]^2, 1, sum) - 
-      ((apply(est$time_to_work_by_age[, 2:3], 1, sum) / est$time_to_work_by_age$all_cnt)^2 * 
-        se$time_to_work_by_age$all_cnt^2)) / est$time_to_work_by_age$all_cnt
-  se$time_to_work_by_age$pct_lt60 <- sqrt(apply(se$time_to_work_by_age[, 2:5]^2, 1, sum) - 
-      ((apply(est$time_to_work_by_age[, 2:5], 1, sum) / est$time_to_work_by_age$all_cnt)^2 * 
-        se$time_to_work_by_age$all_cnt^2)) / est$time_to_work_by_age$all_cnt
+  se$time_to_work_by_sex$pct_lt30 <- sqrt(apply(se$time_to_work_by_sex[, 2:3]^2, 1, sum) - 
+      ((apply(est$time_to_work_by_sex[, 2:3], 1, sum) / est$time_to_work_by_sex$all_cnt)^2 * 
+        se$time_to_work_by_sex$all_cnt^2)) / est$time_to_work_by_sex$all_cnt
+  se$time_to_work_by_sex$pct_lt60 <- sqrt(apply(se$time_to_work_by_sex[, 2:5]^2, 1, sum) - 
+      ((apply(est$time_to_work_by_sex[, 2:5], 1, sum) / est$time_to_work_by_sex$all_cnt)^2 * 
+        se$time_to_work_by_sex$all_cnt^2)) / est$time_to_work_by_sex$all_cnt
   
   
   ## 03 -- (A) combine columns and (B) calc percentages
@@ -144,6 +136,9 @@ pull_transit_work <- function(endyear, span, geography) {
   se$mode_to_work_by_age$pct_work_home   <- sqrt(se$mode_to_work_by_age[,49]^2 - 
     (est$mode_to_work_by_age[,49] / est$mode_to_work_by_age[,1])^2 * se$mode_to_work_by_age[,1]^2) / 
       est$mode_to_work_by_age[,1]
+  
+  est$mode_to_work_by_age <- est$mode_to_work_by_age[, -c(2:8)]
+  se$mode_to_work_by_age  <- se$mode_to_work_by_age[, -c(2:8)]
   
   ## 04 -- (A) combine columns and (B) calc percentages
   ### transit_med_earn
@@ -241,12 +236,15 @@ pull_transit_work <- function(endyear, span, geography) {
   
   # 09 -- combine and return
   #----------------------------------------------
-  est <- do.call("cbind", est)
-  se  <- do.call("cbind", se)
-  
-  return(list(endyear= endyear, span= span,
+  ret <- list(endyear= endyear, span= span,
               estimates= est,
               standard_error= se,
-              acs_colnames= orig_colnames,
-              geography= geo))
+              geography= geo,
+              geo_title= unlist(geography@geo.list))
+  class(ret) <- "macroACS"
+  names(ret$estimates) <- names(ret$standard_error) <- c("time_to_work_by_sex", "mode_transit_by_age",
+    "median_earnings_by_mode_transit", "median_age_by_mode_transit", "mode_transit_by_occ", 
+    "place_of_work_metroSA", "place_of_work_microSA")
+  
+  return(ret)
 }

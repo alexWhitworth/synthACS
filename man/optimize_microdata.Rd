@@ -5,9 +5,9 @@
 \title{Optimize the selection of a micro data population.}
 \usage{
 optimize_microdata(micro_data, prob_name = "p", constraint_list,
-  tolerance = round(sum(constraint_list[[1]]) * 5e-04 *
-  length(constraint_list), 0), resample_size = min(sum(constraint_list[[1]]),
-  max(500, round(sum(constraint_list[[1]]) * 1e-04, 0))), p_accept = 0.4,
+  tolerance = round(sum(constraint_list[[1]])/2000 * length(constraint_list),
+  0), resample_size = min(sum(constraint_list[[1]]), max(500,
+  round(sum(constraint_list[[1]]) * 1e-04, 0))), p_accept = 0.4,
   max_iter = 10000L, seed = sample.int(10000L, size = 1, replace = FALSE),
   verbose = TRUE)
 }

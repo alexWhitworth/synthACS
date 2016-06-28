@@ -44,6 +44,16 @@ is.synthACS <- function(x) {
   inherits(x, "synthACS")
 }
 
+#' @title Check smsm_set class
+#' @description Function that checks if the target object is a \code{smsm_set} object.
+#' @param x any R object.
+#' @return Returns \code{TRUE} if its argument has class "macroACS" among its classes and
+#' \code{FALSE} otherwise.
+#' @export
+is.smsm_set <- function(x) {
+  inherits(x, "smsm_set")
+}
+
 ##---------------------------------------------------------
 ## Generics for class macroACS
 ##---------------------------------------------------------
@@ -70,7 +80,7 @@ validate_get_inputs <- function(acs, geography, dataset= c("estimate", "st.err")
   if (!is.character(geography)) {
     stop("geography must be specified as a character vector.")
   } else {
-    if (any(nchar(geography) < 4) & geography != "*") 
+    if (geography != "*" && any(nchar(geography) < 4)) 
       stop("Please specify at least 4 characters for geography.")
   }
   # if no error, okay
@@ -115,6 +125,37 @@ fetch_data.macroACS <- function(acs, geography, dataset= c("estimate", "st.err")
 ##---------------------------------------------------------
 ## generics for getting the span, endyear and geography -- macroACS
 ##---------------------------------------------------------
+# @title Constructor function for the "macroACS" class
+# @description Constructor function for the "macroACS" class
+# @param endyear An integer specifying the eendyear
+# @param span An integer specifying the span of the data collection period. One of \code{c(1,3,5)}
+# @param estimates a \code{list} of \code{data.frame}s
+# @param standard_error a \code{list} of \code{data.frame}s
+# @param geography A \code{data.frame} specifying the geography to which the data corrresponds
+# @param geo_title An object of class 'geo'.
+new_macroACS <- function(endyear, span, estimates, standard_error, geography,
+                         geo_title) {
+  # validate inputs
+  if (! span %in% c(1,3,5)) stop("The ACS API only supports data spans of 1, 3, and 5 years.")
+  if (endyear %% 1 != 0 | endyear < 2009) stop("endyear must be an integer >= 2009 (when ACS data begins).")
+  if (!is.data.frame(geography)) stop("geography must be a data.frame")
+  #if (!acs::is.geo(geo_title[[1]])) stop("geo_title must be a 'geo' object.")
+  if (!is.list(estimates) & all(!unlist(lapply(estimates, is.data.frame))))
+    stop("estimates must be a list of data.frames.")
+  if (!is.list(standard_error) & all(!unlist(lapply(standard_error, is.data.frame))))
+    stop("standard_error must be a list of data.frames.")
+  
+  # create new macroACS object
+  new_macro <- list(endyear= endyear, span= span,
+                    estimates= estimates,
+                    standard_error= standard_error,
+                    geography= geography,
+                    geo_title= geo_title)
+  class(new_macro) <- "macroACS"
+  return(new_macro)
+}
+
+
 #' @title Get the span from a "macroACS" object.
 #' @description Get the data collection span from a "macroACS" object
 #' @param acs An object of class \code{"macroACS"}.
@@ -153,6 +194,58 @@ get_geography <- function(acs) {
 get_geography.macroACS <- function(acs) {
   return(acs$geo_title)
 }
+
+#' @title Get dataset names from a "macroACS" object.
+#' @description Get the names of the datasets in a given "macroACS" object. 
+#' @param acs An object of class \code{"macroACS"}.
+#' @seealso \code{\link{fetch_data}}
+#' @export
+get_dataset_names <- function(acs) {
+  UseMethod("get_dataset_names", acs)
+}
+
+#' @export
+get_dataset_names.macroACS <- function(acs) {
+  return(names(acs$estimates))
+}
+
+#' @title Split a "macroACS" object
+#' @description Split a "macroACS" object into subsets. This may be helpful for users who have
+#' limited memory available on their machines before proceding to derive sample synthetic micro data.
+#' @param acs An object of class \code{"macroACS"}.
+#' @param n_splits An integer for the number of splits you wish to create.
+#' @seealso \code{\link{derive_synth_datasets}}
+#' @export
+split <- function(acs, n_splits) {
+  UseMethod("split", acs)
+}
+
+#' @export
+split.macroACS <- function(acs, n_splits) {
+  # keep meta data
+  sp <- get_span(acs)
+  ey <- get_endyear(acs)
+  orig_geo <- acs$geography
+  geo_title <- NULL
+  
+  # split
+  nx <- nrow(acs$geography)
+  split_idx <- parallel::splitIndices(nx, ncl= n_splits)
+  
+  split_macroACS <- vector("list", length= n_splits)
+  for (i in 1:n_splits) {
+    geo <- orig_geo[ split_idx[[i]], ]
+    est <- lapply(acs$estimates, function(l, idx) {return(l[idx, ])}, idx= split_idx[[i]])
+    se <- lapply(acs$standard_error, function(l, idx) {return(l[idx, ])}, idx= split_idx[[i]])
+    
+    split_macroACS[[i]] <- new_macroACS(endyear= ey, span= sp, 
+                                        estimates= est, standard_error= se,
+                                        geography= geo,
+                                        geo_title= geo_title)
+  }
+  return(split_macroACS)
+}
+
 
 ##---------------------------------------------------------
 ## GENERICS FOR CLASS "macro_micro" -- SPECIFICALLY ADDING CONSTRAINT LISTS
@@ -702,3 +795,46 @@ all_geog_constraint_race.synthACS <- function(obj, method= c("synthetic", "macro
   }
   return(constraint)
 }
+
+
+##---------------------------------------------------------
+## Generics for class smsm_set
+##---------------------------------------------------------
+#' @title Summarizing SMSM fits
+#' @description \code{summary} method for class 'smsm_set'. 
+#' @param object An object of class \code{'smsm_set'}, typically a result of call to 
+#' \code{\link{all_geog_optimize_microdata}}
+#' @export
+summary <- function(object) {
+  UseMethod("summary")
+}
+
+#' @export
+summary.smsm_set <- function(object) {
+  
+  tae_q <- round(quantile(unlist(object$tae) / unlist(lapply(object$best_fit, nrow)) / object$D), 6)
+  n_early <- sum(unlist(object$iter) < object$max_iter)
+  
+  cat("\n Call: \n", paste(deparse(object$call), collapse= "\n"),
+      "\n \n Seed: ", object$seed,
+      "\n n-Constraints: ", object$D,
+      "\n \n Maximum Iterations: ", object$max_iter,
+      "\n %-Early Stop: ", round(n_early / length(object$iter), 4),
+      "\n \n Mean %-TAE: ", round(mean(unlist(object$tae) / unlist(lapply(object$best_fit, nrow)) / object$D), 6),
+      "\n Median %-TAE: ", round(median(unlist(object$tae) / unlist(lapply(object$best_fit, nrow)) / object$D), 6),
+      "\n %-TAE quantiles: \n ")
+  print(tae_q)
+}
+
+#' #' @title Combine separate SMSM optimizations
+#' #' @description Combine multiple objects of class "smsm_set" into a single object of class "smsm_set"
+#' #' @param ... objects of class 'smsm_set'.
+#' #' @seealso \code{\link[synthACS]{split}}
+#' #' @export
+#' combine_smsm <- function(...) {
+#'   UseMethod("combine_smsm", ...)
+#' }
+
+
+## combine, Z-statistics???
+

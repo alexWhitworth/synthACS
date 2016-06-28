@@ -172,7 +172,7 @@ test_that("fetch - pop_by_race - SE work", {
 
 
 #----------------------------
-test_that("span, endyear, geography", {
+test_that("span, endyear, geography, dataset names", {
   # load test data:
   load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
   rm(list=ls()[-which(ls() == "ca_dat")])
@@ -185,4 +185,51 @@ test_that("span, endyear, geography", {
   
   g <- get_geography(ca_dat)
   expect_equal(g, ca_dat$geo_title)
+  
+  nn <- get_dataset_names(ca_dat)
+  expect_equal(nn, names(ca_dat$estimates))
+  expect_equal(nn, names(ca_dat$standard_error))
+})
+
+
+
+#----------------------------
+test_that("split macroACS works", {
+  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
+  rm(list=ls()[-which(ls() == "ca_dat")])
+  
+  # run function
+  ca_split <- split(ca_dat, n_splits= 7)
+  # comparison / manual
+  split_idx <- parallel::splitIndices(nrow(ca_dat$geography), 7)
+  
+  # test structure
+  expect_equal(unlist(lapply(ca_split, class)), rep("macroACS", 7))
+  expect_equal(unlist(lapply(ca_split, names)), rep(names(ca_dat), 7))
+  expect_equal(unlist(lapply(ca_split, get_span)), rep(get_span(ca_dat), 7))
+  expect_equal(unlist(lapply(ca_split, get_endyear)), rep(get_endyear(ca_dat), 7))
+  expect_equal(unlist(lapply(ca_split, function(l) return(l$geo_title))), rep(NULL, 7))
+  
+  # test correct number of rows per split
+  expect_equal(nrow(ca_split[[1]]$estimates[[1]]), length(split_idx[[1]]))
+  expect_equal(nrow(ca_split[[2]]$estimates[[7]]), length(split_idx[[2]]))
+  expect_equal(nrow(ca_split[[3]]$estimates[[8]]), length(split_idx[[3]]))
+  expect_equal(nrow(ca_split[[4]]$estimates[[5]]), length(split_idx[[4]]))
+  expect_equal(nrow(ca_split[[5]]$standard_error[[2]]), length(split_idx[[5]]))
+  expect_equal(nrow(ca_split[[6]]$standard_error[[6]]), length(split_idx[[6]]))
+  expect_equal(nrow(ca_split[[7]]$standard_error[[10]]), length(split_idx[[7]]))
+  
+  # accurate geography splits
+  expect_equal(ca_split[[1]]$geography, ca_dat$geography[ split_idx[[1]], ])
+  expect_equal(ca_split[[4]]$geography, ca_dat$geography[ split_idx[[4]], ])
+  expect_equal(ca_split[[7]]$geography, ca_dat$geography[ split_idx[[7]], ])
+  
+  # accurate estimates splites
+  expect_equal(ca_split[[2]]$estimates, lapply(ca_dat$estimates, function(l, idx) return(l[idx, ]), idx= split_idx[[2]]))
+  expect_equal(ca_split[[3]]$estimates, lapply(ca_dat$estimates, function(l, idx) return(l[idx, ]), idx= split_idx[[3]]))
+  expect_equal(ca_split[[5]]$estimates, lapply(ca_dat$estimates, function(l, idx) return(l[idx, ]), idx= split_idx[[5]]))
+  
+  # accurate SE splits
+  expect_equal(ca_split[[6]]$standard_error, 
+               lapply(ca_dat$standard_error, function(l, idx) return(l[idx, ]), idx= split_idx[[6]]))
 })

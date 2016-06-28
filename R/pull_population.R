@@ -21,7 +21,7 @@
 #' and a \code{data.frame} of the geography metadata from \code{\link[acs]{acs.fetch}}.
 #' @seealso \code{\link[acs]{acs.fetch}}, \code{\link[acs]{geo.make}}
 #' @export
-pull_pop_data <- function(endyear, span, geography) {
+pull_population <- function(endyear, span, geography) {
   # 00 -- error checking
   #----------------------------------------------
   check_geo_inputs(endyear= endyear, span= span, geography= geography)
@@ -50,31 +50,24 @@ pull_pop_data <- function(endyear, span, geography) {
   # 02 -- create lists of EST and SE -- as data.frames
   #----------------------------------------------
   est <- list(age_by_sex= data.frame(age_by_sex@estimate),
-              pop_by_race= data.frame(pop_by_race@estimate[, c(1:7)]),
               med_age= data.frame(med_age@estimate),
+              pop_by_race= data.frame(pop_by_race@estimate[, c(1:7)]),
               birth_and_language= data.frame(birth_and_language@estimate),
               by_marital_status= data.frame(by_marital_status@estimate),
               by_edu= data.frame(by_edu@estimate),
               by_inc_12mo= data.frame(by_inc_12mo@estimate),
+              med_inc_12mo= data.frame(med_inc_12mo@estimate),
               by_pov_status= data.frame(by_pov_status@estimate))
   
   se <- list(age_by_sex= data.frame(age_by_sex@standard.error),
-             pop_by_race= data.frame(pop_by_race@standard.error[, c(1:7)]),
              med_age= data.frame(med_age@standard.error),
+             pop_by_race= data.frame(pop_by_race@standard.error[, c(1:7)]),
              birth_and_language= data.frame(birth_and_language@standard.error),
              by_marital_status= data.frame(by_marital_status@standard.error),
              by_edu= data.frame(by_edu@standard.error),
              by_inc_12mo= data.frame(by_inc_12mo@standard.error),
+             med_inc_12mo= data.frame(med_inc_12mo@standard.error),
              by_pov_status= data.frame(by_pov_status@standard.error))
-  
-  orig_colnames <- list(age_by_sex= data.frame(age_by_sex@acs.colnames),
-                        pop_by_race= data.frame(pop_by_race@acs.colnames[1:7]),
-                        med_age= data.frame(med_age@acs.colnames),
-                        birth_and_language= data.frame(birth_and_language@acs.colnames),
-                        by_marital_status= data.frame(by_marital_status@acs.colnames),
-                        by_edu= data.frame(by_edu@acs.colnames),
-                        by_inc_12mo= data.frame(by_inc_12mo@acs.colnames),
-                        by_pov_status= data.frame(by_pov_status@acs.colnames))
   
   geo <- age_by_sex@geography
   

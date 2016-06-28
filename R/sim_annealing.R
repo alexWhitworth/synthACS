@@ -186,7 +186,7 @@ tae_mapply <- function(samples, constraints) {
 #' (1987): 157-162.
 #' @export
 optimize_microdata <- function(micro_data, prob_name= "p", constraint_list, 
-                               tolerance= round(sum(constraint_list[[1]]) * .0005 * length(constraint_list), 0),
+                               tolerance= round(sum(constraint_list[[1]]) / 2000 * length(constraint_list), 0),
                                resample_size= min(sum(constraint_list[[1]]), max(500, round(sum(constraint_list[[1]]) * .0001, 0))), 
                                p_accept= 0.40, max_iter= 10000L, 
                                seed= sample.int(10000L, size=1, replace=FALSE),

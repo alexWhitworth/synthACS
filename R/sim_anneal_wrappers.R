@@ -143,8 +143,11 @@ all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_
   taes <- lapply(geography_anneal, function(l) return(l[["tae"]]))
   iters <- lapply(geography_anneal, function(l) return(l[["iter"]]))
   
-  return(list(best_fit= best_fits, tae= taes, call= mc, p_accept= p_accept, 
-              iter= iters, max_iter= max_iter, seed= seed))
+  smsm <- list(best_fit= best_fits, tae= taes, call= mc, p_accept= p_accept, 
+               iter= iters, max_iter= max_iter, seed= seed, D= length(constraint_list_list[[1]]))
+  # add class
+  class(smsm) <- "smsm_set"
+  return(smsm)
 }
 
 
