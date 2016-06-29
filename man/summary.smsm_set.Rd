@@ -4,11 +4,13 @@
 \alias{summary.smsm_set}
 \title{Summarizing SMSM fits}
 \usage{
-\method{summary}{smsm_set}(object)
+\method{summary}{smsm_set}(object, ...)
 }
 \arguments{
 \item{object}{An object of class \code{'smsm_set'}, typically a result of call to 
 \code{\link{all_geog_optimize_microdata}}}
+
+\item{...}{additional arguments affecting the summary produced.}
 }
 \description{
 \code{summary} method for class 'smsm_set'.

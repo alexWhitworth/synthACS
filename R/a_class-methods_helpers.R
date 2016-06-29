@@ -97,7 +97,7 @@ validate_get_inputs <- function(acs, geography, dataset= c("estimate", "st.err")
 #' @param choice A character vector specifying the name of one of the datasets in \code{acs} 
 #' @export
 fetch_data <- function(acs, geography, dataset= c("estimate", "st.err"), 
-                       choice= names(acs[[estimates]])) {
+                       choice= NULL) {
   UseMethod("fetch_data", acs) 
 }
 
@@ -804,11 +804,13 @@ all_geog_constraint_race.synthACS <- function(obj, method= c("synthetic", "macro
 #' @description \code{summary} method for class 'smsm_set'. 
 #' @param object An object of class \code{'smsm_set'}, typically a result of call to 
 #' \code{\link{all_geog_optimize_microdata}}
+#' @param ... additional arguments affecting the summary produced.
 #' @export
-summary.smsm_set <- function(object) {
+summary.smsm_set <- function(object, ...) {
   
-  tae_q <- round(quantile(unlist(object$tae) / unlist(lapply(object$best_fit, nrow)) / object$D), 6)
-  names(tae_q) <- c("0%", "25%", "50%", "75%", "100%")
+  tae_pct <- unlist(object$tae) / unlist(lapply(object$best_fit, nrow)) / object$D
+  tae_q <- round(stats::quantile(tae_pct, c(0,.25,.5,.75,.9,.95)), 6)
+  names(tae_q) <- c("0%", "25%", "50%", "75%", "90%", "95%")
   n_early <- sum(unlist(object$iter) < object$max_iter)
   
   cat("\n Call: \n", paste(deparse(object$call), collapse= "\n"),
@@ -816,11 +818,13 @@ summary.smsm_set <- function(object) {
       "\n n-Constraints: ", object$D,
       "\n \n Maximum Iterations: ", object$max_iter,
       "\n %-Early Stop: ", round(n_early / length(object$iter), 4),
-      "\n \n Mean %-TAE: ", round(mean(unlist(object$tae) / unlist(lapply(object$best_fit, nrow)) / object$D), 6),
-      "\n Median %-TAE: ", round(median(unlist(object$tae) / unlist(lapply(object$best_fit, nrow)) / object$D), 6),
+      "\n \n Mean %-TAE: ", round(mean(tae_pct), 6),
+      "\n Median %-TAE: ", round(stats::median(tae_pct), 6),
+      "\n Max %-TAE: ", round(max(tae_pct), 6),
       "\n %-TAE quantiles: \n ")
   print(tae_q)
 }
+
 
 #' #' @title Combine separate SMSM optimizations
 #' #' @description Combine multiple objects of class "smsm_set" into a single object of class "smsm_set"
