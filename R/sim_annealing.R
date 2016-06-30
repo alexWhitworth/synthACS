@@ -203,11 +203,14 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
       !all(sapply(names(constraint_list), function(n, df) {
         exists(n, as.environment(df))}, df= micro_data)))
     stop("constraint_list must be a named list of numeric vectors with corresponding attributes in micro_data.")
-  if ((tolerance %% 1 != 0) | tolerance < 1 ) stop("tolerance must be specified as a positive integer.")
+  if ((tolerance %% 1 != 0) | tolerance < 0) stop("tolerance must be specified as an integer >= 0.")
   if ((resample_size %% 1 != 0) | resample_size < 1) stop("resample_size must be specified as a positive integer.")
   if (!is.numeric(p_accept) | p_accept <= 0 | p_accept >= 1) stop("p_accept must be numeric in (0,1).")
   if ((max_iter %% 1 != 0) | max_iter < 1) stop("max_iter must be an integer.")
-  
+
+  ## create output structure for proposal and accepted TAE
+  tae_path <- matrix(NA, nrow= max_iter, ncol= 2, dimnames= list(1:max_iter, c("proposal TAE", "current TAE")))
+    
   ## 02. Take initial sample / iteration
   #------------------------------------
   mc <- match.call()
@@ -218,6 +221,8 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
   cur_samp <- sample_micro(micro_data, sz, prob_name)
   tae_0 <- calculate_TAE(sample_data= cur_samp, constraint_list,
                          prior_sample_totals= NULL, dropped_obs_totals= NULL, new_obs= NULL)
+  # add TAE to tracker
+  tae_path[iter, ] <- rep(tae_0[[1]], 2)
   
   if (verbose) {
     cat("Iteration", iter, ": TAE =", sprintf("%.0f", tae_0[[1]]), "... \n")
@@ -225,9 +230,10 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
   
   # check if we got lucky
   if (tae_0$tae < tolerance) {
+    tae_path <- tae_path[1:iter,]
     # got lucky, return:
     return(list(best_fit= cur_samp, tae= tae_0[[1]], call= mc, p_accept= p_accept, 
-                iter= iter, max_iter= max_iter, seed= seed))
+                iter= iter, max_iter= max_iter, tae_path= tae_path, seed= seed))
   } else {
     iter <- iter + 1L
   ## 03. Anneal to convergence
@@ -235,7 +241,7 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
     con_names <- names(constraint_list)
     resample_size <- min(resample_size, round(sz * .05,0)) # check for small geogs, never more than 5%
     
-    # set cooling schedule
+    # set cooling schedule; eg. T = {T_1, ..., T_{max_iter} }
     cool_rt <- p_accept * exp(-1/20 * seq(length.out= max_iter) / length(constraint_list))
     
     repeat {
@@ -266,7 +272,7 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
       if (tae_1[[1]] < tae_0[[1]]) {
         cur_samp <- rbind(cur_samp[-drop_ind, ], new_obs) # P(Accept | \delta E <0) == 1
         tae_0 <- tae_1
-      } else { # P(Accept | \delta E > 0) \propto d_tae * U(0,1)
+      } else { # P(Accept | \delta E > 0, T_k) \propto d_tae * U(0,1)
         tae_rel <- tae_1[[1]] / tae_0[[1]]
         if(stats::runif(1, 0, 1 * tae_rel) < cool_rt[iter]) {
           cur_samp <- rbind(cur_samp[-drop_ind, ], new_obs)
@@ -274,10 +280,14 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
         } # else -- stays the same
       }
       
+      # add TAE to tracker
+      tae_path[iter,] <- c(tae_1[[1]], tae_0[[1]]) 
+      
       ## (C) check to exit
       if (tae_0[[1]] < tolerance | iter >= max_iter) {
+        tae_path <- tae_path[1:iter,]
         return(list(best_fit= cur_samp, tae= tae_0[[1]], call= mc, p_accept= p_accept, 
-                    iter= iter, max_iter= max_iter, seed= seed))
+                    iter= iter, max_iter= max_iter, tae_path= tae_path, seed= seed))
       } else { # (d) update for next iteration
         iter <- iter + 1
       }

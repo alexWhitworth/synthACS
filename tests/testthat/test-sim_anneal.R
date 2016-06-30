@@ -411,7 +411,8 @@ test_that("annealing works correctly", {
   c_list <- c_list <- add_constraint(attr_name= "nativity", attr_totals= n, micro_data= test_micro,
                                      constraint_list= c_list)
   # sample data and run
-  anneal1 <- optimize_microdata(test_micro, "p", c_list, max_iter= 10, resample_size= 500, p_accept= 0.01)
+  anneal1 <- optimize_microdata(test_micro, "p", c_list, max_iter= 10, resample_size= 500, p_accept= 0.01,
+                                verbose= FALSE)
   
   # test structure of output
   expect_true(is.list(anneal1))
@@ -419,9 +420,17 @@ test_that("annealing works correctly", {
   expect_true(is.data.table(anneal1$best_fit))
   expect_true(is.numeric(anneal1$tae))
   expect_true(is.numeric(anneal1$p_accept))
+  expect_equal(anneal1$p_accept, 0.01)
   expect_true(is.numeric(anneal1$iter))
   expect_true(is.numeric(anneal1$max_iter))
   expect_lte(anneal1$iter, anneal1$max_iter)
+  expect_equal(anneal1$max_iter, 10L)
+  
+  expect_true(is.matrix(anneal1$tae_path))
+  expect_equal(nrow(anneal1$tae_path), anneal1$iter)
+  expect_equal(ncol(anneal1$tae_path), 2L)
+  expect_equal(anneal1$seed %% 1, 0)
+  expect_true(all(anneal1$tae_path[,1] >= anneal1$tae_path[,2]))
   
   expect_true(all(unlist(lapply(anneal1$best_fit, is.factor))))
   expect_true(all(names(anneal1$best_fit) %in% names(test_micro)))

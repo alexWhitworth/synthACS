@@ -47,12 +47,17 @@ test_that("optimization works", {
   cll <- all_geogs_add_constraint(attr_name= "edu_attain", attr_total_list= e, macro_micro= syn, constraint_list_list= cll)
   
   opt_geog <- all_geog_optimize_microdata(syn, prob_name= "p", constraint_list_list= cll,
-                                          max_iter= 10L)
+                                          max_iter= 10L, verbose= FALSE)
   
   # test output
   expect_true(is.list(opt_geog$best_fit))
+  expect_true(is.list(opt_geog$tae))
+  expect_true(is.list(opt_geog$iter))
+  expect_true(is.list(opt_geog$tae_paths))
+  
   expect_true(all(unlist(lapply(opt_geog$best_fit, is.data.table))))
   expect_true(all(unlist(opt_geog$iter) <= 10L))
-  expect_true(all(unlist(opt_geog$tae) > 0))
+  expect_true(all(unlist(opt_geog$tae) >= 0))
   expect_true(all(unlist(opt_geog$tae) %% 1 == 0))
+  
 })

@@ -825,16 +825,86 @@ summary.smsm_set <- function(object, ...) {
   print(tae_q)
 }
 
+#' @title Plot simulated annealing path
+#' @description Plot the path TAE in the simulated annealing algorithm for a given geography
+#' @param object An object of class \code{'smsm_set'}, typically a result of call to 
+#' \code{\link{all_geog_optimize_microdata}}
+#' @param geography A string allowing string matching via \code{\link[base]{grep}} to 
+#' a specified geography.
+#' @param ... additional arguments passed to other methods
+#' @export
+plot_TAEpath <- function(object, geography,  ...) {
+  UseMethod("plot_TAEpath", object)
+}
 
-#' #' @title Combine separate SMSM optimizations
-#' #' @description Combine multiple objects of class "smsm_set" into a single object of class "smsm_set"
-#' #' @param ... objects of class 'smsm_set'.
-#' #' @seealso \code{\link[synthACS]{split}}
-#' #' @export
-#' combine_smsm <- function(...) {
-#'   UseMethod("combine_smsm", ...)
-#' }
+#' @export
+plot_TAEpath.smsm_set <- function(object, geography, ...) {
+  
+  if (length(geography) != 1) stop("Please specify a single geography")
+  idx <- get_rowmatch(geography, names(object$tae))
+  if (length(idx) > 1) stop("geography specification returns multiple results. Please be more specific.")
+  tae_path <- object$tae_paths[[ idx ]]
+  if (!is.matrix(tae_path)) {
+    tae_path <- matrix(tae_path, ncol= 2)
+  }
+  
+  y_min <- max(min(tae_path) - 10, 0)
+  y_max <- round(max(tae_path) * 1.1, 0)
+  plot(x= 1:nrow(tae_path), y= tae_path[,2], type= "b", col= "black", pch= 18,
+       xlab= "Iteration",ylab= "TAE", ylim= c(y_min, y_max), ...)
+  points(x= 1:nrow(tae_path), y= tae_path[,1], pch= 1, col= "red")
+  title(main= paste(names(object$best_fit)[idx], "\nPath of Simulated Annealing Fit"))
+  legend(x= nrow(tae_path) * .76, y = y_max * .95, legend= c("Proposal", "Current"), title= "TAE",
+         pch= c(1, 18), col= c("red", "black"), cex= 0.8, bty= "n")
+}
+
+# @description save some duplicate typing in checking global parameter matches in combine_smsm() below
+# @param l A list of objects of class 'smsm_set'.
+# @param param_name a string specifying one of the elements of an 'smsm_set' object
+# @param warning_msg A string specifying the warning messsage if equality is not found.
+global_param_check <- function(l, param_name, warning_msg) {
+  param <- unlist(lapply(l, "[[", param_name))
+  if (!all(param == param[1])) warning(warning_msg)
+  return(param[1])
+}
+
+#' @title Combine separate SMSM optimizations
+#' @description Combine objects of class "smsm_set" into a single object of class "smsm_set"
+#' @param ... A list of objects of class 'smsm_set'.
+#' @seealso \code{\link[synthACS]{split}}, \code{\link[synthACS]{all_geog_optimize_microdata}}
+#' @export
+combine_smsm <- function(...) {
+   smsm <- list(...)
+   if (!all(unlist(lapply(smsm, is.smsm_set)))) stop("All items supplied via '...' must be of class 'smsm_set'.")
+   
+   # 01. check if global parameter values are the same for all objects
+   max_iter <- global_param_check(smsm, "max_iter",
+                 warning_msg= "'smsm_set' objects do not have the equal max_iter values. Setting max_iter to first value.")
+     
+   D <- global_param_check(smsm, "D",
+                 warning_msg= "'smsm_set' objects do not have the equal D values. Setting D to first value.")
+   
+   p_accept <- global_param_check(smsm, "p_accept",
+                 warning_msg= "'smsm_set' objects do not have the equal p_accept values. Setting p_accept to first value.")
+   seed <- unlist(lapply(smsm, "[[", "seed"))
+   if (!all(seed == seed[1])) warning("'smsm_set' objects do not have equal seed values. Returning all seed values.")
+   else {seed <- seed[1]}
+   message("call will be set to NULL.")
+   
+   # 02. create return structure / combine list of smsm_set objects
+   ret <- list(best_fit=  do.call("c", lapply(smsm, "[[", "best_fit")),
+               tae=       do.call("c", lapply(smsm, "[[", "tae")),
+               call=      NULL,
+               p_accept=  p_accept,
+               iter=      do.call("c", lapply(smsm, "[[", "iter")),
+               max_iter=  max_iter,
+               tae_paths= drop(lapply(smsm, "[[", "tae_paths")),
+               seed=      seed,
+               D=         D)
+   class(ret) <- "smsm_set"
+   return(ret)
+}
 
 
-## combine, Z-statistics???
+## Z-statistics???
 
