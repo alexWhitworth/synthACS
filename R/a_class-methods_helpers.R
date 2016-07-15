@@ -850,11 +850,11 @@ plot_TAEpath.smsm_set <- function(object, geography, ...) {
   
   y_min <- max(min(tae_path) - 10, 0)
   y_max <- round(max(tae_path) * 1.1, 0)
-  plot(x= 1:nrow(tae_path), y= tae_path[,2], type= "b", col= "black", pch= 18,
+  graphics::plot(x= 1:nrow(tae_path), y= tae_path[,2], type= "b", col= "black", pch= 18,
        xlab= "Iteration",ylab= "TAE", ylim= c(y_min, y_max), ...)
-  points(x= 1:nrow(tae_path), y= tae_path[,1], pch= 1, col= "red")
-  title(main= paste(names(object$best_fit)[idx], "\nPath of Simulated Annealing Fit"))
-  legend(x= nrow(tae_path) * .76, y = y_max * .95, legend= c("Proposal", "Current"), title= "TAE",
+  graphics::points(x= 1:nrow(tae_path), y= tae_path[,1], pch= 1, col= "red")
+  graphics::title(main= paste(names(object$best_fit)[idx], "\nPath of Simulated Annealing Fit"))
+  graphics::legend(x= nrow(tae_path) * .76, y = y_max * .95, legend= c("Proposal", "Current"), title= "TAE",
          pch= c(1, 18), col= c("red", "black"), cex= 0.8, bty= "n")
 }
 

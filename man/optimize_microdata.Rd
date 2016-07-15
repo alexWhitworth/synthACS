@@ -7,7 +7,7 @@
 optimize_microdata(micro_data, prob_name = "p", constraint_list,
   tolerance = round(sum(constraint_list[[1]])/2000 * length(constraint_list),
   0), resample_size = min(sum(constraint_list[[1]]), max(500,
-  round(sum(constraint_list[[1]]) * 1e-04, 0))), p_accept = 0.4,
+  round(sum(constraint_list[[1]]) * 0.005, 0))), p_accept = 0.4,
   max_iter = 10000L, seed = sample.int(10000L, size = 1, replace = FALSE),
   verbose = TRUE)
 }
@@ -21,11 +21,11 @@ of selection.}
 \item{constraint_list}{A \code{list} of constraining macro data attributes. See \code{\link{add_constraint}}}
 
 \item{tolerance}{An integer giving the maximum acceptable loss (TAE), enabling early stopping.
-Defaults to 0.05\% of the observations per constraint.}
+Defaults to a misclassification rate of 1 individual per 1,000 per constraint.}
 
 \item{resample_size}{An integer controlling the rate of movement about the candidate space. 
 Specifically, it specifies the number of observations to change between iterations. Defaults to 
-min(num_obs, max(0.1\% * nobs, 500))}
+\code{0.5\%} the number of observations.}
 
 \item{p_accept}{The acceptance probability for the Metropolis acceptance criteria.}
 

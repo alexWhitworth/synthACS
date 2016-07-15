@@ -20,7 +20,7 @@
 adjDR
 }
 \description{
-A dataset containing raw death rate data by race and gender of the deceased. Data  
+A dataset containing age-adjusted death rate data by race and gender of the deceased. Data  
 is provided for 1980-2013.
 }
 \section{Details}{
