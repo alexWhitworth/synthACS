@@ -246,6 +246,22 @@ split.macroACS <- function(acs, n_splits) {
   return(split_macroACS)
 }
 
+#' @title Generate attribute vectors
+#' @description Generate a list of attribute vectors for new synthetic attribute creation from a 
+#' "macroACS" object.
+#' @param acs An object of class \code{"macroACS"}.
+#' @param choice A character vector specifying the name of one of the datasets in \code{acs} 
+#' @seealso \code{\link{all_geog_synthetic_new_attribute}}, \code{\link{synthetic_new_attribute}}
+#' @export
+gen_attr_vectors <- function(acs, choice) {
+  UseMethod("gen_attr_vectors", acs)
+}
+
+#' @export
+gen_attr_vectors.macroACS <- function(acs, choice) {
+  df <- fetch_data(acs, geography= "*", dataset= "estimate", choice= choice)
+  return(disaggregate_md(df))
+}
 
 ##---------------------------------------------------------
 ## GENERICS FOR CLASS "macro_micro" -- SPECIFICALLY ADDING CONSTRAINT LISTS

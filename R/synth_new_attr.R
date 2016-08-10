@@ -155,8 +155,8 @@ cond_var_split <- function(df, prob_name,
       
       # C. apply recursion
       l <- cond_var_split(l, prob_name= prob_name,
-                                           attr_name= attr_name, attr_vector= attr_cnts, attr_levels= attr_levels,
-                                           conditional_vars= conditional_vars2, ht_list= ht_list2)
+                          attr_name= attr_name, attr_vector= attr_cnts, attr_levels= attr_levels,
+                          conditional_vars= conditional_vars2, ht_list= ht_list2)
     }, prob_name= prob_name, attr_name= attr_name, attr_vector= attr_vector, 
        attr_levels= attr_levels, conditional_vars= conditional_vars, ht_list= ht_list) 
     #### WHY DOES THIS RETURN A LIST OF TRANSPOSED MATRICES VS A LIST OF DATA.FRAMES????
