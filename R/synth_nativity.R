@@ -33,7 +33,7 @@ nat_lapply <- function(l, ht, v, levels) {
   if (sum(comp) > 0) comp <- (comp / sum(comp)) 
   
   dat <- replicate(length(levels), l, simplify = FALSE)
-  dat <- do.call("rbind", mapply(mapply_synth, dat= dat, prob_name= "p", attr_pct= comp, 
+  dat <- do.call("rbind", mapply(add_synth_attr_level, dat= dat, prob_name= "p", attr_pct= comp, 
                                  attr_name= "nativity", level= levels,
                                  SIMPLIFY = FALSE))
   return(dat)

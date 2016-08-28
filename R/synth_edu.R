@@ -54,7 +54,7 @@ edu_lapply <- function(l, ht, edu_v, edu_levels) {
     if (sum(edu_comp) > 0) edu_comp <- (edu_comp / sum(edu_comp)) 
     
     dat <- replicate(length(edu_levels), l, simplify = FALSE)
-    return(do.call("rbind", mapply(mapply_synth, dat= dat, prob_name= "p", attr_pct= edu_comp, 
+    return(do.call("rbind", mapply(add_synth_attr_level, dat= dat, prob_name= "p", attr_pct= edu_comp, 
                                    attr_name= "edu_attain", level= edu_levels,
                                    SIMPLIFY = FALSE)))
   }

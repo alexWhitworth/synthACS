@@ -3,10 +3,10 @@ library(testthat)
 library(synthACS)
 
 #----------------------------------------------------------
-context("bottom -- mapply_synth")
+context("new attr - bottom of recursion")
 #----------------------------------------------------------
 
-test_that("mapply - everything works", {
+test_that("mapply - works as designed", {
   # create example data
   set.seed(567L)
   df <- data.frame(gender= factor(sample(c("m", "f"), size= 100, replace=T)),
@@ -20,7 +20,7 @@ test_that("mapply - everything works", {
   a_name <- "var_new"
   
   # test
-  dat2 <- synthACS:::mapply_synth(df, "p", attr_pct= a_p, attr_name= a_name, level= lev)
+  dat2 <- synthACS:::add_synth_attr_level(df, "p", attr_pct= a_p, attr_name= a_name, level= lev)
   
   expect_true(all(names(df) %in% names(dat2)))
   expect_true(all(names(dat2) %in% c(a_name, names(df))))
@@ -30,11 +30,13 @@ test_that("mapply - everything works", {
   expect_equal(ncol(df), ncol(dat2) - 1)
 })
 
+# test_that("mapply -- bug catches", {})
+
 #----------------------------------------------------------
-context("one level up -- lapply_synth")
+context("one level up -- add_synth_attr")
 #----------------------------------------------------------
 
-test_that("lapply - everything works", {
+test_that("lapply - works as designed", {
   # create example data
   set.seed(567L)
   df <- data.frame(gender= factor(sample(c("m", "f"), size= 100, replace=T)),
@@ -47,21 +49,16 @@ test_that("lapply - everything works", {
   cond_v <- "gender"
   ht <- data.frame(old= levels(df$gender), regex= c("f_", "m_"))
   levels <- c("employed", "unemp", "not_in_labor_force")
-  at_v <- structure(c(52, 8, 268, 72, 12, 228, 1338, 93, 297, 921, 
-                      105, 554), 
-            .Names = c("m_lt_pov_employed", "m_lt_pov_unemp", "m_lt_pov_not_in_labor_force", "f_lt_pov_employed", 
-                       "f_lt_pov_unemp", "f_lt_pov_not_in_labor_force", "m_gt_eq_pov_employed", 
-                       "m_gt_eq_pov_unemp", "m_gt_eq_pov_not_in_labor_force", "f_gt_eq_pov_employed", 
-                       "f_gt_eq_pov_unemp", "f_gt_eq_pov_not_in_labor_force"))
+  at_v <- structure(c(70, 8, 22, 80, 5, 15), .Names = c("m_employed", "m_unemp", 
+                        "m_not_in_labor_force", "f_employed", "f_unemp", "f_not_in_labor_force"))
   df2 <- synthACS:::split_df(df, cond_v)
   # run
-  dat <- do.call("rbind", lapply(df2, synthACS:::lapply_synth,
+  dat <- do.call("rbind", lapply(df2, synthACS:::add_synth_attr,
                  prob_name= "p", ht= ht, cond_var=cond_v, attr_name= "variable", 
                  attr_v= at_v, levels= levels))
   
   # test output
-  expect_equal(nrow(df) * length(ht[,2,drop=T]) * length(levels),
-               nrow(dat))
+  expect_equal(nrow(df) * length(levels), nrow(dat))
   expect_equal(ncol(df), ncol(dat) - 1)
   expect_true(all(names(df) %in% names(dat)))
   expect_true(all(names(dat) %in% c("variable", names(df))))
@@ -73,11 +70,36 @@ test_that("lapply - everything works", {
                tapply(df$p, df$gender, sum))
 })
 
+# test_that("lapply - unequal attribute counts", {
+#   # create example data
+#   set.seed(567L)
+#   df <- data.frame(gender= factor(sample(c("m", "f"), size= 100, replace=T)),
+#                    age= factor(sample(1:5, size= 100, replace=T)),
+#                    edu= factor(sample(c("hs", "col", "grad"), size= 100, replace=T)),
+#                    p= runif(100))
+#   df$p <- df$p / sum(df$p)
+#   
+#   # and example test elements
+#   cond_v <- "gender"
+#   ht <- data.frame(old= levels(df$gender), regex= c("f_", "m_"))
+#   levels <- c("employed", "unemp", "not_in_labor_force")
+#   at_v <- structure(c(70, 8, 22, 80), .Names = c("m_employed", "m_unemp", 
+#             "m_not_in_labor_force", "f_employed"))
+#   df2 <- synthACS:::split_df(df, cond_v)
+#   # run
+#   dat <- do.call("rbind", lapply(df2, synthACS:::add_synth_attr,
+#                  prob_name= "p", ht= ht, cond_var=cond_v, attr_name= "variable", 
+#                  attr_v= at_v, levels= levels))
+# })
+
+
+# test_that("lapply - bug catches", {})
+
 #----------------------------------------------------------
 context("conditional splitting & recursion")
 #----------------------------------------------------------
 
-test_that("conditional split -- everything works", {
+test_that("conditional split -- works as designed", {
   # create test data / elements
   # create example data
   set.seed(567L)

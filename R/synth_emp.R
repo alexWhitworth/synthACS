@@ -55,7 +55,7 @@ emp_lapply <- function(l, ht, emp_v, emp_levels) {
     if (sum(emp_comp) > 0) emp_comp <- (emp_comp / sum(emp_comp)) 
     
     dat <- replicate(length(emp_levels), l, simplify = FALSE)
-    dat <- do.call("rbind", mapply(mapply_synth, dat= dat, prob_name= "p", attr_pct= emp_comp, 
+    dat <- do.call("rbind", mapply(add_synth_attr_level, dat= dat, prob_name= "p", attr_pct= emp_comp, 
                                    attr_name= "emp_status", level= emp_levels,
                                    SIMPLIFY = FALSE))
     return(dat)

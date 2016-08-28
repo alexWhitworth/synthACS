@@ -33,7 +33,7 @@ race_lapply <- function(l, v, levels) {
   if (sum(v) > 0) comp <- v / sum(v)
   
   dat <- replicate(length(levels), l, simplify = FALSE)
-  dat <- do.call("rbind", mapply(mapply_synth, dat= dat, prob_name= "p", attr_pct= comp, 
+  dat <- do.call("rbind", mapply(add_synth_attr_level, dat= dat, prob_name= "p", attr_pct= comp, 
                                  attr_name= "race", level= levels,
                                  SIMPLIFY = FALSE))
   return(dat)

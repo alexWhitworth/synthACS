@@ -13,13 +13,13 @@
 #' variables are assumed to be independent from the new attribute. (**see note below)
 #' 
 #' Conditioning is implemented via pattern matching by matching the names of the \code{attr_vector} 
-#' to the existing levels of the data. This is facilitated by hash-tables (\code{ht_list}) to ensure
-#' accurate pattern matching. In the hash-table's key-value pair, the key is the actual level for the 
+#' to the existing levels of the data. This is facilitated by symbol-tables (\code{ht_list}) to ensure
+#' accurate pattern matching. In the symbol-table's key-value pair, the key is the actual level for the 
 #' variable being conditioned upon, while the value is the regex string found in 
 #' \code{names(attr_vector)}.
 #' 
 #' Successive levels of conditioning may be supplied by providing a vector of \code{conditional_vars}
-#' paired with a equal length list of hash tables (\code{ht_list}). A recursive approach is 
+#' paired with a equal length list of symbol-tables (\code{ht_list}). A recursive approach is 
 #' employed to conditionally partition \code{attr_vector}. In this sense, the *order* in which
 #' the conditional variables are supplied matters.
 #' 
@@ -44,7 +44,7 @@
 #' the new attribute (variable) is to be conditioned on. Variables must be specified in order. 
 #' Defaults to \code{NULL} ie- an unconditional new attribute.
 #' @param ht_list A \code{list} of equal length to \code{conditional_vars}. Each element \code{k} of
-#' \code{ht_list} is a \code{data.frame} constructed as a hash-table with one-to-one correspondence  
+#' \code{ht_list} is a \code{data.frame} constructed as a symbol-table with one-to-one correspondence  
 #' between \code{ht_list[[k]]} and \code{conditional_vars[k]}. Of the key-value pair, the key is
 #' the first column and the value is the second column. See details. 
 #' @return A new synthetic_micro dataset with class "synthetic_micro".
@@ -93,7 +93,7 @@ synthetic_new_attribute <- function(df, prob_name= "p",
   } else { # apply new attribute unconditionally
     dat <- replicate(length(attr_levels), df, simplify = FALSE)
     attr_cnts <- attr_vector / sum(attr_vector)
-    dat <- do.call("rbind", mapply(mapply_synth, 
+    dat <- do.call("rbind", mapply(add_synth_attr_level, 
                                    dat= dat, attr_pct= attr_cnts, attr_name= attr_name,
                                    level= attr_levels, prob_name= prob_name,
                                    SIMPLIFY = FALSE)) 
@@ -135,7 +135,7 @@ cond_var_split <- function(df, prob_name,
   ht_n <- length(ht_list)
   
   if (cv_n == 1 & ht_n == 1) { # if lengths == 1, bottom of tree. Apply and return
-    return(lapply_synth(l= df, prob_name= prob_name,
+    return(add_synth_attr(l= df, prob_name= prob_name,
                  ht= ht_list[[1]], cond_var= conditional_vars[1],
                  attr_name= attr_name, attr_v= attr_vector, levels= attr_levels))
   } else { # else more conditioning needed, use recursion.
@@ -175,7 +175,7 @@ cond_var_split <- function(df, prob_name,
 # @param levels the levels of the new variable
 # @ prob_name A string specifying the column name within \code{l} containing the
 # probabilities for each synthetic observation.
-lapply_synth <- function(l, prob_name, ht, cond_var, attr_name= "variable", attr_v, levels) {
+add_synth_attr <- function(l, prob_name, ht, cond_var, attr_name= "variable", attr_v, levels) {
   # use ht to pull appropriate elements from v
   cond_var_comp <- ht[,2][which(l[,cond_var][1] == ht[,1])]
   attr_cnts <- attr_v[which(grepl(cond_var_comp, names(attr_v)))]
@@ -184,7 +184,7 @@ lapply_synth <- function(l, prob_name, ht, cond_var, attr_name= "variable", attr
   
   # replicate data and apply new levels/probabilities
   dat <- replicate(length(levels), l, simplify = FALSE)
-  dat <- do.call("rbind", mapply(mapply_synth, 
+  dat <- do.call("rbind", mapply(add_synth_attr_level, 
                  dat= dat, attr_pct= attr_cnts, attr_name= attr_name,
                  level= levels, prob_name= prob_name,
                  SIMPLIFY = FALSE))
@@ -194,7 +194,14 @@ lapply_synth <- function(l, prob_name, ht, cond_var, attr_name= "variable", attr
 
 # helper function for bottom of recursion -- apply new level to 
 # smallest subset of data and update probabilities appropriately
-mapply_synth <- function(dat, prob_name, attr_pct, attr_name= "variable", level) {
+
+# @title add new synthetic attribute to a dataset
+# @param dat A current dataset on which to add an attribute
+# @param prob_name A string specifying the name of the probability vector within \code{dat}
+# @param attr_pct A scalar $\in$ [0,1] for scaling the existing probabilities given the new attribute
+# @param attr_name A string specifying the name of the new attribute. (eg. "gender")
+# @param level A string specifying the value which the new attribute will take on. (eg. "female") 
+add_synth_attr_level <- function(dat, prob_name, attr_pct, attr_name= "variable", level) {
   p <- get(prob_name, as.environment(dat))
   d_temp <- dat[, which(names(dat) != prob_name)]
   d_temp[attr_name] <- level

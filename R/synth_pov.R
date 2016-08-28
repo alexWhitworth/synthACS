@@ -64,7 +64,7 @@ pov_lapply <- function(l, levels, emp_marg) {
   comp <- c(comp, 1-comp)
   
   dat <- replicate(length(emp_levels), l, simplify = FALSE)
-  dat <- do.call("rbind", mapply(mapply_synth, dat= dat, prob_name= "p", attr_pct= comp, 
+  dat <- do.call("rbind", mapply(add_synth_attr_level, dat= dat, prob_name= "p", attr_pct= comp, 
                                  attr_name= "pov_status", level= levels,
                                  SIMPLIFY = FALSE))
   return(dat)
