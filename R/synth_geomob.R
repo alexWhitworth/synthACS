@@ -34,10 +34,12 @@ geo_lapply <- function(l, ht, v, levels) {
   comp <- v[which(grepl(l_comp, names(v)))]
   if (sum(comp) > 0) comp <- (comp / sum(comp)) 
   
+  st <- data.frame(pct= comp, levels= levels)
+  st <- base::split(st, 1:nrow(st))
+  
   dat <- replicate(length(levels), l, simplify = FALSE)
-  dat <- do.call("rbind", mapply(add_synth_attr_level, dat= dat, prob_name= "p", attr_pct= comp, 
-                                 attr_name= "geog_mobility", level= levels,
-                                 SIMPLIFY = FALSE))
+  dat <- do.call("rbind", mapply(add_synth_attr_level, dat= dat, prob_name= "p", attr= st,
+                                 attr_name= "geog_mobility", SIMPLIFY = FALSE))
   return(dat)
 }
 

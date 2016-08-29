@@ -53,9 +53,12 @@ edu_lapply <- function(l, ht, edu_v, edu_levels) {
     edu_comp <- edu_v[which(grepl(l_age_comp, names(edu_v)))]
     if (sum(edu_comp) > 0) edu_comp <- (edu_comp / sum(edu_comp)) 
     
+    st <- data.frame(pct= edu_comp, levels= edu_levels)
+    st <- base::split(st, 1:nrow(st))
+    
     dat <- replicate(length(edu_levels), l, simplify = FALSE)
-    return(do.call("rbind", mapply(add_synth_attr_level, dat= dat, prob_name= "p", attr_pct= edu_comp, 
-                                   attr_name= "edu_attain", level= edu_levels,
+    return(do.call("rbind", mapply(add_synth_attr_level, dat= dat, prob_name= "p", 
+                                   attr_name= "edu_attain", attr= st, 
                                    SIMPLIFY = FALSE)))
   }
 }

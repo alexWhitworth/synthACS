@@ -10,18 +10,7 @@
 #' probability distribution for an attribute vector; and, to create synthetic individuals from 
 #' this distribution. Although no limit is placed on the number of variables on which to condition, 
 #' in practice, data rarely exists which allows more than two or three conditioning variables. Other 
-#' variables are assumed to be independent from the new attribute. (**see note below)
-#' 
-#' Conditioning is implemented via pattern matching by matching the names of the \code{attr_vector} 
-#' to the existing levels of the data. This is facilitated by symbol-tables (\code{ht_list}) to ensure
-#' accurate pattern matching. In the symbol-table's key-value pair, the key is the actual level for the 
-#' variable being conditioned upon, while the value is the regex string found in 
-#' \code{names(attr_vector)}.
-#' 
-#' Successive levels of conditioning may be supplied by providing a vector of \code{conditional_vars}
-#' paired with a equal length list of symbol-tables (\code{ht_list}). A recursive approach is 
-#' employed to conditionally partition \code{attr_vector}. In this sense, the *order* in which
-#' the conditional variables are supplied matters.
+#' variables are assumed to be independent from the new attribute. 
 #' 
 #' ** There are four different types of conditional/marginal probability models which may be considered
 #' for a given new attribute:
@@ -31,41 +20,64 @@
 #'  (3) Conditional independence: Attributes can be depedent on some subset of other attributes and 
 #'  independent of the rest.
 #'  (4) In the most general case, all attributes are jointly interrelated.
+#'  
+#' Conditioning is implemented via symbol-tables (\code{sym_tbl}) to ensure accurate matching between
+#' conditioning variables, new attribute levels, and new attribute probabilities. The symbol table
+#' is constructed such that the key in the symbol-table's key-value pair is the specific values for 
+#' the set of conditioning variables. This key is the first N columns of \code{sym_tbl}.  A 
+#' recursive approach is employed to conditionally partition \code{sym_tbl}. In this sense, the 
+#' *order* in which the conditional variables are supplied matters.
+#' 
+#' The value is final 2 columns of \code{sym_tbl} which are a pair of (A) either counts or percentages 
+#' used to specify the probability for the new attribute and (B) the level that the new attribute takes on.
 #' 
 #' @param df An R object of class "synthetic_micro". 
 #' @param prob_name A string specifying the column name of the \code{df} containing the
 #' probabilities for each synthetic observation.
 #' @param attr_name A string specifying the desired name of the new attribute to be added to the data.
-#' @param attr_vector A named vector specifying the counts or percentages of the new attribute,
-#' or variable, to be added. Names must include appropriate naming for expression matching.
-#' @param attr_levels A character vector specifying the complete set of levels for the new 
-#' attribute.
 #' @param conditional_vars An character vector specifying the existing variables, if any, on which 
 #' the new attribute (variable) is to be conditioned on. Variables must be specified in order. 
 #' Defaults to \code{NULL} ie- an unconditional new attribute.
-#' @param ht_list A \code{list} of equal length to \code{conditional_vars}. Each element \code{k} of
-#' \code{ht_list} is a \code{data.frame} constructed as a symbol-table with one-to-one correspondence  
-#' between \code{ht_list[[k]]} and \code{conditional_vars[k]}. Of the key-value pair, the key is
-#' the first column and the value is the second column. See details. 
+#' @param sym_tbl sym_tbl A \code{data.frame} symbol table with N + 2 columns. The last two columns must be:
+#' 1. A vector containing the new attribute counts or percentages; 2. is a vector of the new attribute 
+#' levels. The first N columns must match the conditioning scheme imposed by the variables in 
+#' \code{conditional_vars}. See details and examples. 
 #' @return A new synthetic_micro dataset with class "synthetic_micro".
+#' @examples {
+#'  set.seed(567L)
+#'  df <- data.frame(gender= factor(sample(c("male", "female"), size= 100, replace=T)),
+#'                  edu= factor(sample(c("LT_college", "BA_degree"), size= 100, replace=T)),
+#'                  p= runif(100))
+#'  df$p <- df$p / sum(df$p)
+#'  ST <- data.frame(gender= c(rep("male", 3), rep("female", 3)),
+#'                   attr_pct= c(0.1, 0.8, 0.1, 0.05, 0.7, 0.25),
+#'                   levels= rep(c("low", "middle", "high"), 2))
+#'  df2 <- synthetic_new_attribute(df, prob_name= "p", attr_name= "SES", conditional_vars= "gender",
+#'           sym_tbl= ST)
+#'           
+#'  ST2 <- data.frame(gender= c(rep("male", 3), rep("female", 6)),
+#'                    edu= c(rep(NA, 3), rep(c("LT_college", "BA_degree"), each= 3)),
+#'                    attr_pct= c(0.1, 0.8, 0.1, 10, 80, 10, 5, 70, 25),
+#'                    levels= rep(c("low", "middle", "high"), 3))
+#'  df2 <- synthetic_new_attribute(df, prob_name= "p", attr_name= "SES", 
+#'           conditional_vars= c("gender", "edu"),
+#'           sym_tbl= ST2)
+#' }
 #' @export
 synthetic_new_attribute <- function(df, prob_name= "p",
                                     attr_name= "variable",
-                                    attr_vector, attr_levels, 
                                     conditional_vars= NULL,
-                                    ht_list= NULL) {
+                                    sym_tbl= NULL) {
   # 01. Error checking
   #------------------------------------
-  if (missing(attr_vector) | missing(attr_levels) | missing(attr_name)) 
-    stop("attr_name, attr_vector, and attr_levels must be supplied.")
-  if (!is.character(attr_name)) stop("attr_name must be a string.")
-  if (!is.numeric(attr_vector) | !is.vector(attr_vector)) stop("attr_vector must be a numeric vector.")
-  if (is.null(names(attr_vector))) stop("attr_vector must be a named vector.")
-  if (!(is.character(attr_levels) | is.factor(attr_levels))) 
-    stop("attr_levels must be a character or factor vector.")
+  n_st <- ncol(sym_tbl); n_cv <- length(conditional_vars)
+  
   if (!is.micro_synthetic(df)) stop("Input appropriate df -- use class 'micro_synthetic'.")
-  if (!is.character(prob_name)) stop("prob_name must be a string.")
+  if (!is.character(prob_name) || length(prob_name) != 1L) stop("prob_name must be a string.")
   if (!exists(prob_name, as.environment(df))) stop("prob_name is not in df.")
+  if (!is.character(attr_name) || length(attr_name) != 1L) stop ("attr_name must be specified as a character string")
+  if (!is.numeric(sym_tbl[, n_st - 1])) 
+    stop("The second to last column of sym_tbl must be numeric.")
   if (!is.null(conditional_vars)) {
     # error check conditional_vars
     if (!all(sapply(conditional_vars, is.character)))
@@ -73,12 +85,14 @@ synthetic_new_attribute <- function(df, prob_name= "p",
     if (!all(sapply(conditional_vars, function(l) exists(l, as.environment(df)))))
       stop("at least one conditional_var is not in df.")
     # error check ht_list, must be co-specified.
-    if (is.null(ht_list)) stop("ht_list must be specified")
+    if (is.null(sym_tbl)) stop("sym_tbl must be specified")
     else {
-      if (!is.list(ht_list) | (length(ht_list) != length(conditional_vars)))
-        stop("ht_list must be a list of equal length as conditional_vars.")
-      if (!all(unlist(lapply(ht_list, function(l) sapply(l, function(i) is.character(i) | is.factor(i))))))
-        stop("all elements of ht_list must be strings or factors.")
+      if (!is.data.frame(sym_tbl) | (n_st - 2 != n_cv))
+        stop("sym_tbl must contain conditioning variables of equal length as conditional_vars.")
+      if (!all(unlist(lapply(sym_tbl[,1:(n_st - 2)], function(l) sapply(l, function(i) is.character(i) | is.factor(i))))))
+        stop("all conditioning elements of sym_tbl must be strings or factors.")
+      if (any(names(sym_tbl)[1:(n_st - 2)] != conditional_vars))
+        stop("Variable names in sym_tbl must match conditional_vars.")
     }
   }
   
@@ -86,16 +100,19 @@ synthetic_new_attribute <- function(df, prob_name= "p",
   #------------------------------------
   if (!is.null(conditional_vars)) {
     dat <- cond_var_split(df= df, prob_name= prob_name,
-                          attr_name= attr_name, attr_vector= attr_vector,
-                          attr_levels= attr_levels,
+                          attr_name= attr_name,
                           conditional_vars= conditional_vars,
-                          ht_list= ht_list)
+                          sym_tbl= sym_tbl)
   } else { # apply new attribute unconditionally
-    dat <- replicate(length(attr_levels), df, simplify = FALSE)
-    attr_cnts <- attr_vector / sum(attr_vector)
+    n_lvl <- length(table(sym_tbl[, n_st]))
+    dat <- replicate(n_lvl, df, simplify = FALSE)
+    
+    sym_tbl[, n_st - 1] <- sym_tbl[, n_st - 1] / sum(sym_tbl[, n_st - 1])
+    sym_tbl <- base::split(sym_tbl, 1:nrow(sym_tbl))
+    
     dat <- do.call("rbind", mapply(add_synth_attr_level, 
-                                   dat= dat, attr_pct= attr_cnts, attr_name= attr_name,
-                                   level= attr_levels, prob_name= prob_name,
+                                   dat= dat, prob_name= prob_name, attr_name= attr_name,
+                                   attr= sym_tbl,
                                    SIMPLIFY = FALSE)) 
   }
   
@@ -108,7 +125,7 @@ synthetic_new_attribute <- function(df, prob_name= "p",
 
 # simple helper function to reduce typing.
 split_df <- function(d, var) {
-  split(d, get(var, as.environment(d)))
+  base::split(d, get(var, as.environment(d)))
 }
 
 
@@ -117,77 +134,66 @@ split_df <- function(d, var) {
 # @param prob_name A string specifying the column name of the \code{df} containing the
 # probabilities for each synthetic observation.
 # @param attr_name A string specifying the desired name of the new attribute to be added to the data.
-# @param attr_vector A named vector specifying the counts or percentages of the new attribute,
-# or variable, to be added. Names must include appropriate naming for expression matching.
-# @param attr_levels A character vector specifying the complete set of levels for the new 
-# attribute.
 # @param conditional_vars An character vector specifying the existing variables, if any, on which 
 # the new attribute (variable) is to be conditioned on. Variables must be specified in order. 
 # Defaults to \code{NULL} ie- an unconditional new attribute.
-# @param ht_list A \code{list} of equal length to \code{conditional_vars}. Each element \code{k} of
-# \code{ht_list} is a \code{data.frame} constructed as a hash-table with one-to-one correspondence  
-# between \code{ht_list[[k]]} and \code{conditional_vars[k]}. Of the key-value pair, the key is
-# the first column and the value is the second column. See details. 
-cond_var_split <- function(df, prob_name, 
-                           attr_name= "variable", attr_vector, attr_levels, 
-                           conditional_vars, ht_list) {
+# @param sym_tbl A \code{data.frame} symbol table with N + 2 columns. The last two columns must be:
+# 1. A vector containing the new attribute counts or percentages; 2. is a vector of the new attribute 
+# levels. The first N columns must match the conditioning scheme imposed by 
+# the variables in \code{conditional_vars}....
+cond_var_split <- function(df, prob_name, attr_name= "variable", 
+                           conditional_vars, sym_tbl) {
   cv_n <- length(conditional_vars)
-  ht_n <- length(ht_list)
+  st_n <- ncol(sym_tbl) - 2
   
-  if (cv_n == 1 & ht_n == 1) { # if lengths == 1, bottom of tree. Apply and return
-    return(add_synth_attr(l= df, prob_name= prob_name,
-                 ht= ht_list[[1]], cond_var= conditional_vars[1],
-                 attr_name= attr_name, attr_v= attr_vector, levels= attr_levels))
-  } else { # else more conditioning needed, use recursion.
-    # A. split data conditionally and apply
-    dat <- split_df(df, conditional_vars[1])
+  if (cv_n == 0 & st_n == 0) { # if lengths == 1, bottom of tree. Apply and return
+    return(add_synth_attr(l= df, prob_name= prob_name, sym_tbl= sym_tbl, attr_name= attr_name))
+  } else { 
+    if (any(names(sym_tbl)[1:st_n] != conditional_vars))
+      stop("Variable names in sym_tbl must match conditional_vars.") # quick error check
     
-    dat <- lapply(dat, function(l, prob_name, attr_name, attr_vector, 
-                                attr_levels, conditional_vars, ht_list) {
-      # extract first level, then drop level of conditioning
-      c_var <- conditional_vars[1]
-      ht <- ht_list[[1]]
-      conditional_vars2 <- conditional_vars[-1]
-      ht_list2 <- ht_list[-1]
-      # B. split attr_vector by ht 
-      cond_var_comp <- ht[,2][which(l[,c_var][1] == ht[,1])] 
-      attr_cnts <- attr_vector[which(grepl(cond_var_comp, names(attr_vector)))]
-      
-      # C. apply recursion
-      l <- cond_var_split(l, prob_name= prob_name,
-                          attr_name= attr_name, attr_vector= attr_cnts, attr_levels= attr_levels,
-                          conditional_vars= conditional_vars2, ht_list= ht_list2)
-    }, prob_name= prob_name, attr_name= attr_name, attr_vector= attr_vector, 
-       attr_levels= attr_levels, conditional_vars= conditional_vars, ht_list= ht_list) 
-    #### WHY DOES THIS RETURN A LIST OF TRANSPOSED MATRICES VS A LIST OF DATA.FRAMES????
-    return(do.call("rbind", dat))
+    # else: split data & ST conditionally, then recurse
+    df <- split_df(df, conditional_vars[1])
+    if (!all(is.na(sym_tbl[,1]))) {
+      sym_tbl <- base::split(sym_tbl[,-1], sym_tbl[,1])
+      return(do.call("rbind", mapply(cond_var_split, 
+             df= df, prob_name= prob_name, attr_name= attr_name, 
+             conditional_vars= ifelse(cv_n == 1, replicate(st_n - 1, NULL), conditional_vars[-1]), 
+             sym_tbl= sym_tbl, SIMPLIFY= FALSE)))
+    } else {
+      return(do.call("rbind", lapply(df, cond_var_split,
+             prob_name= prob_name, attr_name= attr_name, 
+             conditional_vars= conditional_vars[-1], 
+             sym_tbl= sym_tbl[,-1])))
+    }
   }
 }
 
 
 
 # @param l A data.frame -- a conditional subset of df 
-# @param ht A hash-table (an element of ht_list) mapping conditional_var[k] to 
-# the names of attr_vector (attr_v here)
+# @param sym_tbl A \code{data.frame} symbol table with two columns: Column 1 is a vector containing the new 
+# attribute counts or percentages; Column 2 is a vector of the new attribute levels.
 # @param attr_name the name of the new variable 
-# @param attr_v A named vector specifying the counts or percentages of the new attribute.
-# Here, a subset of the previously specified attr_vector.
-# @param levels the levels of the new variable
 # @ prob_name A string specifying the column name within \code{l} containing the
 # probabilities for each synthetic observation.
-add_synth_attr <- function(l, prob_name, ht, cond_var, attr_name= "variable", attr_v, levels) {
-  # use ht to pull appropriate elements from v
-  cond_var_comp <- ht[,2][which(l[,cond_var][1] == ht[,1])]
-  attr_cnts <- attr_v[which(grepl(cond_var_comp, names(attr_v)))]
-  # unit-norm
-  if (sum(attr_cnts) > 0) attr_cnts <- attr_cnts / sum(attr_cnts)
+add_synth_attr <- function(l, prob_name, sym_tbl, attr_name= "variable") {
+  if (ncol(sym_tbl) != 2) stop("incorrect dimensions for sym_tbl.")
+  if (!(is.factor(sym_tbl[,2]) | is.character(sym_tbl[,2]))) stop("sym_tbl new-levels incorrectly specified.")
+  if (!is.numeric(sym_tbl[,1])) 
+    stop("sym_tbl attribute counts incorrectly specified. Must be specified as  either percentages summing to 1 or counts > 1.")
+  # unit norm
+  if (sum(sym_tbl[,1]) > 1) { sym_tbl[,1] <- sym_tbl[,1] / sum(sym_tbl[,1])} 
+  
+  # split by row
+  sym_tbl <- base::split(sym_tbl, f= 1:nrow(sym_tbl))
   
   # replicate data and apply new levels/probabilities
   dat <- replicate(length(levels), l, simplify = FALSE)
-  dat <- do.call("rbind", mapply(add_synth_attr_level, 
-                 dat= dat, attr_pct= attr_cnts, attr_name= attr_name,
-                 level= levels, prob_name= prob_name,
-                 SIMPLIFY = FALSE))
+  dat <- do.call("rbind", mapply(add_synth_attr_level, dat= dat, prob_name= prob_name, 
+                                 attr= sym_tbl, attr_name= attr_name,
+                                 SIMPLIFY = FALSE))
+  
   return(dat)
 }
 
@@ -198,13 +204,14 @@ add_synth_attr <- function(l, prob_name, ht, cond_var, attr_name= "variable", at
 # @title add new synthetic attribute to a dataset
 # @param dat A current dataset on which to add an attribute
 # @param prob_name A string specifying the name of the probability vector within \code{dat}
-# @param attr_pct A scalar $\in$ [0,1] for scaling the existing probabilities given the new attribute
+# @param attr A vector of length two. The first element must be the attribute probability and
+# the second element must be the attribute level.
 # @param attr_name A string specifying the name of the new attribute. (eg. "gender")
 # @param level A string specifying the value which the new attribute will take on. (eg. "female") 
-add_synth_attr_level <- function(dat, prob_name, attr_pct, attr_name= "variable", level) {
+add_synth_attr_level <- function(dat, prob_name, attr, attr_name= "variable") {
   p <- get(prob_name, as.environment(dat))
   d_temp <- dat[, which(names(dat) != prob_name)]
-  d_temp[attr_name] <- level
-  d_temp[prob_name] <- p * attr_pct
+  d_temp[attr_name] <- attr[[2]]
+  d_temp[prob_name] <- p * attr[[1]]
   return(d_temp)
 }

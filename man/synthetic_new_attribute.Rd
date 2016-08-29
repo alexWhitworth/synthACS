@@ -5,7 +5,7 @@
 \title{Add a new attribute to a synthetic_micro dataset}
 \usage{
 synthetic_new_attribute(df, prob_name = "p", attr_name = "variable",
-  attr_vector, attr_levels, conditional_vars = NULL, ht_list = NULL)
+  conditional_vars = NULL, sym_tbl = NULL)
 }
 \arguments{
 \item{df}{An R object of class "synthetic_micro".}
@@ -15,20 +15,14 @@ probabilities for each synthetic observation.}
 
 \item{attr_name}{A string specifying the desired name of the new attribute to be added to the data.}
 
-\item{attr_vector}{A named vector specifying the counts or percentages of the new attribute,
-or variable, to be added. Names must include appropriate naming for expression matching.}
-
-\item{attr_levels}{A character vector specifying the complete set of levels for the new 
-attribute.}
-
 \item{conditional_vars}{An character vector specifying the existing variables, if any, on which 
 the new attribute (variable) is to be conditioned on. Variables must be specified in order. 
 Defaults to \code{NULL} ie- an unconditional new attribute.}
 
-\item{ht_list}{A \code{list} of equal length to \code{conditional_vars}. Each element \code{k} of
-\code{ht_list} is a \code{data.frame} constructed as a hash-table with one-to-one correspondence  
-between \code{ht_list[[k]]} and \code{conditional_vars[k]}. Of the key-value pair, the key is
-the first column and the value is the second column. See details.}
+\item{sym_tbl}{sym_tbl A \code{data.frame} symbol table with N + 2 columns. The last two columns must be:
+1. A vector containing the new attribute counts or percentages; 2. is a vector of the new attribute 
+levels. The first N columns must match the conditioning scheme imposed by the variables in 
+\code{conditional_vars}. See details and examples.}
 }
 \value{
 A new synthetic_micro dataset with class "synthetic_micro".
@@ -45,18 +39,7 @@ to \code{\link{derive_synth_datasets}}, the goal with this function is to genera
 probability distribution for an attribute vector; and, to create synthetic individuals from 
 this distribution. Although no limit is placed on the number of variables on which to condition, 
 in practice, data rarely exists which allows more than two or three conditioning variables. Other 
-variables are assumed to be independent from the new attribute. (**see note below)
-
-Conditioning is implemented via pattern matching by matching the names of the \code{attr_vector} 
-to the existing levels of the data. This is facilitated by hash-tables (\code{ht_list}) to ensure
-accurate pattern matching. In the hash-table's key-value pair, the key is the actual level for the 
-variable being conditioned upon, while the value is the regex string found in 
-\code{names(attr_vector)}.
-
-Successive levels of conditioning may be supplied by providing a vector of \code{conditional_vars}
-paired with a equal length list of hash tables (\code{ht_list}). A recursive approach is 
-employed to conditionally partition \code{attr_vector}. In this sense, the *order* in which
-the conditional variables are supplied matters.
+variables are assumed to be independent from the new attribute. 
 
 ** There are four different types of conditional/marginal probability models which may be considered
 for a given new attribute:
@@ -66,5 +49,37 @@ for a given new attribute:
  (3) Conditional independence: Attributes can be depedent on some subset of other attributes and 
  independent of the rest.
  (4) In the most general case, all attributes are jointly interrelated.
+ 
+Conditioning is implemented via symbol-tables (\code{sym_tbl}) to ensure accurate matching between
+conditioning variables, new attribute levels, and new attribute probabilities. The symbol table
+is constructed such that the key in the symbol-table's key-value pair is the specific values for 
+the set of conditioning variables. This key is the first N columns of \code{sym_tbl}.  A 
+recursive approach is employed to conditionally partition \code{sym_tbl}. In this sense, the 
+*order* in which the conditional variables are supplied matters.
+
+The value is final 2 columns of \code{sym_tbl} which are a pair of (A) either counts or percentages 
+used to specify the probability for the new attribute and (B) the level that the new attribute takes on.
+}
+\examples{
+{
+ set.seed(567L)
+ df <- data.frame(gender= factor(sample(c("male", "female"), size= 100, replace=T)),
+                 edu= factor(sample(c("LT_college", "BA_degree"), size= 100, replace=T)),
+                 p= runif(100))
+ df$p <- df$p / sum(df$p)
+ ST <- data.frame(gender= c(rep("male", 3), rep("female", 3)),
+                  attr_pct= c(0.1, 0.8, 0.1, 0.05, 0.7, 0.25),
+                  levels= rep(c("low", "middle", "high"), 2))
+ df2 <- synthetic_new_attribute(df, prob_name= "p", attr_name= "SES", conditional_vars= "gender",
+          sym_tbl= ST)
+          
+ ST2 <- data.frame(gender= c(rep("male", 3), rep("female", 6)),
+                   edu= c(rep(NA, 3), rep(c("LT_college", "BA_degree"), each= 3)),
+                   attr_pct= c(0.1, 0.8, 0.1, 10, 80, 10, 5, 70, 25),
+                   levels= rep(c("low", "middle", "high"), 3))
+ df2 <- synthetic_new_attribute(df, prob_name= "p", attr_name= "SES", 
+          conditional_vars= c("gender", "edu"),
+          sym_tbl= ST2)
+}
 }
 

@@ -32,17 +32,12 @@ nat_lapply <- function(l, ht, v, levels) {
   comp <- v[which(grepl(l_age_comp, names(v)))]
   if (sum(comp) > 0) comp <- (comp / sum(comp)) 
   
+  st <- data.frame(pct= comp, levels= levels)
+  st <- base::split(st, 1:nrow(st))
+  
   dat <- replicate(length(levels), l, simplify = FALSE)
-  dat <- do.call("rbind", mapply(add_synth_attr_level, dat= dat, prob_name= "p", attr_pct= comp, 
-                                 attr_name= "nativity", level= levels,
-                                 SIMPLIFY = FALSE))
+  dat <- do.call("rbind", mapply(add_synth_attr_level, dat= dat, prob_name= "p", attr= st,
+                                 attr_name= "nativity", SIMPLIFY = FALSE))
   return(dat)
 }
 
-# helper function for synth_data_nativ. Internal to nat_lapply
-# nat_mapply <- function(dat, comp, levels) {
-#   dat <- data.frame(age= dat$age, gender= dat$gender, marital_status= dat$marital_status,
-#                     edu_attain= dat$edu_attain, emp_status= dat$emp_status, 
-#                     nativity= levels, p= dat$p * comp)
-#   return(dat)
-# }

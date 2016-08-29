@@ -63,10 +63,12 @@ pov_lapply <- function(l, levels, emp_marg) {
   comp <- emp_marg[which(names(emp_marg) %in% emp_levels)]
   comp <- c(comp, 1-comp)
   
+  st <- data.frame(pct= comp, levels= levels)
+  st <- base::split(st, 1:nrow(st))
+  
   dat <- replicate(length(emp_levels), l, simplify = FALSE)
-  dat <- do.call("rbind", mapply(add_synth_attr_level, dat= dat, prob_name= "p", attr_pct= comp, 
-                                 attr_name= "pov_status", level= levels,
-                                 SIMPLIFY = FALSE))
+  dat <- do.call("rbind", mapply(add_synth_attr_level, dat= dat, prob_name= "p", attr= st,
+                                 attr_name= "pov_status", SIMPLIFY = FALSE))
   return(dat)
 }
 
@@ -90,12 +92,3 @@ marginalize_emp_status <- function(pov_vec, emp_levels) {
   }
   return(out)
 }
-
-# helper function for synth_data_pov. Internal to pov_lapply
-# pov_mapply <- function(dat, comp, levels) {
-#   dat <- data.frame(age= dat$age, gender= dat$gender, marital_status= dat$marital_status,
-#                     edu_attain= dat$edu_attain, emp_status= dat$emp_status, 
-#                     nativity= dat$nativity,
-#                     pov_status= levels, p= dat$p * comp)
-#   return(dat)
-# }

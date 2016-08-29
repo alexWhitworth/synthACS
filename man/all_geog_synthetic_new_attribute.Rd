@@ -5,8 +5,7 @@
 \title{Add a new attribute to a set (ie list) of synthetic_micro datasets}
 \usage{
 all_geog_synthetic_new_attribute(df_list, prob_name = "p",
-  attr_name = "variable", attr_vector_list, attr_levels,
-  conditional_vars = NULL, ht_list = NULL)
+  attr_name = "variable", conditional_vars = NULL, st_list = NULL)
 }
 \arguments{
 \item{df_list}{A \code{list} of R objects each of class "synthetic_micro".}
@@ -16,21 +15,15 @@ containing the probabilities for each synthetic observation.}
 
 \item{attr_name}{A string specifying the desired name of the new attribute to be added to the data.}
 
-\item{attr_vector_list}{A \code{list} of named vectors with each specifying the counts or 
-percentages of the new attribute, or variable, to be added. Names must include appropriate 
-naming for expression matching.}
-
-\item{attr_levels}{A character vector specifying the complete set of levels for the new 
-attribute.}
-
 \item{conditional_vars}{An character vector specifying the existing variables, if any, on which 
 the new attribute (variable) is to be conditioned on for each dataset. Variables must be specified 
 in order. Defaults to \code{NULL} ie- an unconditional new attribute.}
 
-\item{ht_list}{A \code{list} of equal length to \code{conditional_vars}. Each element \code{k} of
-\code{ht_list} is a \code{data.frame} constructed as a hash-table with one-to-one correspondence  
-between \code{ht_list[[k]]} and \code{conditional_vars[k]}. Of the key-value pair, the key is
-the first column and the value is the second column. See \code{\link{synthetic_new_attribute}}.}
+\item{st_list}{A \code{list} of equal length to \code{df_list}. Each element of \code{st_list} is 
+a \code{data.frame} symbol table with N + 2 columns. The last two columns must be:
+1. A vector containing the new attribute counts or percentages; 2. is a vector of the new attribute 
+levels. The first N columns must match the conditioning scheme imposed by the variables in 
+\code{conditional_vars}. See \code{\link{synthetic_new_attribute}} and examples.}
 }
 \value{
 A list of new synthetic_micro datasets each with class "synthetic_micro".

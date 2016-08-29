@@ -89,18 +89,13 @@ mar_lapply <- function(l, ht, v, levels) {
     comp <- v[which(grepl(l_comp, names(v)))]
     if (sum(comp) > 0) comp <- (comp / sum(comp)) 
     
+    st <- data.frame(pct= comp, levels= levels)
+    st <- base::split(st, 1:nrow(st))
+    
     dat <- replicate(length(levels), l, simplify = FALSE)
-    dat <- do.call("rbind", mapply(add_synth_attr_level, dat= dat, prob_name= "p", attr_pct= comp, 
-                                   attr_name= "marital_status", level= levels,
+    dat <- do.call("rbind", mapply(add_synth_attr_level, dat= dat, prob_name= "p", 
+                                   attr_name= "marital_status", attr= st, 
                                    SIMPLIFY = FALSE))
     return(dat)
   }
 }
-
-
-# helper function for synth_data_emp. Internal to emp_lapply
-# mar_mapply <- function(dat, comp, levels) {
-#   dat <- data.frame(age= dat$age, gender= dat$gender, marital_status= levels, 
-#                     p= dat$p * comp)
-#   return(dat)
-# }
