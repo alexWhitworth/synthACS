@@ -12,8 +12,8 @@ synth_data_pov <- function(agmeen_dat, pov_ge_vec, total_pop) {
   pov_pop <- pov_ge_vec[1]
   if (total_pop / pov_pop > 3 | (total_pop / pov_pop > 2 & pov_pop < 100)) {
     message("Data on poverty status is underreported. Marking all individauls as >= poverty line.")
-    dat <- mapply_synth(dat= agmeen_dat[[1]], prob_name= "p", attr_pct= 1.0, attr_name= "pov_status",
-                        level="at_above_pov_level")
+    dat <- add_synth_attr_level(dat= agmeen_dat[[1]], prob_name= "p", attr_name= "pov_status",
+                                attr= list(pct= 1.0, level="at_above_pov_level"))
     dat$pov_status <- factor(dat$pov_status, levels= c("below_pov_level", "at_above_pov_level"))
     return(list(dat, levels(dat$edu_attain)))
   }
