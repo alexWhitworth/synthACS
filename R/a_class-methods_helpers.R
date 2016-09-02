@@ -1,4 +1,15 @@
 
+# Solving namespace issues:
+#--------------------------------------
+#' @importFrom acs acs.fetch 
+#' @importFrom acs is.geo.set
+#' @importFrom data.table data.table
+#' @useDynLib synthACS
+#' @importFrom Rcpp sourceCpp
+#' @importFrom data.table is.data.table
+NULL
+#--------------------------------------
+
 ##---------------------------------------------------------
 ## CHECK IF OBJECT IS MEMBER OF CLASS
 ##---------------------------------------------------------
@@ -811,6 +822,31 @@ all_geog_constraint_race.synthACS <- function(obj, method= c("synthetic", "macro
   }
   return(constraint)
 }
+
+##---------------------------------------------------------
+## Generics for class micro_synthetic
+##---------------------------------------------------------
+#' #' @title Marginalize a 'micro_synthetic' class object
+#' #' @description Reduce the number of attributes in a 'micro_synthetic' class object
+#' #' by marginalizing the joint distribution based on a set of specified attributes.
+#' #' @param obj An object of class \code{"micro_synthetic"}.
+#' #' @param varlist A character vector of variable names in \code{obj}
+#' #' @param prob_name A string specifying the column name of the \code{df} containing the
+#' #' probabilities for each synthetic observation.
+#' #' @export
+#' marginalize_attributes <- function(obj, varlist, prob_name) {
+#'   UseMethod(marginalize_attributes, obj)
+#' }
+#' 
+#' #' @export
+#' marginalize_attributes.micro_synthetic <- function(obj, varlist, prob_name="p") {
+#'   if (!all(sapply(varlist, function(l) exists(l, as.environment(obj)))))
+#'     stop("at least one variable in varlist is not in obj.")
+#' 
+#'   setDT(obj)  
+#'   return(obj[,sum(p), by= varlist])
+#' }
+
 
 
 ##---------------------------------------------------------

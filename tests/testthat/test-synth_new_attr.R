@@ -398,7 +398,6 @@ test_that("can add extra attributes in parallel", {
   
   df_list <- replicate(10, df, simplify= FALSE)
   st_list <- replicate(10, sym_tbl, simplify= FALSE)
-  class(df_list) <- c("list", "synthACS")
   
   # run
   syn <- all_geog_synthetic_new_attribute(df_list, prob_name= "p", attr_name= "variable",

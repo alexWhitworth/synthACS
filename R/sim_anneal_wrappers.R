@@ -177,6 +177,33 @@ all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_
 #' \code{conditional_vars}. See \code{\link{synthetic_new_attribute}} and examples.
 #' @return A list of new synthetic_micro datasets each with class "synthetic_micro".
 #' @seealso \code{\link{synthetic_new_attribute}}
+#' @examples {
+#'  set.seed(567L)
+#' df <- data.frame(gender= factor(sample(c("m", "f"), size= 100, replace=T)),
+#'                  age= factor(sample(1:5, size= 100, replace=T)),
+#'                  pov= factor(sample(c("below poverty", "at above poverty"), 
+#'                                     size= 100, replace=T, prob= c(.15,.85))),
+#'                  p= runif(100))
+#' df$p <- df$p / sum(df$p)
+#' class(df) <- c("data.frame", "micro_synthetic")
+#' 
+#' # and example test elements
+#' cond_v <- c("gender", "pov")
+#' levels <- c("employed", "unemp", "not_in_LF")
+#' sym_tbl <- data.frame(gender= rep(rep(c("male", "female"), each= 3), 2),
+#'                       pov= rep(c("lt_pov", "gt_eq_pov"), each= 6),
+#'                       cnts= c(52, 8, 268, 72, 12, 228, 1338, 93, 297, 921, 105, 554),
+#'                       lvls= rep(levels, 4))
+#' 
+#' 
+#' 
+#' df_list <- replicate(10, df, simplify= FALSE)
+#' st_list <- replicate(10, sym_tbl, simplify= FALSE)
+#' 
+#' # run
+#' syn <- all_geog_synthetic_new_attribute(df_list, prob_name= "p", attr_name= "variable",
+#'                                         conditional_vars= cond_v,st_list= st_list)
+#' }
 #' @export
 all_geog_synthetic_new_attribute <- function(df_list, prob_name= "p",
                                              attr_name= "variable",
@@ -185,8 +212,6 @@ all_geog_synthetic_new_attribute <- function(df_list, prob_name= "p",
  
   # 01. error checking
   #------------------------------------
-  if (!is.list(df_list) | !is.synthACS(df_list))
-    stop("df_list must be supplied as a class 'synthACS' object.")
   if (!is.null(st_list)) {
     if (length(df_list) != length(st_list))
       stop("when conditioning, st_list and df_list must have equal lengths")
@@ -204,9 +229,13 @@ all_geog_synthetic_new_attribute <- function(df_list, prob_name= "p",
   if (grepl("Windows", utils::sessionInfo()$running)) {cl <- parallel::makeCluster(nnodes, type= "PSOCK")}
   else {cl <- parallel::makeCluster(nnodes, type= "FORK")}
   
+  # to allow simplified testing (using non synthACS class objects)
+  if (is.synthACS(df_list)) {df_list <- lapply(df_list, function(l) return(l[[2]]))} 
+  
   synthethic_data <- parallel::clusterMap(cl, RECYCLE= TRUE, SIMPLIFY= FALSE, .scheduling= "dynamic",
                                 fun= synthetic_new_attribute,
-                                df= df_list, prob_name= prob_name, attr_name= attr_name,
+                                df= df_list, 
+                                prob_name= prob_name, attr_name= attr_name,
                                 conditional_vars= conditional_vars,
                                 sym_tbl= st_list)
   

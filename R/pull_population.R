@@ -1,11 +1,3 @@
-# Solving namespace issues:
-#--------------------------------------
-#' @importFrom acs acs.fetch 
-#' @importFrom acs is.geo.set
-#' @importFrom data.table data.table
-#' @useDynLib synthACS
-#' @importFrom Rcpp sourceCpp
-#--------------------------------------
 
 #' @title Pull ACS population data
 #' @description Pull ACS data for a specified geography from base tables

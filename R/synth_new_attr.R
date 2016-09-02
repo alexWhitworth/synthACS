@@ -1,5 +1,4 @@
 
-
 #' @title Add a new attribute to a synthetic_micro dataset
 #' @description Add a new attribute to a synthetic_micro dataset using conditional relationships
 #' between the new attribute and existing attributes (eg. wage rate conditioned on age and education 
@@ -90,7 +89,9 @@ synthetic_new_attribute <- function(df, prob_name= "p",
     else {
       if (!is.data.frame(sym_tbl) | (n_st - 2 != n_cv))
         stop("sym_tbl must contain conditioning variables of equal length as conditional_vars.")
-      if (!all(unlist(lapply(sym_tbl[,1:(n_st - 2)], function(l) sapply(l, function(i) is.character(i) | is.factor(i))))))
+      if (is.data.table(sym_tbl)) { class(sym_tbl) <- "data.frame" } 
+      if ( !all(unlist(lapply(sym_tbl[, 1:(n_st - 2)], 
+            function(l) { sapply(l, function(i) is.character(i) || is.factor(i)) }))) )
         stop("all conditioning elements of sym_tbl must be strings or factors.")
       if (any(names(sym_tbl)[1:(n_st - 2)] != conditional_vars))
         stop("Variable names in sym_tbl must match conditional_vars.")
@@ -155,8 +156,10 @@ cond_var_split <- function(df, prob_name, attr_name= "variable",
     
     # else: split data & ST conditionally, then recurse
     df <- split_df(df, conditional_vars[1])
+    df <- df[order(names(df))]
     if (!all(is.na(sym_tbl[,1]))) {
       sym_tbl <- base::split(sym_tbl[,-1], sym_tbl[,1])
+      sym_tbl <- sym_tbl[order(names(sym_tbl))]
       return(do.call("rbind", mapply(cond_var_split, 
              df= df, prob_name= prob_name, attr_name= attr_name, 
              conditional_vars= ifelse(cv_n == 1, replicate(st_n - 1, NULL), conditional_vars[-1]), 
@@ -179,6 +182,8 @@ cond_var_split <- function(df, prob_name, attr_name= "variable",
 # @ prob_name A string specifying the column name within \code{l} containing the
 # probabilities for each synthetic observation.
 add_synth_attr <- function(l, prob_name, sym_tbl, attr_name= "variable") {
+  if (nrow(l) < 1L) return(l)
+  
   if (ncol(sym_tbl) != 2) stop("incorrect dimensions for sym_tbl.")
   if (!(is.factor(sym_tbl[,2]) | is.character(sym_tbl[,2]))) stop("sym_tbl new-levels incorrectly specified.")
   if (!is.numeric(sym_tbl[,1])) 

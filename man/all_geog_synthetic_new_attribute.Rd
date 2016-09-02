@@ -34,6 +34,35 @@ relationships between the new attribute and existing attributes (eg. wage rate c
 and education level). The same attribute is added to *each* synthetic_micro dataset, where each
 dataset is supplied a distinct relationship for attribute creation.
 }
+\examples{
+{
+ set.seed(567L)
+df <- data.frame(gender= factor(sample(c("m", "f"), size= 100, replace=T)),
+                 age= factor(sample(1:5, size= 100, replace=T)),
+                 pov= factor(sample(c("below poverty", "at above poverty"), 
+                                    size= 100, replace=T, prob= c(.15,.85))),
+                 p= runif(100))
+df$p <- df$p / sum(df$p)
+class(df) <- c("data.frame", "micro_synthetic")
+
+# and example test elements
+cond_v <- c("gender", "pov")
+levels <- c("employed", "unemp", "not_in_LF")
+sym_tbl <- data.frame(gender= rep(rep(c("male", "female"), each= 3), 2),
+                      pov= rep(c("lt_pov", "gt_eq_pov"), each= 6),
+                      cnts= c(52, 8, 268, 72, 12, 228, 1338, 93, 297, 921, 105, 554),
+                      lvls= rep(levels, 4))
+
+
+
+df_list <- replicate(10, df, simplify= FALSE)
+st_list <- replicate(10, sym_tbl, simplify= FALSE)
+
+# run
+syn <- all_geog_synthetic_new_attribute(df_list, prob_name= "p", attr_name= "variable",
+                                        conditional_vars= cond_v,st_list= st_list)
+}
+}
 \seealso{
 \code{\link{synthetic_new_attribute}}
 }
