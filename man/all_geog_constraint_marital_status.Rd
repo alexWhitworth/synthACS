@@ -18,6 +18,13 @@ that constraints are built by marginalizing the synthetic micro datasets. Specif
 Create a new marital status constraint list to the mapping between a a set of macro 
 datasets and a matching set of micro dataset (supplied as class 'synthACS').
 }
+\examples{
+\dontrun{
+ # assumes that obj of class 'synthACS' already exists in your environment
+ m1 <- all_geog_constraint_marital_status(obj, "synthetic")
+ m2 <- all_geog_constraint_marital_status(obj, "macro_table")
+}
+}
 \seealso{
 \code{\link{all_geogs_add_constraint}}
 }

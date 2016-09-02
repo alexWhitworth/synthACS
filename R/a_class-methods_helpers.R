@@ -304,6 +304,11 @@ equal_constraint_populations <- function(constr_vec, geo_pop) {
 #' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
 #' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
+#' @examples \dontrun{
+#'  # assumes that obj of class 'synthACS' already exists in your environment
+#'  g1 <- all_geog_constraint_gender(obj, "synthetic")
+#'  g2 <- all_geog_constraint_gender(obj, "macro_table")
+#' }
 #' @export
 all_geog_constraint_gender <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_gender", obj)
@@ -344,6 +349,11 @@ all_geog_constraint_gender.synthACS <- function(obj, method= c("synthetic", "mac
 #' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
 #' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
+#' @examples \dontrun{
+#'  # assumes that obj of class 'synthACS' already exists in your environment
+#'  a1 <- all_geog_constraint_age(obj, "synthetic")
+#'  a2 <- all_geog_constraint_age(obj, "macro_table")
+#' }
 #' @export
 all_geog_constraint_age <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_age", obj)
@@ -385,6 +395,11 @@ all_geog_constraint_age.synthACS <- function(obj, method= c("synthetic", "macro.
 #' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
 #' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
+#' @examples \dontrun{
+#'  # assumes that obj of class 'synthACS' already exists in your environment
+#'  m1 <- all_geog_constraint_marital_status(obj, "synthetic")
+#'  m2 <- all_geog_constraint_marital_status(obj, "macro_table")
+#' }
 #' @export
 all_geog_constraint_marital_status <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_marital_status", obj)
@@ -436,6 +451,11 @@ all_geog_constraint_marital_status.synthACS <- function(obj, method= c("syntheti
 #' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
 #' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
+#' @examples \dontrun{
+#'  # assumes that obj of class 'synthACS' already exists in your environment
+#'  e1 <- all_geog_constraint_edu(obj, "synthetic")
+#'  e2 <- all_geog_constraint_edu(obj, "macro_table")
+#' }
 #' @export
 all_geog_constraint_edu <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_edu", obj)
@@ -494,6 +514,11 @@ all_geog_constraint_edu.synthACS <- function(obj, method= c("synthetic", "macro.
 #' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
 #' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
+#' @examples \dontrun{
+#'  # assumes that obj of class 'synthACS' already exists in your environment
+#'  e1 <- all_geog_constraint_employment(obj, "synthetic")
+#'  e2 <- all_geog_constraint_employment(obj, "macro_table")
+#' }
 #' @export
 all_geog_constraint_employment <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_employment", obj)
@@ -545,6 +570,11 @@ all_geog_constraint_employment.synthACS <- function(obj, method= c("synthetic", 
 #' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
 #' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
+#' @examples \dontrun{
+#'  # assumes that obj of class 'synthACS' already exists in your environment
+#'  n1 <- all_geog_constraint_nativity(obj, "synthetic")
+#'  n2 <- all_geog_constraint_nativity(obj, "macro_table")
+#' }
 #' @export
 all_geog_constraint_nativity <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_nativity", obj)
@@ -592,6 +622,11 @@ all_geog_constraint_nativity.synthACS <- function(obj, method= c("synthetic", "m
 #' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
 #' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
+#' @examples \dontrun{
+#'  # assumes that obj of class 'synthACS' already exists in your environment
+#'  p1 <- all_geog_constraint_poverty(obj, "synthetic")
+#'  p2 <- all_geog_constraint_poverty(obj, "macro_table")
+#' }
 #' @export
 all_geog_constraint_poverty <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_poverty", obj)
@@ -640,6 +675,11 @@ all_geog_constraint_poverty.synthACS <- function(obj, method= c("synthetic", "ma
 #' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
 #' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
+#' @examples \dontrun{
+#'  # assumes that obj of class 'synthACS' already exists in your environment
+#'  gm1 <- all_geog_constraint_geog_mob(obj, "synthetic")
+#'  gm2 <- all_geog_constraint_geog_mob(obj, "macro_table")
+#' }
 #' @export
 all_geog_constraint_geog_mob <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_geog_mob", obj)
@@ -717,6 +757,11 @@ all_geog_constraint_geog_mob.synthACS <- function(obj, method= c("synthetic", "m
 #' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
 #' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
+#' @examples \dontrun{
+#'  # assumes that obj of class 'synthACS' already exists in your environment
+#'  i1 <- all_geog_constraint_income(obj, "synthetic")
+#'  i2 <- all_geog_constraint_income(obj, "macro_table")
+#' }
 #' @export
 all_geog_constraint_income <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_income", obj)
@@ -772,6 +817,11 @@ all_geog_constraint_income.synthACS <- function(obj, method= c("synthetic", "mac
 #' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
 #' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
+#' @examples \dontrun{
+#'  # assumes that obj of class 'synthACS' already exists in your environment
+#'  r1 <- all_geog_constraint_race(obj, "synthetic")
+#'  r2 <- all_geog_constraint_race(obj, "macro_table")
+#' }
 #' @export
 all_geog_constraint_race <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_race", obj)
@@ -826,26 +876,72 @@ all_geog_constraint_race.synthACS <- function(obj, method= c("synthetic", "macro
 ##---------------------------------------------------------
 ## Generics for class micro_synthetic
 ##---------------------------------------------------------
-#' #' @title Marginalize a 'micro_synthetic' class object
-#' #' @description Reduce the number of attributes in a 'micro_synthetic' class object
-#' #' by marginalizing the joint distribution based on a set of specified attributes.
-#' #' @param obj An object of class \code{"micro_synthetic"}.
-#' #' @param varlist A character vector of variable names in \code{obj}
-#' #' @param prob_name A string specifying the column name of the \code{df} containing the
-#' #' probabilities for each synthetic observation.
-#' #' @export
-#' marginalize_attributes <- function(obj, varlist, prob_name) {
-#'   UseMethod(marginalize_attributes, obj)
-#' }
+#' @title Marginalize synthetic attributes
+#' @description Marginalize, (ie- reduce in number), attributes of a synthetic dataset of class
+#' 'micro_synthetic' or a list of synthetic datasets of class 'synthACS'. This is done
+#' by marginalizing the joint distribution based on a set of specified attributes (see Arguments below).
+#' @param obj An object of class \code{"micro_synthetic"}.
+#' @param varlist A character vector of variable, or attribute, names in \code{obj}. 
+#' @param marginalize_out Logical. Do you wish to *remove* the variables in \code{varlist} 
+#' instead of keeping them? Defaults to \code{FALSE}
+#' @examples {
+#' set.seed(567L)
+#' df <- data.frame(gender= factor(sample(c("m", "f"), size= 100, replace=T)),
+#'                  age= factor(sample(1:5, size= 100, replace=T)),
+#'                  pov= factor(sample(c("below poverty", "at above poverty"), 
+#'                                    size= 100, replace=T, prob= c(.15,.85))),
+#'                  p= runif(100))
+#' df$p <- df$p / sum(df$p)
+#' class(df) <- c("data.frame", "micro_synthetic")
 #' 
-#' #' @export
-#' marginalize_attributes.micro_synthetic <- function(obj, varlist, prob_name="p") {
-#'   if (!all(sapply(varlist, function(l) exists(l, as.environment(obj)))))
-#'     stop("at least one variable in varlist is not in obj.")
+#' df2 <- marginalize_attr(df, varlist= "gender")
+#' df3 <- marginalize_attr(df, varlist= c("gender", "age"))
+#' df4 <- marginalize_attr(df, varlist= c("gender", "age"), marginalize_out= TRUE)
 #' 
-#'   setDT(obj)  
-#'   return(obj[,sum(p), by= varlist])
+#' df_list <- replicate(10, df, simplify= FALSE)
+#' dummmy_list <- replicate(10, list(NULL), simplify= FALSE)
+#' df_list <- mapply(function(a,b) {return(list(a, b))}, a= dummy_list, b= df_list)
+#' class(df_list) <- c("list", "synthACS")
+#' df_list2 <- marginalize_attr(df_list, varlist= c("gender", "age"))
 #' }
+#' @export
+#' 
+marginalize_attr <- function(obj, varlist, marginalize_out= FALSE) {
+  UseMethod("marginalize_attr", obj)
+}
+
+#' @export
+marginalize_attr.micro_synthetic <- function(obj, varlist, marginalize_out= FALSE) {
+  if (!is.character(varlist) || !is.vector(varlist)) stop("varlist must be specified as a character vector.")
+  if (!all(sapply(varlist, function(l) exists(l, as.environment(obj)))))
+    stop("at least one variable in varlist is not in obj.")
+  if (!("p" %in% names(obj))) {
+    p_idx <- which(apply(obj, 2, is.numeric))
+    if (length(p_idx) > 1L) stop("obj appears to have more than 1 probability vector.")
+    p_name <- names(obj)[p_idx]
+    names(obj)[p_idx] <- "p"
+  }
+
+  setDT(obj)
+  if (!marginalize_out) {
+    obj <- obj[,sum(p), by= varlist]
+    setnames(obj, "V1", ifelse(exists("p_name"), p_name, "p"))
+    return(obj)
+  } else {
+    vlist2 <- names(obj)[which(!names(obj) %in% c(varlist, "p"))]
+    obj <- obj[,sum(p), by= vlist2]
+    setnames(obj, "V1", ifelse(exists("p_name"), p_name, "p"))
+    return(obj)
+  }
+}
+
+#' @export
+marginalize_attr.synthACS <- function(obj, varlist, marginalize_out= FALSE) {
+  return(lapply(obj, function(l, v, m) {
+    l[[2]] <- marginalize_attr.micro_synthetic(l[[2]], v, m)
+    return(l)
+  }, v= varlist, m= marginalize_out))
+}
 
 
 

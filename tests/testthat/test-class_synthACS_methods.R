@@ -277,3 +277,43 @@ test_that("race constraint creates successfully", {
   expect_equal(sum(g2[[4]]), syn[[4]]$macro_constraints$age_by_sex[1], check.attributes = FALSE)
   
 })
+
+
+test_that("marginalize_attr correctly", {
+  set.seed(567L)
+  df <- data.frame(gender= factor(sample(c("male", "female"), size= 100, replace=T)),
+                   age= factor(sample(1:5, size= 100, replace=T)),
+                   pov= factor(sample(c("below poverty", "at above poverty"),
+                                     size= 100, replace=T, prob= c(.15,.85))),
+                   p= runif(100))
+  df$p <- df$p / sum(df$p)
+  class(df) <- c("data.frame", "micro_synthetic")
+
+  # micro-synthetic
+  df2 <- marginalize_attr(df, varlist= "gender")
+  df3 <- marginalize_attr(df, varlist= c("gender", "age"))
+  df4 <- marginalize_attr(df, varlist= c("gender", "age"), marginalize_out= TRUE)
+  
+  ## test:
+  expect_equal(sum(df2[,p]), 1)
+  expect_equal(sum(df3[,p]), 1)
+  expect_equal(sum(df2[,p]), 1)
+  expect_equal(nrow(df2), length(levels(df$gender)))
+  expect_equal(nrow(df3), length(levels(df$gender)) * length(levels(df$age)))
+  expect_equal(nrow(df4), length(levels(df$pov)))
+  expect_equal(df2[,p], as.vector(tapply(df$p, df$gender, sum)))
+  expect_equal(df4[,p], as.vector(tapply(df$p, list(df$pov), sum)))
+  
+  # synthACS
+  df_list <- replicate(10, df, simplify= FALSE)
+  dummy_list <- replicate(10, list(letters[1:3]), simplify= FALSE)
+  df_list <- mapply(function(a,b) {return(list(a, b))}, a= dummy_list, b= df_list, SIMPLIFY = FALSE)
+  class(df_list) <- c("list", "synthACS")
+  df_list2 <- marginalize_attr(df_list, varlist= c("gender", "age"))
+  
+  ## test:
+  expect_true(all( unlist(lapply(df_list2, function(l) sum(l[[2]]$p))) == 1))
+  expect_equal(unlist(lapply(df_list, function(l) { length(levels(l[[2]]$gender)) * length(levels(l[[2]]$age)) })),
+               unlist(lapply(df_list2, function(l) { nrow(l[[2]]) })))
+  
+})

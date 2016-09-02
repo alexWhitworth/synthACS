@@ -17,6 +17,13 @@ that constraints are built by marginalizing the synthetic micro datasets. Specif
 Create a new nativity status constraint list to the mapping between a a set 
 of macro datasets and a matching set of micro dataset (supplied as class 'synthACS').
 }
+\examples{
+\dontrun{
+ # assumes that obj of class 'synthACS' already exists in your environment
+ n1 <- all_geog_constraint_nativity(obj, "synthetic")
+ n2 <- all_geog_constraint_nativity(obj, "macro_table")
+}
+}
 \seealso{
 \code{\link{all_geogs_add_constraint}}
 }

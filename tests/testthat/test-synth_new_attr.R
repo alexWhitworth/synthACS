@@ -368,11 +368,39 @@ test_that("new attr (top level) -- unconditionally", {
   expect_true(all(levels(factor(syn$variable)) %in% levels))
 })
 
+test_that("single synthetic dataset -- real data", {
+  # geography
+  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
+  # set up symbol tables
+  
+  levels <- c("A", "B", "C")
+  ST <- data.frame(marital_status= rep(levels(test_micro$marital_status), each= 7),
+                   race= rep(levels(test_micro$race), 5))
+  ST <- do.call("rbind", replicate(3, ST, simplify=FALSE))
+  ST <- ST[order(ST$marital_status, ST$race),]
+  ST$pct <- rep(c(0.33, 0.34, 0.33), 35)
+  ST$levels <- rep(levels, 35)
+  
+  # run
+  syn <- synthetic_new_attribute(df= test_micro, prob_name= "p", attr_name= "variable",
+                                 conditional_vars= c("marital_status", "race"), sym_tbl= ST)
+  
+  # test output
+  expect_equal(sum(syn$p), 1)
+  expect_equal(tapply(syn$p, syn$gender, sum),
+               tapply(test_micro$p, test_micro$gender, sum))
+  expect_equal(tapply(syn$p, syn$marital_status, sum),
+               tapply(test_micro$p, test_micro$marital_status, sum))
+  expect_equal(tapply(syn$p, syn$race, sum),
+               tapply(test_micro$p, test_micro$race, sum))
+  expect_equal(nrow(test_micro) * length(levels), nrow(syn))
+  expect_equal(ncol(test_micro), ncol(syn) - 1)
+  expect_true(all.equal(as.vector(tapply(syn$p, syn$variable, sum)), c(0.33, 0.34, 0.33), check.attributes=FALSE))
+})
 
 #----------------------------------------------------------
 context("Synthetic new attribute -- in parallel")
 #----------------------------------------------------------
-
 
 test_that("can add extra attributes in parallel", {
   # create test data / elements
@@ -394,8 +422,6 @@ test_that("can add extra attributes in parallel", {
                         cnts= c(52, 8, 268, 72, 12, 228, 1338, 93, 297, 921, 105, 554),
                         lvls= rep(levels, 4))
   
-  
-  
   df_list <- replicate(10, df, simplify= FALSE)
   st_list <- replicate(10, sym_tbl, simplify= FALSE)
   
@@ -413,7 +439,39 @@ test_that("can add extra attributes in parallel", {
                lapply(df_list, function(l) {tapply(l$p, l$gender, sum)}))
   expect_equal(lapply(syn, function(l) {tapply(l$p, l$pov, sum)}),
              lapply(df_list, function(l) {tapply(l$p, l$pov, sum)}))
+})
+
+test_that("parallel - real data", {
+  # create test inputs
+  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
+  # set up symbol tables
+  levels <- c("A", "B", "C")
+  ST <- data.frame(marital_status= rep(levels(syn[[1]][[2]]$marital_status), each= 7),
+                   race= rep(levels(syn[[2]][[2]]$race), 5))
+  ST <- do.call("rbind", replicate(3, ST, simplify=FALSE))
+  ST <- ST[order(ST$marital_status, ST$race),]
+  ST$pct <- rep(c(0.33, 0.34, 0.33), 35)
+  ST$levels <- rep(levels, 35)
   
+  st_list <- replicate(4, ST, simplify= FALSE)
   
+  # run
+  syn2 <- all_geog_synthetic_new_attribute(syn, prob_name= "p", attr_name= "variable",
+                                          conditional_vars= c("marital_status", "race"),
+                                          st_list= st_list)
+  # test 
+  expect_true(all(unlist(lapply(syn2, function(l) sum(l$p) == 1)))) ### edge case in syn[[1]][[1]] -- missing a level for race
+  
+  expect_equal(lapply(syn2, function(l) {tapply(l$p, l$gender, sum)}),
+               lapply(syn, function(l) {tapply(l$p, l$gender, sum)}))
+  expect_equal(lapply(syn2, function(l) {tapply(l$p, l$pov, sum)}),
+               lapply(syn, function(l) {tapply(l$p, l$pov, sum)}))
+  expect_equal(lapply(syn2, function(l) {tapply(l$p, l$marital_status, sum)}),
+               lapply(syn, function(l) {tapply(l$p, l$marital_status, sum)}))
+  expect_equal(lapply(syn2, function(l) {tapply(l$p, l$race, sum)}),
+               lapply(syn, function(l) {tapply(l$p, l$race, sum)}))
+  
+  expect_true(all.equal(lapply(syn2, function(l) {as.vector(tapply(l$p, l$variable, sum))}), 
+                replicate(4, c(0.33, 0.34, 0.33), simplify = FALSE), check.attributes = FALSE))
   
 })
