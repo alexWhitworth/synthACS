@@ -926,21 +926,25 @@ marginalize_attr.micro_synthetic <- function(obj, varlist, marginalize_out= FALS
   if (!marginalize_out) {
     obj <- obj[,sum(p), by= varlist]
     setnames(obj, "V1", ifelse(exists("p_name"), p_name, "p"))
+    class(obj) <- c("data.table", "data.frame", "micro_synthetic")
     return(obj)
   } else {
     vlist2 <- names(obj)[which(!names(obj) %in% c(varlist, "p"))]
     obj <- obj[,sum(p), by= vlist2]
     setnames(obj, "V1", ifelse(exists("p_name"), p_name, "p"))
+    class(obj) <- c("data.table", "data.frame", "micro_synthetic")
     return(obj)
   }
 }
 
 #' @export
 marginalize_attr.synthACS <- function(obj, varlist, marginalize_out= FALSE) {
-  return(lapply(obj, function(l, v, m) {
+  obj <- lapply(obj, function(l, v, m) {
     l[[2]] <- marginalize_attr.micro_synthetic(l[[2]], v, m)
     return(l)
-  }, v= varlist, m= marginalize_out))
+  }, v= varlist, m= marginalize_out)
+  class(obj) <- c("list", "synthACS")
+  return(obj)
 }
 
 
@@ -1053,6 +1057,47 @@ combine_smsm <- function(...) {
    return(ret)
 }
 
+#' @title Extract best fit for a specified geogrpahy from an 'smsm_set' object
+#' @description Extract the best fit micro population (resulting from the simulated annealing 
+#' algorithm) for a given geography.
+#' @param object An object of class \code{'smsm_set'}, typically a result of call to 
+#' \code{\link{all_geog_optimize_microdata}}
+#' @param geography A string allowing string matching via \code{\link[base]{grep}} to 
+#' a specified geography.
+#' @export
+get_best_fit <- function(obj, geography) {
+  UseMethod("get_best_fit", obj)
+}
+
+#' @export
+get_best_fit.smsm_set <- function(obj, geography) {
+  if (length(geography) != 1) stop("Please specify a single geography")
+  idx <- get_rowmatch(geography, names(object$best_fit))
+  if (length(idx) > 1) stop("geography specification returns multiple results. Please be more specific.")
+  
+  return(object$best_fit[[ idx ]])
+}
+
+#' @title Extract the final TAE for a specified geogrpahy from an 'smsm_set' object
+#' @description Extract the final TAE (resulting from the simulated annealing 
+#' algorithm) for a given geography.
+#' @param object An object of class \code{'smsm_set'}, typically a result of call to 
+#' \code{\link{all_geog_optimize_microdata}}
+#' @param geography A string allowing string matching via \code{\link[base]{grep}} to 
+#' a specified geography.
+#' @export
+get_final_tae <- function(obj, geography) {
+  UseMethod("get_final_tae", obj)
+}
+
+#' @export
+get_final_tae.smsm_set <- function(obj, geography) {
+  if (length(geography) != 1) stop("Please specify a single geography")
+  idx <- get_rowmatch(geography, names(object$best_fit))
+  if (length(idx) > 1) stop("geography specification returns multiple results. Please be more specific.")
+  
+  return(object$tae[[ idx ]])
+}
 
 ## Z-statistics???
 

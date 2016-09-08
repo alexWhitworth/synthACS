@@ -315,5 +315,6 @@ test_that("marginalize_attr correctly", {
   expect_true(all( unlist(lapply(df_list2, function(l) sum(l[[2]]$p))) == 1))
   expect_equal(unlist(lapply(df_list, function(l) { length(levels(l[[2]]$gender)) * length(levels(l[[2]]$age)) })),
                unlist(lapply(df_list2, function(l) { nrow(l[[2]]) })))
+  expect_equal(class(df_list2), c("list", "synthACS"))
   
 })

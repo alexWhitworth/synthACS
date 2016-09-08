@@ -230,11 +230,11 @@ all_geog_synthetic_new_attribute <- function(df_list, prob_name= "p",
   else {cl <- parallel::makeCluster(nnodes, type= "FORK")}
   
   # to allow simplified testing (using non synthACS class objects)
-  if (is.synthACS(df_list)) {df_list <- lapply(df_list, function(l) return(l[[2]]))} 
+  if (is.synthACS(df_list)) {df_list2 <- lapply(df_list, function(l) return(l[[2]]))} 
   
-  synthethic_data <- parallel::clusterMap(cl, RECYCLE= TRUE, SIMPLIFY= FALSE, .scheduling= "dynamic",
+  synthetic_data <- parallel::clusterMap(cl, RECYCLE= TRUE, SIMPLIFY= FALSE, .scheduling= "dynamic",
                                 fun= synthetic_new_attribute,
-                                df= df_list, 
+                                df= df_list2, 
                                 prob_name= prob_name, attr_name= attr_name,
                                 conditional_vars= conditional_vars,
                                 sym_tbl= st_list)
@@ -242,5 +242,11 @@ all_geog_synthetic_new_attribute <- function(df_list, prob_name= "p",
   parallel::stopCluster(cl)
   # 03. return
   #------------------------------------
-  return(synthethic_data) 
+  df_list <- mapply(function(x,y) {return(list(macro_constraints= x, synthetic_micro= y))},
+                    x= lapply(df_list, function(l) return(l[[1]])),
+                    y= synthetic_data, 
+                    SIMPLIFY = FALSE)
+  
+  class(df_list) <- c("list", "synthACS")
+  return(df_list) 
 }

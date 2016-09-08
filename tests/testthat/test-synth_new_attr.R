@@ -460,18 +460,17 @@ test_that("parallel - real data", {
                                           conditional_vars= c("marital_status", "race"),
                                           st_list= st_list)
   # test 
-  expect_true(all(unlist(lapply(syn2, function(l) sum(l$p) == 1)))) ### edge case in syn[[1]][[1]] -- missing a level for race
+  expect_equal(class(syn2), c("list", "synthACS"))
+  expect_true(is.synthACS(syn2))
+  expect_true(all(unlist(lapply(syn2, function(l) is.micro_synthetic(l[[2]])))))
+  expect_true(all(unlist(lapply(syn2, function(l) sum(l[[2]]$p))) == 1)) ### edge case in syn[[1]][[1]] -- missing a level for race
   
-  expect_equal(lapply(syn2, function(l) {tapply(l$p, l$gender, sum)}),
-               lapply(syn, function(l) {tapply(l$p, l$gender, sum)}))
-  expect_equal(lapply(syn2, function(l) {tapply(l$p, l$pov, sum)}),
-               lapply(syn, function(l) {tapply(l$p, l$pov, sum)}))
-  expect_equal(lapply(syn2, function(l) {tapply(l$p, l$marital_status, sum)}),
-               lapply(syn, function(l) {tapply(l$p, l$marital_status, sum)}))
-  expect_equal(lapply(syn2, function(l) {tapply(l$p, l$race, sum)}),
-               lapply(syn, function(l) {tapply(l$p, l$race, sum)}))
+  expect_equal(lapply(syn2, function(l) {tapply(l[[2]]$p, l[[2]]$marital_status, sum)}),
+               lapply(syn,  function(l) {tapply(l[[2]]$p, l[[2]]$marital_status, sum)}) )
+  expect_equal(lapply(syn2, function(l) {tapply(l[[2]]$p, l[[2]]$race, sum)}),
+               lapply(syn,  function(l) {tapply(l[[2]]$p, l[[2]]$race, sum)}) )
   
-  expect_true(all.equal(lapply(syn2, function(l) {as.vector(tapply(l$p, l$variable, sum))}), 
+  expect_true(all.equal(lapply(syn2, function(l) {as.vector(tapply(l[[2]]$p, l[[2]]$variable, sum))}), 
                 replicate(4, c(0.33, 0.34, 0.33), simplify = FALSE), check.attributes = FALSE))
   
 })
