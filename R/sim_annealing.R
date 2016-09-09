@@ -10,6 +10,15 @@
 #' @param constraint_list A \code{list} of prior constraints on the same dataset which you wish to
 #' add to. Defaults to \code{NULL} (ie. the default is that this is the first constraint.)
 #' @return A list of constraints.
+#' @examples \dontrun{
+#' ## assumes that you have a micro_synthetic dataset named test_micro and attribute counts
+#' ## named a,e,g respectively 
+#' c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
+#' c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
+#'                         constraint_list= c_list)
+#' c_list <- add_constraint(attr_name= "gender", attr_totals= g, micro_data= test_micro,
+#'                          constraint_list= c_list)
+#' }
 #' @export
 add_constraint <- function(attr_name= "variable", attr_totals, micro_data,
                            constraint_list= NULL) {
@@ -65,6 +74,13 @@ add_constraint <- function(attr_name= "variable", attr_totals, micro_data,
 #' @param new_obs An optional \code{data.frame} containing new observations with attributes matching 
 #' those in \code{sample_data}, \code{constraint_list}, and \code{prior_sample_totals}. Defaults 
 #' to \code{NULL}.
+#' @examples \dontrun{
+#' ## assumes that you have a micro_synthetic dataset named test_micro and attribute count
+#' ## named g respectively 
+#' c_list <- add_constraint(attr_name= "gender", attr_totals= g, micro_data= test_micro,
+#'             constraint_list= c_list)
+#' calculate_TAE(test_micro, c_list)
+#' }
 #' @export
 calculate_TAE <- function(sample_data, constraint_list, 
                           prior_sample_totals= NULL, dropped_obs_totals= NULL, new_obs= NULL) {
@@ -184,6 +200,11 @@ tae_mapply <- function(samples, constraints) {
 #' machines." The journal of chemical physics 21.6 (1953): 1087-1092.
 #' @references Szu, Harold, and Ralph Hartley. "Fast simulated annealing." Physics letters A 122.3 
 #' (1987): 157-162.
+#' @examples \dontrun{
+#' ## assumes you have micro_synthetic object named test_micro and constraint_list named c_list
+#' opt_data <- optimize_microdata(test_micro, "p", c_list, max_iter= 10, resample_size= 500, 
+#'               p_accept= 0.01, verbose= FALSE)
+#' }
 #' @export
 optimize_microdata <- function(micro_data, prob_name= "p", constraint_list, 
                                tolerance= round(sum(constraint_list[[1]]) / 2000 * length(constraint_list), 0),

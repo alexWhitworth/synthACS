@@ -28,4 +28,13 @@ totals from the matching macro data. Allows for updating of prior TAE instead of
 to improve speed in iterating. The updating feature is particularly helpful for optimizing
 micro data fitting via simulated annealing (see \code{\link{optimize_microdata}}).
 }
+\examples{
+\dontrun{
+## assumes that you have a micro_synthetic dataset named test_micro and attribute count
+## named g respectively 
+c_list <- add_constraint(attr_name= "gender", attr_totals= g, micro_data= test_micro,
+            constraint_list= c_list)
+calculate_TAE(test_micro, c_list)
+}
+}
 

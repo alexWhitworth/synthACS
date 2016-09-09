@@ -2,14 +2,14 @@
 library(testthat)
 library(synthACS)
 
+load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
+
 #------------------------------------------------------------------------------
 context("adding constraints - all geogs")
 #------------------------------------------------------------------------------
 
 test_that("can add 1 constraint to all geogs", {
   # create test inputs
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
-  
   cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a, macro_micro= syn)
   
   # test structure output
@@ -21,8 +21,6 @@ test_that("can add 1 constraint to all geogs", {
 
 test_that("can add 2+ constraints to all geogs", {
   # create test inputs
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
-  
   cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a, macro_micro= syn)
   cll <- all_geogs_add_constraint(attr_name= "gender", attr_total_list= g, macro_micro= syn, constraint_list_list= cll)
   cll <- all_geogs_add_constraint(attr_name= "edu_attain", attr_total_list= e, macro_micro= syn, constraint_list_list= cll)
@@ -40,8 +38,6 @@ context("can simulate anneal - all geogs in parallel")
 
 test_that("optimization works", {
   # create test inputs
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
-  
   cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a, macro_micro= syn)
   cll <- all_geogs_add_constraint(attr_name= "gender", attr_total_list= g, macro_micro= syn, constraint_list_list= cll)
   cll <- all_geogs_add_constraint(attr_name= "edu_attain", attr_total_list= e, macro_micro= syn, constraint_list_list= cll)

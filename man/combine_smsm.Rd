@@ -12,6 +12,11 @@ combine_smsm(...)
 \description{
 Combine objects of class "smsm_set" into a single object of class "smsm_set"
 }
+\examples{
+\dontrun{
+ combined <- combine_smsm(smsm1, smsm2, smsm3)
+}
+}
 \seealso{
 \code{\link[synthACS]{split}}, \code{\link[synthACS]{all_geog_optimize_microdata}}
 }

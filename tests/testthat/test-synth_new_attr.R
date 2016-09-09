@@ -2,11 +2,15 @@
 library(testthat)
 library(synthACS)
 
+load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
+load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
+load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/towork.rda")
+
 #----------------------------------------------------------
 context("new attr - bottom of recursion")
 #----------------------------------------------------------
 
-test_that("mapply - works as designed", {
+test_that("mapply - works as designed (df)", {
   # create example data
   set.seed(567L)
   df <- data.frame(gender= factor(sample(c("m", "f"), size= 100, replace=T)),
@@ -42,13 +46,41 @@ test_that("mapply - works as designed", {
   expect_equal(dat2, dat3)
 })
 
+
+
+
 # test_that("mapply -- bug catches", {})
 
 #----------------------------------------------------------
 context("one level up -- add_synth_attr")
 #----------------------------------------------------------
 
-test_that("lapply - valid output with percentages", {
+test_that("lapply - bug catches", {
+  set.seed(567L)
+  df <- data.frame(gender= factor(sample(c("m", "f"), size= 100, replace=T)),
+                   age= factor(sample(1:5, size= 100, replace=T)),
+                   edu= factor(sample(c("hs", "col", "grad"), size= 100, replace=T)),
+                   p= runif(100))
+  df$p <- df$p / sum(df$p)
+  
+  # and example test elements
+  ST <- data.frame(attr_cnts= as.character(c(0.1,0.1,0.1)),
+                   lev= c("employed", "unemp", "not_in_labor_force"))
+  ST2 <- data.frame(abc= letters[1:3],
+                    attr_cnts= c(60, 10, 30),
+                    lev= c("employed", "unemp", "not_in_labor_force"))
+  ST3 <- data.frame(lev= c("employed", "unemp", "not_in_labor_force"),
+                    attr_cnts= c(60, 10, 30))
+  ST4 <- data.frame(lvl= c("employed", "unemp", "not_in_labor_force"),
+                    attr_cnts= c(60, 10, 30))
+  
+  expect_error(add_synth_attr(l= df, prob_name= "p", sym_tbl= ST, attr_name= "variable"))
+  expect_error(add_synth_attr(l= df, prob_name= "p", sym_tbl= ST2, attr_name= "variable"))
+  expect_error(add_synth_attr(l= df, prob_name= "p", sym_tbl= ST3, attr_name= "variable"))
+  expect_error(add_synth_attr(l= df, prob_name= "p", sym_tbl= ST4, attr_name= "variable"))
+})
+
+test_that("lapply - valid output with percentages (df)", {
   # create example data
   set.seed(567L)
   df <- data.frame(gender= factor(sample(c("m", "f"), size= 100, replace=T)),
@@ -78,7 +110,40 @@ test_that("lapply - valid output with percentages", {
   expect_equal(as.vector(tapply(dat$p, dat$variable, sum)), c(0.6, 0.3, 0.1))
 })
 
-test_that("lapply - valid output with counts", {
+test_that("lapply - valid output with percentages (dt)", {
+  # create example data
+  set.seed(567L)
+  df <- data.frame(gender= factor(sample(c("m", "f"), size= 100, replace=T)),
+                   age= factor(sample(1:5, size= 100, replace=T)),
+                   edu= factor(sample(c("hs", "col", "grad"), size= 100, replace=T)),
+                   p= runif(100))
+  df$p <- df$p / sum(df$p)
+  setDT(df)
+  
+  # and example test elements
+  sym_tbl <- data.frame(attr_cnts= c(0.6, 0.1, 0.3),
+                        lev= c("employed", "unemp", "not_in_labor_force"))
+  setDT(sym_tbl)
+  
+  dat <- add_synth_attr(l= df, prob_name= "p", sym_tbl= sym_tbl, attr_name= "variable")
+  
+  # test output
+  expect_equal(nrow(df) * nrow(sym_tbl), nrow(dat))
+  expect_equal(ncol(df), ncol(dat) - 1)
+  expect_true(all(names(df) %in% names(dat)))
+  expect_true(all(names(dat) %in% c("variable", names(df))))
+  expect_equal(sum(dat$p), 1)
+  expect_equal(sum(dat$p), sum(df$p))
+  expect_true(all(sym_tbl$lev %in% levels(factor(dat$variable))))
+  expect_true(all(levels(factor(dat$variable)) %in% sym_tbl$lev))
+  expect_equal(tapply(dat$p, dat$gender, sum),
+               tapply(df$p, df$gender, sum))
+  expect_equal(sort(as.vector(tapply(dat$p, dat$variable, sum))), c(0.1, 0.3, 0.6))
+  expect_equal(as.vector(tapply(dat$p, dat$variable, sum)), c(0.6, 0.3, 0.1))
+})
+
+
+test_that("lapply - valid output with counts  -- DF", {
   # create example data
   set.seed(567L)
   df <- data.frame(gender= factor(sample(c("m", "f"), size= 100, replace=T)),
@@ -108,36 +173,44 @@ test_that("lapply - valid output with counts", {
   expect_equal(as.vector(tapply(dat$p, dat$variable, sum)), c(0.6, 0.3, 0.1))
 })
 
-test_that("lapply - bug catches", {
+test_that("lapply - valid output with counts -- DT", {
+  # create example data
   set.seed(567L)
   df <- data.frame(gender= factor(sample(c("m", "f"), size= 100, replace=T)),
                    age= factor(sample(1:5, size= 100, replace=T)),
                    edu= factor(sample(c("hs", "col", "grad"), size= 100, replace=T)),
                    p= runif(100))
   df$p <- df$p / sum(df$p)
+  setDT(df)
   
   # and example test elements
-  ST <- data.frame(attr_cnts= as.character(c(0.1,0.1,0.1)),
+  sym_tbl <- data.frame(attr_cnts= c(60, 10, 30),
                         lev= c("employed", "unemp", "not_in_labor_force"))
-  ST2 <- data.frame(abc= letters[1:3],
-                    attr_cnts= c(60, 10, 30),
-                    lev= c("employed", "unemp", "not_in_labor_force"))
-  ST3 <- data.frame(lev= c("employed", "unemp", "not_in_labor_force"),
-                   attr_cnts= c(60, 10, 30))
-  ST4 <- data.frame(lvl= c("employed", "unemp", "not_in_labor_force"),
-                    attr_cnts= c(60, 10, 30))
+  setDT(sym_tbl)
   
-  expect_error(add_synth_attr(l= df, prob_name= "p", sym_tbl= ST, attr_name= "variable"))
-  expect_error(add_synth_attr(l= df, prob_name= "p", sym_tbl= ST2, attr_name= "variable"))
-  expect_error(add_synth_attr(l= df, prob_name= "p", sym_tbl= ST3, attr_name= "variable"))
-  expect_error(add_synth_attr(l= df, prob_name= "p", sym_tbl= ST4, attr_name= "variable"))
+  dat <- add_synth_attr(l= df, prob_name= "p", sym_tbl= sym_tbl, attr_name= "variable")
+  
+  # test output
+  expect_equal(nrow(df) * nrow(sym_tbl), nrow(dat))
+  expect_equal(ncol(df), ncol(dat) - 1)
+  expect_true(all(names(df) %in% names(dat)))
+  expect_true(all(names(dat) %in% c("variable", names(df))))
+  expect_equal(sum(dat$p), 1)
+  expect_equal(sum(dat$p), sum(df$p))
+  expect_true(all(sym_tbl$lev %in% levels(factor(dat$variable))))
+  expect_true(all(levels(factor(dat$variable)) %in% sym_tbl$lev))
+  expect_equal(tapply(dat$p, dat$gender, sum),
+               tapply(df$p, df$gender, sum))
+  expect_equal(sort(as.vector(tapply(dat$p, dat$variable, sum))), c(0.1, 0.3, 0.6))
+  expect_equal(as.vector(tapply(dat$p, dat$variable, sum)), c(0.6, 0.3, 0.1))
 })
+
 
 #----------------------------------------------------------
 context("conditional splitting & recursion")
 #----------------------------------------------------------
 
-test_that("conditional split -- fully specified conditioning", {
+test_that("conditional split -- fully specified conditioning (DF)", {
   # create test data / elements
   # create example data
   set.seed(567L)
@@ -159,6 +232,46 @@ test_that("conditional split -- fully specified conditioning", {
   # run code
   dat <- synthACS:::cond_var_split(df, "p", attr_name= "variable", 
                         conditional_vars= cond_v, sym_tbl= sym_tbl)
+  # test output
+  expect_equal(nrow(df) * length(levels), nrow(dat))
+  expect_equal(ncol(df), ncol(dat) - 1)
+  expect_true(all(names(df) %in% names(dat)))
+  expect_true(all(names(dat) %in% c("variable", names(df))))
+  expect_equal(sum(dat$p), 1)
+  expect_equal(sum(dat$p), sum(df$p))
+  expect_true(all(levels %in% levels(factor(dat$variable))))
+  expect_true(all(levels(factor(dat$variable)) %in% levels))
+  expect_equal(tapply(dat$p, dat$gender, sum),
+               tapply(df$p, df$gender, sum))
+  expect_equal(tapply(dat$p, dat$pov, sum),
+               tapply(df$p, df$pov, sum))
+  expect_equal(tapply(dat$p, list(dat$pov, dat$gender), sum),
+               tapply(df$p, list(df$pov, df$gender), sum))
+})
+
+test_that("conditional split -- fully specified conditioning (DT)", {
+  # create test data / elements
+  # create example data
+  set.seed(567L)
+  df <- data.frame(gender= factor(sample(c("male", "female"), size= 100, replace=T)),
+                   age= factor(sample(1:5, size= 100, replace=T)),
+                   pov= factor(sample(c("lt_pov", "gt_eq_pov"), 
+                                      size= 100, replace=T, prob= c(.15,.85))),
+                   p= runif(100))
+  df$p <- df$p / sum(df$p)
+  
+  # and example test elements
+  cond_v <- c("gender", "pov")
+  levels <- c("employed", "unemp", "not_in_LF")
+  sym_tbl <- data.frame(gender= rep(rep(c("male", "female"), each= 3), 2),
+                        pov= rep(c("lt_pov", "gt_eq_pov"), each= 6),
+                        cnts= c(52, 8, 268, 72, 12, 228, 1338, 93, 297, 921, 105, 554),
+                        lvls= rep(levels, 4))
+  setDT(df); setDT(sym_tbl)
+  
+  # run code
+  dat <- synthACS:::cond_var_split(df, "p", attr_name= "variable", 
+                                   conditional_vars= cond_v, sym_tbl= sym_tbl)
   # test output
   expect_equal(nrow(df) * length(levels), nrow(dat))
   expect_equal(ncol(df), ncol(dat) - 1)
@@ -266,7 +379,7 @@ test_that("error checking", {
                                        conditional_vars= c("gender", "edu"), sym_tbl = ST3))
 })
 
-test_that("new attr (top level) - standard conditioning", {
+test_that("new attr (top level) - standard conditioning (DF)", {
   set.seed(567L)
   df <- data.frame(gender= factor(sample(c("male", "female"), size= 100, replace=T)),
                    age= factor(sample(1:5, size= 100, replace=T)),
@@ -305,9 +418,47 @@ test_that("new attr (top level) - standard conditioning", {
   expect_true(all(levels(factor(syn$variable)) %in% levels))
 })
 
+test_that("new attr (top level) - standard conditioning (DT)", {
+  set.seed(567L)
+  df <- data.frame(gender= factor(sample(c("male", "female"), size= 100, replace=T)),
+                   age= factor(sample(1:5, size= 100, replace=T)),
+                   pov= factor(sample(c("lt_pov", "gt_eq_pov"), 
+                                      size= 100, replace=T, prob= c(.15,.85))),
+                   p= runif(100))
+  df$p <- df$p / sum(df$p)
+  class(df) <- c("data.frame", "micro_synthetic")
+  
+  # and example test elements
+  cond_v <- c("gender", "pov")
+  levels <- c("employed", "unemp", "not_in_LF")
+  sym_tbl <- data.frame(gender= rep(rep(c("male", "female"), each= 3), 2),
+                        pov= rep(c("lt_pov", "gt_eq_pov"), each= 6),
+                        cnts= c(52, 8, 268, 72, 12, 228, 1338, 93, 297, 921, 105, 554),
+                        lvls= rep(levels, 4))
+  setDT(df); setDT(sym_tbl)
+  
+  # run
+  syn <- synthetic_new_attribute(df= df, prob_name= "p", attr_name= "variable",
+                                 conditional_vars= c("gender", "pov"), sym_tbl= sym_tbl)
+  
+  # test output
+  expect_true(is.micro_synthetic(syn))
+  expect_true(is.data.frame(syn))
+  expect_equal(sum(syn$p), 1)
+  expect_equal(sum(syn$p), sum(df$p))
+  expect_equal(tapply(syn$p, syn$gender, sum),
+               tapply(df$p, df$gender, sum))
+  expect_equal(tapply(syn$p, syn$pov, sum),
+               tapply(df$p, df$pov, sum))
+  expect_equal(nrow(df) * length(levels), nrow(syn))
+  expect_equal(ncol(df), ncol(syn) - 1)
+  expect_true(all(names(df) %in% names(syn)))
+  expect_true(all(names(syn) %in% c("variable", names(df))))
+  expect_true(all(levels %in% levels(factor(syn$variable))))
+  expect_true(all(levels(factor(syn$variable)) %in% levels))
+})
+
 test_that("new attr (top level) - differential conditioning", {
-  # create test data / elements
-  # create example data
   # create example data
   set.seed(567L)
   df <- data.frame(gender= factor(sample(c("male", "female"), size= 100, replace=T)),
@@ -381,9 +532,9 @@ test_that("new attr (top level) -- unconditionally", {
   expect_true(all(levels(factor(syn$variable)) %in% levels))
 })
 
-test_that("single synthetic dataset -- real data", {
+test_that("single synthetic dataset -- real df, fake ST (DF)", {
   # geography
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
+  # load(...) 
   # set up symbol tables
   
   levels <- c("A", "B", "C")
@@ -411,11 +562,83 @@ test_that("single synthetic dataset -- real data", {
   expect_true(all.equal(as.vector(tapply(syn$p, syn$variable, sum)), c(0.33, 0.34, 0.33), check.attributes=FALSE))
 })
 
+
+test_that("single synthetic dataset -- real df, fake ST (DT)", {
+  # set up symbol tables
+  
+  levels <- c("A", "B", "C")
+  ST <- data.frame(marital_status= rep(levels(test_micro$marital_status), each= 7),
+                   race= rep(levels(test_micro$race), 5))
+  ST <- do.call("rbind", replicate(3, ST, simplify=FALSE))
+  ST <- ST[order(ST$marital_status, ST$race),]
+  ST$pct <- rep(c(0.33, 0.34, 0.33), 35)
+  ST$levels <- rep(levels, 35)
+  
+  setDT(test_micro); setDT(ST)
+  # run
+  syn <- synthetic_new_attribute(df= test_micro, prob_name= "p", attr_name= "variable",
+                                 conditional_vars= c("marital_status", "race"), sym_tbl= ST)
+  
+  # test output
+  expect_equal(sum(syn$p), 1)
+  expect_equal(tapply(syn$p, syn$gender, sum),
+               tapply(test_micro$p, test_micro$gender, sum))
+  expect_equal(tapply(syn$p, syn$marital_status, sum),
+               tapply(test_micro$p, test_micro$marital_status, sum))
+  expect_equal(tapply(syn$p, syn$race, sum),
+               tapply(test_micro$p, test_micro$race, sum))
+  expect_equal(nrow(test_micro) * length(levels), nrow(syn))
+  expect_equal(ncol(test_micro), ncol(syn) - 1)
+  expect_true(all.equal(as.vector(tapply(syn$p, syn$variable, sum)), c(0.33, 0.34, 0.33), check.attributes=FALSE))
+})
+
+
+test_that("single synthetic dataset -- real DF, ST (DF)", {
+  # load data inputs
+  test_micro <- syn[[1]][[2]]
+  work_ST <- towork[[1]]
+  class(work_ST) <- "data.frame"
+  
+  # run
+  syn <- synthetic_new_attribute(df= test_micro, prob_name= "p", attr_name= "transit",
+                                 conditional_vars= c("emp_status", "age"), sym_tbl= work_ST)
+  
+  # test output
+  expect_equal(sum(syn$p), 1)
+  expect_equal(tapply(syn$p, syn$emp_status, sum),
+               tapply(test_micro$p, test_micro$emp_status, sum))
+  expect_equal(tapply(syn$p, syn$age, sum),
+               tapply(test_micro$p, test_micro$age, sum))
+  expect_equal(tapply(syn$p, syn$race, sum),
+               tapply(test_micro$p, test_micro$race, sum))
+  expect_equal(ncol(test_micro), ncol(syn) - 1)
+})
+
+test_that("single synthetic dataset -- real DF, ST (DT)", {
+  # load data inputs
+  test_micro <- syn[[4]][[2]]
+  work_ST <- towork[[4]]
+  
+  # run
+  syn <- synthetic_new_attribute(df= test_micro, prob_name= "p", attr_name= "transit",
+                                 conditional_vars= c("emp_status", "age"), sym_tbl= work_ST)
+  
+  # test output
+  expect_equal(sum(syn$p), 1)
+  expect_equal(tapply(syn$p, syn$emp_status, sum),
+               tapply(test_micro$p, test_micro$emp_status, sum))
+  expect_equal(tapply(syn$p, syn$age, sum),
+               tapply(test_micro$p, test_micro$age, sum))
+  expect_equal(tapply(syn$p, syn$race, sum),
+               tapply(test_micro$p, test_micro$race, sum))
+  expect_equal(ncol(test_micro), ncol(syn) - 1)
+})
+
 #----------------------------------------------------------
 context("Synthetic new attribute -- in parallel")
 #----------------------------------------------------------
 
-test_that("can add extra attributes in parallel", {
+test_that("can add extra attributes in parallel (DF)", {
   # create test data / elements
   # create example data
   set.seed(567L)
@@ -454,9 +677,50 @@ test_that("can add extra attributes in parallel", {
              lapply(df_list, function(l) {tapply(l$p, l$pov, sum)}))
 })
 
-test_that("parallel - real data", {
+test_that("can add extra attributes in parallel (DT)", {
+  # create test data / elements
+  # create example data
+  set.seed(567L)
+  df <- data.frame(gender= factor(sample(c("male", "female"), size= 100, replace=T)),
+                   age= factor(sample(1:5, size= 100, replace=T)),
+                   pov= factor(sample(c("lt_pov", "gt_eq_pov"), 
+                                      size= 100, replace=T, prob= c(.15,.85))),
+                   p= runif(100))
+  df$p <- df$p / sum(df$p)
+  class(df) <- c("data.frame", "micro_synthetic")
+  
+  # and example test elements
+  cond_v <- c("gender", "pov")
+  levels <- c("employed", "unemp", "not_in_LF")
+  sym_tbl <- data.frame(gender= rep(rep(c("male", "female"), each= 3), 2),
+                        pov= rep(c("lt_pov", "gt_eq_pov"), each= 6),
+                        cnts= c(52, 8, 268, 72, 12, 228, 1338, 93, 297, 921, 105, 554),
+                        lvls= rep(levels, 4))
+  setDT(df); setDT(sym_tbl)
+  
+  
+  df_list <- replicate(10, df, simplify= FALSE)
+  st_list <- replicate(10, sym_tbl, simplify= FALSE)
+  
+  # run
+  syn <- all_geog_synthetic_new_attribute(df_list, prob_name= "p", attr_name= "variable",
+                                          conditional_vars= cond_v,st_list= st_list)
+  
+  # test output structure
+  expect_true( all(unlist(lapply(syn, function(l) is.micro_synthetic(l[[2]])))) )
+  expect_true( all(unlist(lapply(syn, function(l) is.data.frame(l[[2]])))) )
+  
+  # test ouput probabilities
+  expect_true(all(unlist(lapply(syn, function(l) sum(l[[2]]$p) == 1))))
+  expect_equal(lapply(syn, function(l) {tapply(l[[2]]$p, l[[2]]$gender, sum)}),
+               lapply(df_list, function(l) {tapply(l$p, l$gender, sum)}))
+  expect_equal(lapply(syn, function(l) {tapply(l[[2]]$p, l[[2]]$pov, sum)}),
+               lapply(df_list, function(l) {tapply(l$p, l$pov, sum)}))
+})
+
+test_that("parallel - real DF, fake ST", {
   # create test inputs
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
+  # load(...) 
   # set up symbol tables
   levels <- c("A", "B", "C")
   ST <- data.frame(marital_status= rep(levels(syn[[1]][[2]]$marital_status), each= 7),

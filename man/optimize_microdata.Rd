@@ -60,6 +60,13 @@ candidates and \code{p_accept} controls the hill-climbing rate for exiting local
 
 Please see the references for a more detailed discussion of the simulated annealing procedure.
 }
+\examples{
+\dontrun{
+## assumes you have micro_synthetic object named test_micro and constraint_list named c_list
+opt_data <- optimize_microdata(test_micro, "p", c_list, max_iter= 10, resample_size= 500, 
+              p_accept= 0.01, verbose= FALSE)
+}
+}
 \references{
 Ingber, Lester. "Very fast simulated re-annealing." Mathematical and computer 
 modelling 12.8 (1989): 967-973.

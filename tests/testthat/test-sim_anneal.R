@@ -2,13 +2,14 @@
 library(testthat)
 library(synthACS)
 
+load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
+
 #----------------------------------------------------------
 context("adding constraints")
 #----------------------------------------------------------
 
 test_that("constraint errors work", {
   # geography
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
   data(diamonds, package= "ggplot2")
   let <- letters
   
@@ -23,9 +24,6 @@ test_that("constraint errors work", {
 
 
 test_that("adding constraints work", {
-  # geography
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
-  
   # test -- add some constraints singly
   expect_true(is.list(add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)))
   expect_equal(length(add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)), 1)
@@ -68,8 +66,6 @@ context("calculating TAE - helpers")
 #----------------------------------------------------------
 
 test_that("sample_totals calculates accurately", {
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
-  
   # build out constraints
   c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
   c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
@@ -91,8 +87,6 @@ test_that("sample_totals calculates accurately", {
 })
 
 test_that("tae_mapply calculates accurately", {
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
-  
   # build out constraints
   c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
   c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
@@ -118,9 +112,6 @@ context("calculating TAE")
 #----------------------------------------------------------
 
 test_that("tae errors work appropriately", {
-  # geography
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
-
   # build out constraints
   c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
   c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
@@ -144,9 +135,6 @@ test_that("tae errors work appropriately", {
 })
 
 test_that("TAE results are exactly correct", {
-  # geography
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
-  
   # build out constraints
   c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
   c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
@@ -177,9 +165,6 @@ test_that("TAE results are exactly correct", {
 
 
 test_that("TAE ouptuts appropriately - no iterations", {
-  # geography
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
-  
   # build out constraints
   c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
   c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
@@ -203,9 +188,6 @@ test_that("TAE ouptuts appropriately - no iterations", {
 })
 
 test_that("TAE results are exactly correct - iterations 2-3", {
-  # geography
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
-  
   # build out constraints
   c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
   c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
@@ -282,9 +264,6 @@ test_that("TAE results are exactly correct - iterations 2-3", {
 })
 
 test_that("TAE outputs appropriately - iterations 2-3", {
-  # geography
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
-  
   # build out constraints
   c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
   c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
@@ -344,7 +323,6 @@ context("simulated annealing")
 test_that("errors work", {
   # build up some test data:
   data(diamonds, package= "ggplot2")
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
   
   # build out constraints
   c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
@@ -395,9 +373,6 @@ test_that("errors work", {
 
 
 test_that("annealing works correctly", {
-  # geography
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
-  
   # build out constraints
   c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
   c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,

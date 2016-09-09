@@ -120,7 +120,9 @@ synthetic_new_attribute <- function(df, prob_name= "p",
   
   # 03. return
   #------------------------------------
-  dat <- dat[dat[prob_name] > 0,]
+  if  (!is.data.table(dat)) { dat <- dat[dat[prob_name] > 0,] }
+  else { dat <- dat[get(prob_name, as.environment(dat)) > 0,] }
+  
   if (!is.micro_synthetic(dat))   class(dat) <- c(class(dat), "micro_synthetic")
   return(dat)
 }
@@ -146,6 +148,8 @@ split_df <- function(d, var) {
 cond_var_split <- function(df, prob_name, attr_name= "variable", 
                            conditional_vars, sym_tbl) {
   if (nrow(df) < 1L) return(df)
+  if (is.data.table(sym_tbl)) { class(sym_tbl) <- "data.frame" } 
+  
   cv_n <- length(conditional_vars)
   st_n <- ncol(sym_tbl) - 2
   
@@ -189,6 +193,7 @@ cond_var_split <- function(df, prob_name, attr_name= "variable",
 # probabilities for each synthetic observation.
 add_synth_attr <- function(l, prob_name, sym_tbl, attr_name= "variable") {
   if (nrow(l) < 1L) return(l)
+  if (is.data.table(sym_tbl)) { class(sym_tbl) <- "data.frame" } 
   
   if (ncol(sym_tbl) != 2) stop("incorrect dimensions for sym_tbl.")
   if (!(is.factor(sym_tbl[,2]) | is.character(sym_tbl[,2]))) stop("sym_tbl new-levels incorrectly specified.")

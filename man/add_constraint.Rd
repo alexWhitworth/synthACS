@@ -26,4 +26,15 @@ Add a new constraint to the mapping between a given macro dataset (class "macroA
 and a matching micro dataset (class "micro_synthetic). May be called repeatedly to create a 
 set of constraints.
 }
+\examples{
+\dontrun{
+## assumes that you have a micro_synthetic dataset named test_micro and attribute counts
+## named a,e,g respectively 
+c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
+c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
+                        constraint_list= c_list)
+c_list <- add_constraint(attr_name= "gender", attr_totals= g, micro_data= test_micro,
+                         constraint_list= c_list)
+}
+}
 
