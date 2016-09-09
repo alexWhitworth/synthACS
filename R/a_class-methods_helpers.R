@@ -1024,6 +1024,9 @@ global_param_check <- function(l, param_name, warning_msg) {
 #' @description Combine objects of class "smsm_set" into a single object of class "smsm_set"
 #' @param ... A list of objects of class 'smsm_set'.
 #' @seealso \code{\link[synthACS]{split}}, \code{\link[synthACS]{all_geog_optimize_microdata}}
+#' @examples \dontrun{
+#'  combined <- combine_smsm(smsm1, smsm2, smsm3)
+#' }
 #' @export
 combine_smsm <- function(...) {
    smsm <- list(...)

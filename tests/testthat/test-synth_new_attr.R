@@ -14,19 +14,32 @@ test_that("mapply - works as designed", {
                    edu= factor(sample(c("hs", "col", "grad"), size= 100, replace=T)),
                    p= runif(100))
   df$p <- df$p / sum(df$p)
+  df2  <- setDT(df)
   
   attr <- data.frame(pct= 0.5, level= "new")
   a_name <- "var_new"
   
   # test
   dat2 <- synthACS:::add_synth_attr_level(df, "p", attr= attr, attr_name= a_name)
+  dat3 <- synthACS:::add_synth_attr_level(df2, "p", attr= attr, attr_name= a_name)
   
+  # data.frame
   expect_true(all(names(df) %in% names(dat2)))
   expect_true(all(names(dat2) %in% c(a_name, names(df))))
   expect_equal(sum(df$p), sum(dat2$p) / attr[[1]])
   expect_equal(df$p, dat2$p / attr[[1]])
   expect_equal(nrow(df), nrow(dat2))
   expect_equal(ncol(df), ncol(dat2) - 1)
+  
+  # data.table
+  expect_true(all(names(df2) %in% names(dat3)))
+  expect_true(all(names(dat3) %in% c(a_name, names(df2))))
+  expect_equal(sum(df2$p), sum(dat3$p) / attr[[1]])
+  expect_equal(df2$p, dat2$p / attr[[1]])
+  expect_equal(nrow(df2), nrow(dat3))
+  expect_equal(ncol(df2), ncol(dat3) - 1)
+  
+  expect_equal(dat2, dat3)
 })
 
 # test_that("mapply -- bug catches", {})
@@ -128,9 +141,9 @@ test_that("conditional split -- fully specified conditioning", {
   # create test data / elements
   # create example data
   set.seed(567L)
-  df <- data.frame(gender= factor(sample(c("m", "f"), size= 100, replace=T)),
+  df <- data.frame(gender= factor(sample(c("male", "female"), size= 100, replace=T)),
                    age= factor(sample(1:5, size= 100, replace=T)),
-                   pov= factor(sample(c("below poverty", "at above poverty"), 
+                   pov= factor(sample(c("lt_pov", "gt_eq_pov"), 
                                       size= 100, replace=T, prob= c(.15,.85))),
                    p= runif(100))
   df$p <- df$p / sum(df$p)
@@ -255,9 +268,9 @@ test_that("error checking", {
 
 test_that("new attr (top level) - standard conditioning", {
   set.seed(567L)
-  df <- data.frame(gender= factor(sample(c("m", "f"), size= 100, replace=T)),
+  df <- data.frame(gender= factor(sample(c("male", "female"), size= 100, replace=T)),
                    age= factor(sample(1:5, size= 100, replace=T)),
-                   pov= factor(sample(c("below poverty", "at above poverty"), 
+                   pov= factor(sample(c("lt_pov", "gt_eq_pov"), 
                                       size= 100, replace=T, prob= c(.15,.85))),
                    p= runif(100))
   df$p <- df$p / sum(df$p)
@@ -406,9 +419,9 @@ test_that("can add extra attributes in parallel", {
   # create test data / elements
   # create example data
   set.seed(567L)
-  df <- data.frame(gender= factor(sample(c("m", "f"), size= 100, replace=T)),
+  df <- data.frame(gender= factor(sample(c("male", "female"), size= 100, replace=T)),
                    age= factor(sample(1:5, size= 100, replace=T)),
-                   pov= factor(sample(c("below poverty", "at above poverty"), 
+                   pov= factor(sample(c("lt_pov", "gt_eq_pov"), 
                                       size= 100, replace=T, prob= c(.15,.85))),
                    p= runif(100))
   df$p <- df$p / sum(df$p)
@@ -430,14 +443,14 @@ test_that("can add extra attributes in parallel", {
                                           conditional_vars= cond_v,st_list= st_list)
   
   # test output structure
-  expect_true(all(unlist(lapply(syn, is.micro_synthetic))))
-  expect_true(all(unlist(lapply(syn, is.data.frame))))
+  expect_true( all(unlist(lapply(syn, function(l) is.micro_synthetic(l[[2]])))) )
+  expect_true( all(unlist(lapply(syn, function(l) is.data.frame(l[[2]])))) )
   
   # test ouput probabilities
-  expect_true(all(unlist(lapply(syn, function(l) sum(l$p) == 1))))
-  expect_equal(lapply(syn, function(l) {tapply(l$p, l$gender, sum)}),
+  expect_true(all(unlist(lapply(syn, function(l) sum(l[[2]]$p) == 1))))
+  expect_equal(lapply(syn, function(l) {tapply(l[[2]]$p, l[[2]]$gender, sum)}),
                lapply(df_list, function(l) {tapply(l$p, l$gender, sum)}))
-  expect_equal(lapply(syn, function(l) {tapply(l$p, l$pov, sum)}),
+  expect_equal(lapply(syn, function(l) {tapply(l[[2]]$p, l[[2]]$pov, sum)}),
              lapply(df_list, function(l) {tapply(l$p, l$pov, sum)}))
 })
 
@@ -463,7 +476,7 @@ test_that("parallel - real data", {
   expect_equal(class(syn2), c("list", "synthACS"))
   expect_true(is.synthACS(syn2))
   expect_true(all(unlist(lapply(syn2, function(l) is.micro_synthetic(l[[2]])))))
-  expect_true(all(unlist(lapply(syn2, function(l) sum(l[[2]]$p))) == 1)) ### edge case in syn[[1]][[1]] -- missing a level for race
+  expect_true(all.equal(unlist(lapply(syn2, function(l) sum(l[[2]]$p))), rep(1, 4), check.attributes = FALSE)) 
   
   expect_equal(lapply(syn2, function(l) {tapply(l[[2]]$p, l[[2]]$marital_status, sum)}),
                lapply(syn,  function(l) {tapply(l[[2]]$p, l[[2]]$marital_status, sum)}) )

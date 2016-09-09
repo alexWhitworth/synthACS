@@ -43,25 +43,25 @@
 #' \code{conditional_vars}. See details and examples. 
 #' @return A new synthetic_micro dataset with class "synthetic_micro".
 #' @examples {
- # set.seed(567L)
- # df <- data.frame(gender= factor(sample(c("male", "female"), size= 100, replace= TRUE)),
- #                 edu= factor(sample(c("LT_college", "BA_degree"), size= 100, replace= TRUE)),
- #                 p= runif(100))
- # df$p <- df$p / sum(df$p)
- # class(df) <- c("data.frame", "micro_synthetic")
- # ST <- data.frame(gender= c(rep("male", 3), rep("female", 3)),
- #                  attr_pct= c(0.1, 0.8, 0.1, 0.05, 0.7, 0.25),
- #                  levels= rep(c("low", "middle", "high"), 2))
- # df2 <- synthetic_new_attribute(df, prob_name= "p", attr_name= "SES", conditional_vars= "gender",
- #          sym_tbl= ST)
- # 
- # ST2 <- data.frame(gender= c(rep("male", 3), rep("female", 6)),
- #                   edu= c(rep(NA, 3), rep(c("LT_college", "BA_degree"), each= 3)),
- #                   attr_pct= c(0.1, 0.8, 0.1, 10, 80, 10, 5, 70, 25),
- #                   levels= rep(c("low", "middle", "high"), 3))
- # df2 <- synthetic_new_attribute(df, prob_name= "p", attr_name= "SES",
- #          conditional_vars= c("gender", "edu"),
- #          sym_tbl= ST2)
+#' set.seed(567L)
+#' df <- data.frame(gender= factor(sample(c("male", "female"), size= 100, replace= TRUE)),
+#'                 edu= factor(sample(c("LT_college", "BA_degree"), size= 100, replace= TRUE)),
+#'                 p= runif(100))
+#' df$p <- df$p / sum(df$p)
+#' class(df) <- c("data.frame", "micro_synthetic")
+#' ST <- data.frame(gender= c(rep("male", 3), rep("female", 3)),
+#'                  attr_pct= c(0.1, 0.8, 0.1, 0.05, 0.7, 0.25),
+#'                  levels= rep(c("low", "middle", "high"), 2))
+#' df2 <- synthetic_new_attribute(df, prob_name= "p", attr_name= "SES", conditional_vars= "gender",
+#'          sym_tbl= ST)
+#' 
+#' ST2 <- data.frame(gender= c(rep("male", 3), rep("female", 6)),
+#'                   edu= c(rep(NA, 3), rep(c("LT_college", "BA_degree"), each= 3)),
+#'                   attr_pct= c(0.1, 0.8, 0.1, 10, 80, 10, 5, 70, 25),
+#'                   levels= rep(c("low", "middle", "high"), 3))
+#' df2 <- synthetic_new_attribute(df, prob_name= "p", attr_name= "SES",
+#'          conditional_vars= c("gender", "edu"),
+#'          sym_tbl= ST2)
 #' }
 #' @export
 synthetic_new_attribute <- function(df, prob_name= "p",
@@ -145,6 +145,7 @@ split_df <- function(d, var) {
 # the variables in \code{conditional_vars}....
 cond_var_split <- function(df, prob_name, attr_name= "variable", 
                            conditional_vars, sym_tbl) {
+  if (nrow(df) < 1L) return(df)
   cv_n <- length(conditional_vars)
   st_n <- ncol(sym_tbl) - 2
   
@@ -156,10 +157,15 @@ cond_var_split <- function(df, prob_name, attr_name= "variable",
     
     # else: split data & ST conditionally, then recurse
     df <- split_df(df, conditional_vars[1])
+    nm_df <- names(df)
     df <- df[order(names(df))]
+    
     if (!all(is.na(sym_tbl[,1]))) {
       sym_tbl <- base::split(sym_tbl[,-1], sym_tbl[,1])
+      # validate ST only includes values from DF
+      sym_tbl <- sym_tbl[ which(names(sym_tbl) %in% nm_df) ]
       sym_tbl <- sym_tbl[order(names(sym_tbl))]
+      
       return(do.call("rbind", mapply(cond_var_split, 
              df= df, prob_name= prob_name, attr_name= attr_name, 
              conditional_vars= ifelse(cv_n == 1, replicate(st_n - 1, NULL), conditional_vars[-1]), 
@@ -195,7 +201,7 @@ add_synth_attr <- function(l, prob_name, sym_tbl, attr_name= "variable") {
   sym_tbl <- base::split(sym_tbl, f= 1:nrow(sym_tbl))
   
   # replicate data and apply new levels/probabilities
-  dat <- replicate(length(levels), l, simplify = FALSE)
+  dat <- replicate(length(sym_tbl), l, simplify = FALSE)
   dat <- do.call("rbind", mapply(add_synth_attr_level, dat= dat, prob_name= prob_name, 
                                  attr= sym_tbl, attr_name= attr_name,
                                  SIMPLIFY = FALSE))
@@ -216,8 +222,16 @@ add_synth_attr <- function(l, prob_name, sym_tbl, attr_name= "variable") {
 # @param level A string specifying the value which the new attribute will take on. (eg. "female") 
 add_synth_attr_level <- function(dat, prob_name, attr, attr_name= "variable") {
   p <- get(prob_name, as.environment(dat))
-  d_temp <- dat[, which(names(dat) != prob_name)]
-  d_temp[attr_name] <- attr[[2]]
-  d_temp[prob_name] <- p * attr[[1]]
-  return(d_temp)
+  if (is.data.table(dat)) {
+    d_temp <- dat[, which(names(dat) != prob_name), with= FALSE]
+    d_temp[, `:=` (V_NEW= attr[[2]],
+                   p= p * attr[[1]])]
+    data.table::setnames(d_temp, old= c("V_NEW", "p"), c(attr_name, prob_name))
+    return(d_temp)
+  } else {
+    d_temp <- dat[, which(names(dat) != prob_name)]  
+    d_temp[attr_name] <- attr[[2]]
+    d_temp[prob_name] <- p * attr[[1]]
+    return(d_temp)
+  }
 }

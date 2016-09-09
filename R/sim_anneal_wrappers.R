@@ -231,10 +231,13 @@ all_geog_synthetic_new_attribute <- function(df_list, prob_name= "p",
   
   # to allow simplified testing (using non synthACS class objects)
   if (is.synthACS(df_list)) {df_list2 <- lapply(df_list, function(l) return(l[[2]]))} 
+  else {df_list2 <- df_list}
+  
+  parallel::clusterExport(cl, "setnames")
   
   synthetic_data <- parallel::clusterMap(cl, RECYCLE= TRUE, SIMPLIFY= FALSE, .scheduling= "dynamic",
                                 fun= synthetic_new_attribute,
-                                df= df_list2, 
+                                df= df_list2,
                                 prob_name= prob_name, attr_name= attr_name,
                                 conditional_vars= conditional_vars,
                                 sym_tbl= st_list)
