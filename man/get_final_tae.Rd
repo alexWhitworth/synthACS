@@ -7,11 +7,11 @@
 get_final_tae(obj, geography)
 }
 \arguments{
+\item{obj}{An object of class \code{'smsm_set'}, typically a result of call to 
+\code{\link{all_geog_optimize_microdata}}}
+
 \item{geography}{A string allowing string matching via \code{\link[base]{grep}} to 
 a specified geography.}
-
-\item{object}{An object of class \code{'smsm_set'}, typically a result of call to 
-\code{\link{all_geog_optimize_microdata}}}
 }
 \description{
 Extract the final TAE (resulting from the simulated annealing 

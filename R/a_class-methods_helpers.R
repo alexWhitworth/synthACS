@@ -7,6 +7,7 @@
 #' @useDynLib synthACS
 #' @importFrom Rcpp sourceCpp
 #' @importFrom data.table is.data.table
+#' @importFrom data.table :=
 NULL
 #--------------------------------------
 
@@ -885,11 +886,12 @@ all_geog_constraint_race.synthACS <- function(obj, method= c("synthetic", "macro
 #' @param marginalize_out Logical. Do you wish to *remove* the variables in \code{varlist} 
 #' instead of keeping them? Defaults to \code{FALSE}
 #' @examples {
+#' # dummy data setup
 #' set.seed(567L)
-#' df <- data.frame(gender= factor(sample(c("m", "f"), size= 100, replace=T)),
-#'                  age= factor(sample(1:5, size= 100, replace=T)),
+#' df <- data.frame(gender= factor(sample(c("male", "female"), size= 100, replace= TRUE)),
+#'                  age= factor(sample(1:5, size= 100, replace= TRUE)),
 #'                  pov= factor(sample(c("below poverty", "at above poverty"), 
-#'                                    size= 100, replace=T, prob= c(.15,.85))),
+#'                                    size= 100, replace= TRUE, prob= c(.15,.85))),
 #'                  p= runif(100))
 #' df$p <- df$p / sum(df$p)
 #' class(df) <- c("data.frame", "micro_synthetic")
@@ -899,9 +901,11 @@ all_geog_constraint_race.synthACS <- function(obj, method= c("synthetic", "macro
 #' df4 <- marginalize_attr(df, varlist= c("gender", "age"), marginalize_out= TRUE)
 #' 
 #' df_list <- replicate(10, df, simplify= FALSE)
-#' dummmy_list <- replicate(10, list(NULL), simplify= FALSE)
-#' df_list <- mapply(function(a,b) {return(list(a, b))}, a= dummy_list, b= df_list)
+#' dummy_list <- replicate(10, list(NULL), simplify= FALSE)
+#' df_list <- mapply(function(a,b) {return(list(a, b))}, a= dummy_list, b= df_list, SIMPLIFY = FALSE)
 #' class(df_list) <- c("list", "synthACS")
+#' 
+#' # run the function
 #' df_list2 <- marginalize_attr(df_list, varlist= c("gender", "age"))
 #' }
 #' @export
@@ -922,16 +926,17 @@ marginalize_attr.micro_synthetic <- function(obj, varlist, marginalize_out= FALS
     names(obj)[p_idx] <- "p"
   }
 
-  setDT(obj)
+  data.table::setDT(obj)
   if (!marginalize_out) {
     obj <- obj[,sum(p), by= varlist]
-    setnames(obj, "V1", ifelse(exists("p_name"), p_name, "p"))
+    data.table::setnames(obj, "V1", ifelse(exists("p_name"), p_name, "p"))
     class(obj) <- c("data.table", "data.frame", "micro_synthetic")
     return(obj)
   } else {
+    p <- NULL # needed for R CMD Check -- see stackoverflow./com/questions/8096313
     vlist2 <- names(obj)[which(!names(obj) %in% c(varlist, "p"))]
     obj <- obj[,sum(p), by= vlist2]
-    setnames(obj, "V1", ifelse(exists("p_name"), p_name, "p"))
+    data.table::setnames(obj, "V1", ifelse(exists("p_name"), p_name, "p"))
     class(obj) <- c("data.table", "data.frame", "micro_synthetic")
     return(obj)
   }
@@ -1063,7 +1068,7 @@ combine_smsm <- function(...) {
 #' @title Extract best fit for a specified geogrpahy from an 'smsm_set' object
 #' @description Extract the best fit micro population (resulting from the simulated annealing 
 #' algorithm) for a given geography.
-#' @param object An object of class \code{'smsm_set'}, typically a result of call to 
+#' @param obj An object of class \code{'smsm_set'}, typically a result of call to 
 #' \code{\link{all_geog_optimize_microdata}}
 #' @param geography A string allowing string matching via \code{\link[base]{grep}} to 
 #' a specified geography.
@@ -1075,16 +1080,16 @@ get_best_fit <- function(obj, geography) {
 #' @export
 get_best_fit.smsm_set <- function(obj, geography) {
   if (length(geography) != 1) stop("Please specify a single geography")
-  idx <- get_rowmatch(geography, names(object$best_fit))
+  idx <- get_rowmatch(geography, names(obj$best_fit))
   if (length(idx) > 1) stop("geography specification returns multiple results. Please be more specific.")
   
-  return(object$best_fit[[ idx ]])
+  return(obj$best_fit[[ idx ]])
 }
 
 #' @title Extract the final TAE for a specified geogrpahy from an 'smsm_set' object
 #' @description Extract the final TAE (resulting from the simulated annealing 
 #' algorithm) for a given geography.
-#' @param object An object of class \code{'smsm_set'}, typically a result of call to 
+#' @param obj An object of class \code{'smsm_set'}, typically a result of call to 
 #' \code{\link{all_geog_optimize_microdata}}
 #' @param geography A string allowing string matching via \code{\link[base]{grep}} to 
 #' a specified geography.
@@ -1096,10 +1101,10 @@ get_final_tae <- function(obj, geography) {
 #' @export
 get_final_tae.smsm_set <- function(obj, geography) {
   if (length(geography) != 1) stop("Please specify a single geography")
-  idx <- get_rowmatch(geography, names(object$best_fit))
+  idx <- get_rowmatch(geography, names(obj$best_fit))
   if (length(idx) > 1) stop("geography specification returns multiple results. Please be more specific.")
   
-  return(object$tae[[ idx ]])
+  return(obj$tae[[ idx ]])
 }
 
 ## Z-statistics???

@@ -35,12 +35,12 @@ and education level). The same attribute is added to *each* synthetic_micro data
 dataset is supplied a distinct relationship for attribute creation.
 }
 \examples{
-{
+\dontrun{
  set.seed(567L)
-df <- data.frame(gender= factor(sample(c("m", "f"), size= 100, replace=T)),
-                 age= factor(sample(1:5, size= 100, replace=T)),
-                 pov= factor(sample(c("below poverty", "at above poverty"), 
-                                    size= 100, replace=T, prob= c(.15,.85))),
+ df <- data.frame(gender= factor(sample(c("male", "female"), size= 100, replace= TRUE)),
+                 age= factor(sample(1:5, size= 100, replace= TRUE)),
+                 pov= factor(sample(c("lt_pov", "gt_eq_pov"),
+                                    size= 100, replace= TRUE, prob= c(.15,.85))),
                  p= runif(100))
 df$p <- df$p / sum(df$p)
 class(df) <- c("data.frame", "micro_synthetic")
@@ -59,6 +59,7 @@ df_list <- replicate(10, df, simplify= FALSE)
 st_list <- replicate(10, sym_tbl, simplify= FALSE)
 
 # run
+library(parallel)
 syn <- all_geog_synthetic_new_attribute(df_list, prob_name= "p", attr_name= "variable",
                                         conditional_vars= cond_v,st_list= st_list)
 }

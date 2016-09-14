@@ -297,7 +297,7 @@ test_that("marginalize_attr correctly", {
   ## test:
   expect_equal(sum(df2[,p]), 1)
   expect_equal(sum(df3[,p]), 1)
-  expect_equal(sum(df2[,p]), 1)
+  expect_equal(sum(df4[,p]), 1)
   expect_equal(nrow(df2), length(levels(df$gender)))
   expect_equal(nrow(df3), length(levels(df$gender)) * length(levels(df$age)))
   expect_equal(nrow(df4), length(levels(df$pov)))
