@@ -161,6 +161,7 @@ cond_var_split <- function(df, prob_name, attr_name= "variable",
     
     # else: split data & ST conditionally, then recurse
     df <- split_df(df, conditional_vars[1])
+    df <- df[which(unlist(lapply(df, nrow)) > 0)]
     nm_df <- names(df)
     df <- df[order(names(df))]
     
