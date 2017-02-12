@@ -8,7 +8,7 @@ context("macroACS methods")
 
 test_that("fetch - age_by_sex - estimates work", {
   # load test data:
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
+  load("C:/Github/synthACS/tests/testthat/acsdat.Rdata")
   rm(list=ls()[-which(ls() == "ca_dat")])
   
   # run function on all types of use cases
@@ -49,7 +49,7 @@ test_that("fetch - age_by_sex - estimates work", {
 
 test_that("fetch - age_by_sex - SE work", {
   # load test data:
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
+  load("C:/Github/synthACS/tests/testthat/acsdat.Rdata")
   rm(list=ls()[-which(ls() == "ca_dat")])
   
   # run function on all types of use cases
@@ -90,7 +90,7 @@ test_that("fetch - age_by_sex - SE work", {
 #----------------------------
 test_that("fetch - pop_by_race - estimates work", {
   # load test data:
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
+  load("C:/Github/synthACS/tests/testthat/acsdat.Rdata")
   rm(list=ls()[-which(ls() == "ca_dat")])
   
   # run function on all types of use cases
@@ -131,7 +131,7 @@ test_that("fetch - pop_by_race - estimates work", {
 
 test_that("fetch - pop_by_race - SE work", {
   # load test data:
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
+  load("C:/Github/synthACS/tests/testthat/acsdat.Rdata")
   rm(list=ls()[-which(ls() == "ca_dat")])
   
   # run function on all types of use cases
@@ -174,7 +174,7 @@ test_that("fetch - pop_by_race - SE work", {
 #----------------------------
 test_that("span, endyear, geography, dataset names", {
   # load test data:
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
+  load("C:/Github/synthACS/tests/testthat/acsdat.Rdata")
   rm(list=ls()[-which(ls() == "ca_dat")])
   
   sp <- get_span(ca_dat)
@@ -195,7 +195,7 @@ test_that("span, endyear, geography, dataset names", {
 
 #----------------------------
 test_that("split macroACS works", {
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
+  load("C:/Github/synthACS/tests/testthat/acsdat.Rdata")
   rm(list=ls()[-which(ls() == "ca_dat")])
   
   # run function

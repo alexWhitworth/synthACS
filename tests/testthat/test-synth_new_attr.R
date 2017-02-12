@@ -2,9 +2,9 @@
 library(testthat)
 library(synthACS)
 
-load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
-load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
-load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/towork.rda")
+load("C:/Github/synthACS/tests/testthat/acsdat.Rdata")
+load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
+load("C:/Github/synthACS/tests/testthat/towork.rda")
 
 #----------------------------------------------------------
 context("new attr - bottom of recursion")
@@ -54,7 +54,7 @@ test_that("mapply - works as designed (df)", {
 #----------------------------------------------------------
 context("one level up -- add_synth_attr")
 #----------------------------------------------------------
-
+  
 test_that("lapply - bug catches", {
   set.seed(567L)
   df <- data.frame(gender= factor(sample(c("m", "f"), size= 100, replace=T)),

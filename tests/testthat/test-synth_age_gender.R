@@ -28,7 +28,7 @@ test_that("creates expected result", {
   ## 01. build out test datasets
   ##---------------------------------------------------------------------------
   # load
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
+  load("C:/Github/synthACS/tests/testthat/acsdat.Rdata")
   
   # then create multiple examples
   ca_ag1 <- synthACS:::synth_data_ag(unlist(ca_dat$estimates$age_by_sex[1,]))

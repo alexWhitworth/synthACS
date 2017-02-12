@@ -8,7 +8,7 @@ context("synthACS methods")
 
 test_that("gender constraint creates successfully", {
   # load test data:
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
+  load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
   rm(list=ls()[-which(ls() == "syn")])
   
   # run function
@@ -39,7 +39,7 @@ test_that("gender constraint creates successfully", {
 
 test_that("age constraint creates successfully", {
   # load test data:
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
+  load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
   rm(list=ls()[-which(ls() == "syn")])
   
   # run function
@@ -69,7 +69,7 @@ test_that("age constraint creates successfully", {
 
 test_that("marital status constraint creates successfully", {
   # load test data:
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
+  load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
   rm(list=ls()[-which(ls() == "syn")])
   
   # run function
@@ -100,7 +100,7 @@ test_that("marital status constraint creates successfully", {
 
 test_that("employment status constraint creates successfully", {
   # load test data:
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
+  load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
   rm(list=ls()[-which(ls() == "syn")])
   
   # run function
@@ -130,7 +130,7 @@ test_that("employment status constraint creates successfully", {
 
 test_that("nativity status constraint creates successfully", {
   # load test data:
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
+  load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
   rm(list=ls()[-which(ls() == "syn")])
   
   # run function
@@ -160,7 +160,7 @@ test_that("nativity status constraint creates successfully", {
 
 test_that("poverty status constraint creates successfully", {
   # load test data:
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
+  load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
   rm(list=ls()[-which(ls() == "syn")])
   
   # run function
@@ -190,7 +190,7 @@ test_that("poverty status constraint creates successfully", {
 
 test_that("geographic mobility constraint creates successfully", {
   # load test data:
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
+  load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
   rm(list=ls()[-which(ls() == "syn")])
   
   # run function
@@ -220,7 +220,7 @@ test_that("geographic mobility constraint creates successfully", {
 
 test_that("individual income constraint creates successfully", {
   # load test data:
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
+  load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
   rm(list=ls()[-which(ls() == "syn")])
   
   # run function
@@ -250,7 +250,7 @@ test_that("individual income constraint creates successfully", {
 
 test_that("race constraint creates successfully", {
   # load test data:
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
+  load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
   rm(list=ls()[-which(ls() == "syn")])
   
   # run function

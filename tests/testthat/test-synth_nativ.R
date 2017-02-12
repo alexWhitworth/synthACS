@@ -9,7 +9,7 @@ test_that("get correct results", {
   ## 01. build out test datasets
   ##---------------------------------------------------------------------------
   # load
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
+  load("C:/Github/synthACS/tests/testthat/acsdat.Rdata")
   
   # then create multiple examples
   ca <- synthACS:::synth_data_emp(synthACS:::synth_data_edu(synthACS:::synth_data_mar(

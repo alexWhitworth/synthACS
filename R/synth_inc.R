@@ -17,8 +17,8 @@ synth_data_inc <- function(agmeenpg_dat, inc_nat_vec) {
   
   # 2. create buckets on which to condition
   ag_list <- split(dat, dat$pov_status)
-  ag_list[[1]] <- split(ag_list[[1]], ag_list[[1]]$nativity)
-  ag_list[[2]] <- split(ag_list[[2]], ag_list[[2]]$nativity)
+  ag_list[[1]] <- split(ag_list[[1]], ag_list[[1]]$nativity) # those at_above_pov_level
+  ag_list[[2]] <- split(ag_list[[2]], ag_list[[2]]$nativity) # those below_pov_level
   
   # subset counts for incomes below pov level (2014 ~= $12k)
   inc_levels_pov <- c("no_income", "1_lt10k", "10k_lt15k")
@@ -32,9 +32,9 @@ synth_data_inc <- function(agmeenpg_dat, inc_nat_vec) {
   
   # 3. Apply income status
   ag_list[[1]] <- do.call("rbind", lapply(ag_list[[1]], inc_lapply, ht= ht, 
-                                          v= pov_inc_vec, levels= inc_levels_pov))
+                                          v= nonpov_inc_vec, levels= inc_levels_nonpov))
   ag_list[[2]] <- do.call("rbind", lapply(ag_list[[2]], inc_lapply, ht= ht, 
-                                     v= nonpov_inc_vec, levels= inc_levels_nonpov))
+                                     v= pov_inc_vec, levels= inc_levels_pov))
   # normalize probabilities to account for % < pov , pct >= pov
   pov_rates <- tapply(dat$p, dat$pov_status, sum, na.rm=TRUE)
   pov_rates <- ifelse(is.na(pov_rates), 0, pov_rates)

@@ -9,7 +9,7 @@ context("combine smsm_set objects")
 #------------------------------------------------------------------------------
 
 test_that("expected errors and warnings are generated", {
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
+  load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
   
   # create smsm_set object 
   cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a, macro_micro= syn)
@@ -64,7 +64,7 @@ test_that("expected errors and warnings are generated", {
 })
 
 test_that("returns correctly", {
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
+  load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
   
   # create smsm_set object 
   cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a, macro_micro= syn)

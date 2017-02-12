@@ -2,7 +2,7 @@
 library(testthat)
 library(synthACS)
 
-load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
+load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
 
 #------------------------------------------------------------------------------
 context("adding constraints - all geogs")
