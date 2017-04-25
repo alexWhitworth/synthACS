@@ -1,7 +1,6 @@
-# Covr #
 [![Build Status](https://travis-ci.org/alexWhitworth/synthACS.svg?branch=master)](https://travis-ci.org/alexWhitworth/synthACS.svg?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/alexWhitworth/synthACS/badge.svg?branch=master)](https://coveralls.io/github/alexWhitworth/synthACS?branch=master)
-[![CRAN version](http://www.r-pkg.org/badges/version/synthACS)](https://cran.r-project.org/web/packages/synthACS/index.html)
+[![CRAN version](http://www.r-pkg.org/badges/version/synthACS)](https://cran.r-project.org/package=synthACS)
 
 # synthACS
 
