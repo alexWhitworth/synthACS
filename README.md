@@ -1,3 +1,8 @@
+# Covr #
+[![Build Status](https://travis-ci.org/alexWhitworth/synthACS)](https://travis-ci.org/alexWhitworth/synthACS)
+[![codecov.io](https://coveralls.io/github/alexWhitworth/synthACS)](https://coveralls.io/github/alexWhitworth/synthACS)
+[![CRAN version](http://www.r-pkg.org/badges/version/synthACS)](https://cran.r-project.org/web/packages/synthACS/index.html)
+
 # synthACS
 
 synthACS provides four main features. Firstly, it provides a wrapper

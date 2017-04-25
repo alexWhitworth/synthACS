@@ -5,3 +5,12 @@ notifications:
   email:
     on_success: change
     on_failure: change
+
+service_name: travis-pro
+repo_token: mYAwUYufK46TBtlMOSzFxN2RB96dK7nOM
+
+r_github_packages:
+  - jimhester/covr
+
+after_success:
+  - Rscript -e 'covr::codecov()'
