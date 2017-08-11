@@ -1,6 +1,6 @@
 Package: synthACS
 Title: Synthetic Microdata and Spatial MicroSimulation Modeling for ACS Data
-Version: 1.0.3
+Version: 1.1
 Authors@R: person("Alex", "Whitworth",,email = "whitworth.alex@gmail.com", c("aut", "cre"))
 Description: Firstly provides a wrapper to library(acs) to access curated set
   of American Community Survey (ACS) base tables which may be of interest
@@ -14,8 +14,7 @@ Depends:
     R (>= 3.2.3),
     acs (>= 1.2),
     data.table (>= 1.9.6)
-Imports:
-    parallel (>= 3.2.3)
+Imports: Rcpp
 License: MIT + file LICENSE
 LazyData: true
 Suggests:
@@ -23,7 +22,10 @@ Suggests:
     tigris (>= 0.3),
     sp (>= 1.2),
     leaflet (>= 1.0),
-    shiny (>= 0.13)
+    shiny (>= 0.13),
+    knitr,
+    rmarkdown,
+    R.rsp
 RoxygenNote: 5.0.1
 LinkingTo: Rcpp
-Imports: Rcpp
+VignetteBuilder: R.rsp

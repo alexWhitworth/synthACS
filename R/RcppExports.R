@@ -2,6 +2,6 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 disaggregate_mdCPP <- function(macro_data) {
-    .Call('synthACS_disaggregate_mdCPP', PACKAGE = 'synthACS', macro_data)
+    .Call('_synthACS_disaggregate_mdCPP', PACKAGE = 'synthACS', macro_data)
 }
 
