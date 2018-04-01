@@ -15,4 +15,3 @@ Get the names of the datasets in a given "macroACS" object.
 \seealso{
 \code{\link{fetch_data}}
 }
-

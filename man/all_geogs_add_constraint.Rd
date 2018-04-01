@@ -48,4 +48,3 @@ cll <- all_geogs_add_constraint(attr_name= "gender", attr_total_list= g,
 \seealso{
 \code{\link{add_constraint}}
 }
-

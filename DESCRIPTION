@@ -1,6 +1,6 @@
 Package: synthACS
 Title: Synthetic Microdata and Spatial MicroSimulation Modeling for ACS Data
-Version: 1.1
+Version: 1.2
 Authors@R: person("Alex", "Whitworth",,email = "whitworth.alex@gmail.com", c("aut", "cre"))
 Description: Firstly provides a wrapper to library(acs) to access curated set
   of American Community Survey (ACS) base tables which may be of interest
@@ -12,7 +12,7 @@ Description: Firstly provides a wrapper to library(acs) to access curated set
   via simulated annealing.  SMSM is conducted in parallel by default.
 Depends:
     R (>= 3.2.3),
-    acs (>= 1.2),
+    acs (>= 2.1),
     data.table (>= 1.9.6)
 Imports: Rcpp
 License: MIT + file LICENSE
@@ -26,6 +26,6 @@ Suggests:
     knitr,
     rmarkdown,
     R.rsp
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 LinkingTo: Rcpp
 VignetteBuilder: R.rsp

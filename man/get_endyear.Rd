@@ -12,4 +12,3 @@ get_endyear(acs)
 \description{
 Get the data collection endyear from a "macroACS" object
 }
-

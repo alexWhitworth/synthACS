@@ -37,4 +37,3 @@ c_list <- add_constraint(attr_name= "gender", attr_totals= g, micro_data= test_m
 calculate_TAE(test_micro, c_list)
 }
 }
-

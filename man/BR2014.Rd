@@ -34,9 +34,9 @@ as of July 1 for non-census years.}
 older to this group. Prior to 1997, only births to women age 45-49 were included.} 
 }
 }
+
 \references{
 Hamilton, Brady E., et al. "Births: final data for 2014." National Vital Statistics 
 Reports 64.12 (2015): 1-64.
 }
 \keyword{datasets}
-

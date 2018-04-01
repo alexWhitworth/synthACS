@@ -60,6 +60,7 @@ candidates and \code{p_accept} controls the hill-climbing rate for exiting local
 
 Please see the references for a more detailed discussion of the simulated annealing procedure.
 }
+
 \examples{
 \dontrun{
 ## assumes you have micro_synthetic object named test_micro and constraint_list named c_list
@@ -77,4 +78,3 @@ machines." The journal of chemical physics 21.6 (1953): 1087-1092.
 Szu, Harold, and Ralph Hartley. "Fast simulated annealing." Physics letters A 122.3 
 (1987): 157-162.
 }
-

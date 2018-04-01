@@ -16,4 +16,3 @@ Returns \code{TRUE} if its argument has class "macro_micro" among its classes an
 \description{
 Function that checks if the target object is a \code{macro_micro} object.
 }
-

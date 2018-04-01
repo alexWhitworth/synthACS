@@ -16,4 +16,3 @@ Returns \code{TRUE} if its argument has class "micro_synthetic" among its classe
 \description{
 Function that checks if the target object is a \code{micro_synthetic} object.
 }
-

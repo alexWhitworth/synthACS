@@ -27,4 +27,3 @@ of macro datasets and a matching set of micro dataset (supplied as class 'synthA
 \seealso{
 \code{\link{all_geogs_add_constraint}}
 }
-

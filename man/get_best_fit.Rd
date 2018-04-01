@@ -17,4 +17,3 @@ a specified geography.}
 Extract the best fit micro population (resulting from the simulated annealing 
 algorithm) for a given geography.
 }
-

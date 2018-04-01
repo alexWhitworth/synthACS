@@ -28,4 +28,3 @@ Multiple additional fields, mainly percentages and aggregations, are calculated.
 \seealso{
 \code{\link[acs]{acs.fetch}}, \code{\link[acs]{geo.make}}
 }
-

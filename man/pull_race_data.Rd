@@ -26,4 +26,3 @@ B01001B-I and B02001. ' These tables reference population counts by race.
 \seealso{
 \code{\link[acs]{acs.fetch}}, \code{\link[acs]{geo.make}}
 }
-

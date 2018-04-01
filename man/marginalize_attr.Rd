@@ -44,4 +44,3 @@ class(df_list) <- c("list", "synthACS")
 df_list2 <- marginalize_attr(df_list, varlist= c("gender", "age"))
 }
 }
-

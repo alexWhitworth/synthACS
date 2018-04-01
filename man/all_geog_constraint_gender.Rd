@@ -27,4 +27,3 @@ matching set of micro dataset (supplied as class 'synthACS').
 \seealso{
 \code{\link{all_geogs_add_constraint}}
 }
-

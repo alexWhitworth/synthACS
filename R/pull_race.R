@@ -20,7 +20,7 @@ pull_race_data <- function(endyear, span, geography) {
   # 01 -- pull data
   #----------------------------------------------
   race_all <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
-                        table.number = "B02001", col.names = "pretty")
+                        table.number = "B01001", col.names = "pretty")
   race_aa <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                        table.number = "B01001B", col.names = "pretty")
   race_nat <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
@@ -41,7 +41,7 @@ pull_race_data <- function(endyear, span, geography) {
   
   # 02 -- create lists of EST and SE -- as data.frames
   #----------------------------------------------
-  est <- list(tot_pop= data.frame(race_all@estimate[, c(1:2)]),
+  est <- list(tot_pop= data.frame(race_all@estimate[, c(1:2, 26)]),
               aa_pop = data.frame(race_aa@estimate[,c(1,2,17)]),
               nat_pop= data.frame(race_nat@estimate[,c(1,2,17)]),
               asn_pop= data.frame(race_asian@estimate[,c(1,2,17)]),
@@ -51,7 +51,7 @@ pull_race_data <- function(endyear, span, geography) {
               whi_pop= data.frame(race_white@estimate[,c(1,2,17)]),
               his_pop= data.frame(race_hisp@estimate[,c(1,2,17)]))
   
-  se <- list(tot_pop= data.frame(race_all@standard.error[, c(1:2)]),
+  se <- list(tot_pop= data.frame(race_all@standard.error[, c(1:2, 26)]),
               aa_pop = data.frame(race_aa@standard.error[,c(1,2,17)]),
               nat_pop= data.frame(race_nat@standard.error[,c(1,2,17)]),
               asn_pop= data.frame(race_asian@standard.error[,c(1,2,17)]),
@@ -68,9 +68,9 @@ pull_race_data <- function(endyear, span, geography) {
   # 03 -- combine columns
   #----------------------------------------------
   est <- do.call("cbind", est)
-  est <- est[, c(1:2, seq(3,26,3), seq(4,26,3), seq(5,26,3))]
+  est <- est[, c(1:3, seq(4,27,3), seq(4,26,3), seq(6,28,3))]
   se  <- do.call("cbind", se)
-  se  <- se[, c(1:2, seq(3,26,3), seq(4,26,3), seq(5,26,3))]
+  se  <- se[, c(1:3, seq(4,27,3), seq(4,26,3), seq(6,28,3))]
   
   names(est) <- names(se) <- c(paste("agg", c("count", "white"), sep= "_"), 
     paste(rep(c("total", "m", "f"), each= 8),

@@ -38,9 +38,9 @@ races is provided for 1980-2014 and for individual races from 1990-2014.
  origin may be of any race.}
 }
 }
+
 \references{
 Hamilton, Brady E., et al. "Births: final data for 2014." National Vital Statistics 
 Reports 64.12 (2015): 1-64.
 }
 \keyword{datasets}
-

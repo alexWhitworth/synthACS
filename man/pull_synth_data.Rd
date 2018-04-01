@@ -36,4 +36,3 @@ la_dat <- pull_synth_data(2014, 5, la_geo)
 \seealso{
 \code{\link[acs]{acs.fetch}}, \code{\link[acs]{geo.make}}
 }
-

@@ -21,4 +21,3 @@ population counts or estimated standard errors?}
 Gets aggregate, macro, data, either estimate or standard error, for a specified geography
 and specified dataset.
 }
-

@@ -12,4 +12,3 @@ get_geography(acs)
 \description{
 Get the summary information of the geography selected from a "macroACS" object
 }
-

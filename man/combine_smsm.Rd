@@ -20,4 +20,3 @@ Combine objects of class "smsm_set" into a single object of class "smsm_set"
 \seealso{
 \code{\link[synthACS]{split}}, \code{\link[synthACS]{all_geog_optimize_microdata}}
 }
-

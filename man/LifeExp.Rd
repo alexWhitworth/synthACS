@@ -29,4 +29,3 @@ Xu, J. Q., S. L. Murphy, and K. D. Kochanek. "Deaths: final data for 2013." Nati
 Vital Statistics Reports 64.2 (2015).
 }
 \keyword{datasets}
-

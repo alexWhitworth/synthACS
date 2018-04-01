@@ -29,9 +29,9 @@ for the United States, 2013.
 \item{The death rate is defined as deaths per 100,000 population.} 
 }
 }
+
 \references{
 Xu, J. Q., S. L. Murphy, and K. D. Kochanek. "Deaths: final data for 2013." National 
 Vital Statistics Reports 64.2 (2015).
 }
 \keyword{datasets}
-

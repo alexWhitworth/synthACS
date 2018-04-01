@@ -28,9 +28,9 @@ races is provided for 1970-2014 and for individual races from 1989-2014.
 The Total Fertility Rate is defined as the sums of the birth rates for the 5-year age groups
 found in \code{\link{BR2014}} multiplied by 5.
 }
+
 \references{
 Hamilton, Brady E., et al. "Births: final data for 2014." National Vital Statistics 
 Reports 64.12 (2015): 1-64.
 }
 \keyword{datasets}
-

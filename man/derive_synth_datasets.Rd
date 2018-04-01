@@ -50,6 +50,7 @@ mobility in the prior year, individual income, and race. **Note** that these are
 they are not at the HOUSEHOLD level. Additional attributes which interest the user may be added 
 in a similar manner via \code{\link{synthetic_new_attribute}}.
 }
+
 \examples{
 \dontrun{
 # make geography
@@ -68,4 +69,3 @@ for urban and regional analysis: methods and examples." Environment and planning
 \seealso{
 \code{\link{pull_synth_data}}, \code{\link[acs]{acs.fetch}}, \code{\link[acs]{geo.make}}
 }
-

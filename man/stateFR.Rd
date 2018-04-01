@@ -31,9 +31,9 @@ US states and territories in 2014.
  birth rates based on fewer than 20 births.}
 }
 }
+
 \references{
 Hamilton, Brady E., et al. "Births: final data for 2014." National Vital Statistics 
 Reports 64.12 (2015): 1-64.
 }
 \keyword{datasets}
-

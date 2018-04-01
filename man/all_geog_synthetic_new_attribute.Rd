@@ -67,4 +67,3 @@ syn <- all_geog_synthetic_new_attribute(df_list, prob_name= "p", attr_name= "var
 \seealso{
 \code{\link{synthetic_new_attribute}}
 }
-

@@ -15,4 +15,3 @@
 \description{
 \code{summary} method for class 'smsm_set'.
 }
-

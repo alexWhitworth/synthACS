@@ -44,4 +44,3 @@ simulated annealing and geographies are run in parallel.
 \seealso{
 \code{\link{optimize_microdata}}
 }
-

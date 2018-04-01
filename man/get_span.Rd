@@ -12,4 +12,3 @@ get_span(acs)
 \description{
 Get the data collection span from a "macroACS" object
 }
-

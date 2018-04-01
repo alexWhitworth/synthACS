@@ -60,6 +60,7 @@ recursive approach is employed to conditionally partition \code{sym_tbl}. In thi
 The value is final 2 columns of \code{sym_tbl} which are a pair of (A) either counts or percentages 
 used to specify the probability for the new attribute and (B) the level that the new attribute takes on.
 }
+
 \examples{
 {
 set.seed(567L)
@@ -83,4 +84,3 @@ df2 <- synthetic_new_attribute(df, prob_name= "p", attr_name= "SES",
          sym_tbl= ST2)
 }
 }
-

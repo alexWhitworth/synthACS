@@ -18,4 +18,3 @@ a specified geography.}
 \description{
 Plot the path TAE in the simulated annealing algorithm for a given geography
 }
-

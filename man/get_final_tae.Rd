@@ -17,4 +17,3 @@ a specified geography.}
 Extract the final TAE (resulting from the simulated annealing 
 algorithm) for a given geography.
 }
-

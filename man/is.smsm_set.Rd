@@ -16,4 +16,3 @@ Returns \code{TRUE} if its argument has class "macroACS" among its classes and
 \description{
 Function that checks if the target object is a \code{smsm_set} object.
 }
-

@@ -18,4 +18,3 @@ Generate a list of attribute vectors for new synthetic attribute creation from a
 \seealso{
 \code{\link{all_geog_synthetic_new_attribute}}, \code{\link{synthetic_new_attribute}}
 }
-

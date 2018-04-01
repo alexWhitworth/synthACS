@@ -1,4 +1,42 @@
-
+#' @title Pull ACS base tables
+#' @description A wrapper function to pull multiple base tables from ACS API via 
+#' \code{\link[acs]{acs.fetch}}. 
+#' @param endyear An integer, indicating the latest year of the data in the survey.
+#' @param span An integer in \code{c(1,3,5)} indicating the span of the desired data.
+#' @param geography a valid \code{geo.set} object specifying the census geography or 
+#' geographies to be fetched.
+#' @param table_vec A \code{character} vector specifying ACS base tables.
+#' @return A \code{'macroACS'} class object
+#' @references \url{https://www.census.gov/programs-surveys/acs/technical-documentation/summary-file-documentation.html}
+#' @export
+#' 
+#' #' @examples \dontrun{
+#' # make geography
+#' la_geo <- acs::geo.make(state= "CA", county= "Los Angeles City")
+#' # pull data 
+#' la_dat <- pull_acs_basetables(endyear= 2015, span= 1, geography= la_geo, 
+#'   table_vec= c("B00001", "B00002", "B01003"))
+#' }
+pull_acs_basetables <- function(endyear, span, geography, table_vec) {
+  check_geo_inputs(endyear, span, geography)
+  if (!is.character(table_vec) | length(table_vec) < 1L) 
+    stop("table_vec must be a character vector of ACS base table numbers")
+  
+  nr <- length(table_vec) 
+  temp_dat <- vector("list", length= nr)
+  for (i in 1:nr) {
+    temp_dat[[i]] <- acs::acs.fetch(endyear, span, geography, table.number= table_vec[i],
+                                    col.names= "pretty")
+  }
+  ret <- list(endyear= endyear, span= span,
+              estimates=lapply(temp_dat, function(l) {return(l@estimate)}),
+              standard_error= lapply(temp_dat, function(l) {return(l@standard.error)}),
+              geoography= temp_dat[[1]]@geography,
+              geo_title= unlist(geography@geo.list)
+  )
+  class(ret) <- "macroACS"
+  return(ret)
+}
 
 #' @title Pull ACS data for synthetic data creation.
 #' @description Pull ACS data for a specified geography from base tables

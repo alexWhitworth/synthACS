@@ -18,4 +18,3 @@ limited memory available on their machines before proceding to derive sample syn
 \seealso{
 \code{\link{derive_synth_datasets}}
 }
-

@@ -31,9 +31,9 @@ is provided for 1980-2013.
 as of July 1 for non-census years.}
 }
 }
+
 \references{
 Xu, J. Q., S. L. Murphy, and K. D. Kochanek. "Deaths: final data for 2013." National 
 Vital Statistics Reports 64.2 (2015).
 }
 \keyword{datasets}
-
