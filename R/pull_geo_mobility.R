@@ -21,6 +21,8 @@ pull_geo_mobility <- function(endyear, span, geography) {
   
   # 01 -- pull data
   #----------------------------------------------
+  oldw <- getOption("warn")
+  options(warn= -1) # suppress warnings from library(acs) / ACS API
   geo_by_age <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B07001", col.names= "pretty")
   
@@ -35,24 +37,19 @@ pull_geo_mobility <- function(endyear, span, geography) {
   
   geo_by_inc <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B07010", col.names= "pretty")
+  options(warn= oldw) # turn warnings back on
   
-  est <- list(by_age= data.frame(geo_by_age@estimate[, c(1,17:dim(geo_by_age@estimate)[[2]])]),
-              by_sex= data.frame(geo_by_sex@estimate[, c(1,4:dim(geo_by_sex@estimate)[[2]])]),
-              by_mar= data.frame(geo_by_mar@estimate[, c(1,7:dim(geo_by_mar@estimate)[[2]])]),
-              by_edu= data.frame(geo_by_edu@estimate[, c(1,7:dim(geo_by_edu@estimate)[[2]])]),
-              by_inc= data.frame(geo_by_inc@estimate[, c(1,12:dim(geo_by_inc@estimate)[[2]])]))
+  est <- list(by_age= data.frame(t(geo_by_age@estimate[, c(1,17:dim(geo_by_age@estimate)[[2]])])),
+              by_sex= data.frame(t(geo_by_sex@estimate[, c(1,4:dim(geo_by_sex@estimate)[[2]])])),
+              by_mar= data.frame(t(geo_by_mar@estimate[, c(1,7:dim(geo_by_mar@estimate)[[2]])])),
+              by_edu= data.frame(t(geo_by_edu@estimate[, c(1,7:dim(geo_by_edu@estimate)[[2]])])),
+              by_inc= data.frame(t(geo_by_inc@estimate[, c(1,12:dim(geo_by_inc@estimate)[[2]])])))
   
-  se <- list(by_age= data.frame(geo_by_age@standard.error[, c(1,17:dim(geo_by_age@standard.error)[[2]])]),
-             by_sex= data.frame(geo_by_sex@standard.error[, c(1,4:dim(geo_by_sex@standard.error)[[2]])]),
-             by_mar= data.frame(geo_by_mar@standard.error[, c(1,7:dim(geo_by_mar@standard.error)[[2]])]),
-             by_edu= data.frame(geo_by_edu@standard.error[, c(1,7:dim(geo_by_edu@standard.error)[[2]])]),
-             by_inc= data.frame(geo_by_inc@standard.error[, c(1,12:dim(geo_by_inc@standard.error)[[2]])]))
-  
-  orig_colnames <- list(by_age= geo_by_age@acs.colnames[c(1,17:length(geo_by_age@acs.colnames))],
-                        by_sex= geo_by_sex@acs.colnames[c(1,4:length(geo_by_sex@acs.colnames))],
-                        by_mar= geo_by_mar@acs.colnames[c(1,7:length(geo_by_mar@acs.colnames))],
-                        by_edu= geo_by_edu@acs.colnames[c(1,7:length(geo_by_edu@acs.colnames))],
-                        by_inc= geo_by_inc@acs.colnames[c(1,12:length(geo_by_inc@acs.colnames))])
+  se <- list(by_age= data.frame(t(geo_by_age@standard.error[, c(1,17:dim(geo_by_age@standard.error)[[2]])])),
+             by_sex= data.frame(t(geo_by_sex@standard.error[, c(1,4:dim(geo_by_sex@standard.error)[[2]])])),
+             by_mar= data.frame(t(geo_by_mar@standard.error[, c(1,7:dim(geo_by_mar@standard.error)[[2]])])),
+             by_edu= data.frame(t(geo_by_edu@standard.error[, c(1,7:dim(geo_by_edu@standard.error)[[2]])])),
+             by_inc= data.frame(t(geo_by_inc@standard.error[, c(1,12:dim(geo_by_inc@standard.error)[[2]])])))
   
   geo <- geo_by_age@geography
   
@@ -200,7 +197,7 @@ pull_geo_mobility <- function(endyear, span, geography) {
               geo_title= unlist(geography@geo.list))
   class(ret) <- "macroACS"
   names(ret$estimates) <- names(ret$standard_error) <- c("geo_mob_by_age", "geo_mob_by_sex",
-    "geo_mob_by_mar_status", "geo_mob_by_edu_attain", "geo_mob_by_income", "geo_mob_by_pov_status")
+    "geo_mob_by_mar_status", "geo_mob_by_edu_attain", "geo_mob_by_income") # , "geo_mob_by_pov_status")
   
   return(ret)
 }

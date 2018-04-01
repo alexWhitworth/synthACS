@@ -21,7 +21,7 @@ metadata from \code{\link[acs]{acs.fetch}}.
 }
 \description{
 Pull ACS data for a specified geography from base tables
-B15011, and B15012. Note: only 2014 data is supplied by ACS
+B15011 and B15012. Note: only 2014 data is supplied by ACS
 }
 \seealso{
 \code{\link[acs]{acs.fetch}}, \code{\link[acs]{geo.make}}

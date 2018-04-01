@@ -19,8 +19,10 @@ pull_race_data <- function(endyear, span, geography) {
   
   # 01 -- pull data
   #----------------------------------------------
+  oldw <- getOption("warn")
+  options(warn= -1) # suppress warnings from library(acs) / ACS API
   race_all <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
-                        table.number = "B01001", col.names = "pretty")
+                        table.number = "B02001", col.names = "pretty")
   race_aa <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                        table.number = "B01001B", col.names = "pretty")
   race_nat <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
@@ -37,11 +39,11 @@ pull_race_data <- function(endyear, span, geography) {
                        table.number = "B01001H", col.names = "pretty")
   race_hisp <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                        table.number = "B01001I", col.names = "pretty")
-  
+  options(warn= oldw) # turn warnings back on
   
   # 02 -- create lists of EST and SE -- as data.frames
   #----------------------------------------------
-  est <- list(tot_pop= data.frame(race_all@estimate[, c(1:2, 26)]),
+  est <- list(tot_pop= data.frame(race_all@estimate[, c(1:2)]),
               aa_pop = data.frame(race_aa@estimate[,c(1,2,17)]),
               nat_pop= data.frame(race_nat@estimate[,c(1,2,17)]),
               asn_pop= data.frame(race_asian@estimate[,c(1,2,17)]),
@@ -51,7 +53,7 @@ pull_race_data <- function(endyear, span, geography) {
               whi_pop= data.frame(race_white@estimate[,c(1,2,17)]),
               his_pop= data.frame(race_hisp@estimate[,c(1,2,17)]))
   
-  se <- list(tot_pop= data.frame(race_all@standard.error[, c(1:2, 26)]),
+  se <- list(tot_pop= data.frame(race_all@standard.error[, c(1:2)]),
               aa_pop = data.frame(race_aa@standard.error[,c(1,2,17)]),
               nat_pop= data.frame(race_nat@standard.error[,c(1,2,17)]),
               asn_pop= data.frame(race_asian@standard.error[,c(1,2,17)]),
@@ -67,10 +69,9 @@ pull_race_data <- function(endyear, span, geography) {
   
   # 03 -- combine columns
   #----------------------------------------------
-  est <- do.call("cbind", est)
-  est <- est[, c(1:3, seq(4,27,3), seq(4,26,3), seq(6,28,3))]
-  se  <- do.call("cbind", se)
-  se  <- se[, c(1:3, seq(4,27,3), seq(4,26,3), seq(6,28,3))]
+  est <- as.data.frame(t(unlist(est))); se <- as.data.frame(t(unlist(se)))
+  est <- est[, c(1:2, seq(3,26,3), seq(4,26,3), seq(5,26,3))]
+  se <-  se[, c(1:2, seq(3,26,3), seq(4,26,3), seq(5,26,3))]
   
   names(est) <- names(se) <- c(paste("agg", c("count", "white"), sep= "_"), 
     paste(rep(c("total", "m", "f"), each= 8),
@@ -80,8 +81,8 @@ pull_race_data <- function(endyear, span, geography) {
   # 04 -- combine and return
   #----------------------------------------------
   ret <- list(endyear= endyear, span= span,
-              estimates= est,
-              standard_error= se,
+              estimates= list(pop_by_race= est),
+              standard_error= list(pop_by_race= se),
               geography= geo,
               geo_title= unlist(geography@geo.list))
   class(ret) <- "macroACS"

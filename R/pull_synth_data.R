@@ -7,9 +7,8 @@
 #' geographies to be fetched.
 #' @param table_vec A \code{character} vector specifying ACS base tables.
 #' @return A \code{'macroACS'} class object
-#' @references \url{https://www.census.gov/programs-surveys/acs/technical-documentation/summary-file-documentation.html}
 #' @export
-#' 
+#' @references \url{https://www.census.gov/programs-surveys/acs/technical-documentation/summary-file-documentation.html}
 #' #' @examples \dontrun{
 #' # make geography
 #' la_geo <- acs::geo.make(state= "CA", county= "Los Angeles City")
@@ -93,7 +92,7 @@ pull_synth_data <- function(endyear, span, geography) {
   # 02 -- create lists of EST and SE -- as data.frames
   #----------------------------------------------
   est <- list(age_by_sex= data.frame(age_by_sex@estimate),
-              pop_by_race= pop_by_race$estimate,
+              pop_by_race= pop_by_race$estimate$pop_by_race,
               marital_status= data.frame(marital_status@estimate),
               edu= data.frame(edu@estimate),
               nativity= data.frame(nativity@estimate),
@@ -106,7 +105,7 @@ pull_synth_data <- function(endyear, span, geography) {
               # pov_status2= data.frame(pov_status2@estimate))
   
   se <- list(age_by_sex= data.frame(age_by_sex@standard.error),
-             pop_by_race= pop_by_race$standard_error,
+             pop_by_race= pop_by_race$standard_error$pop_by_race,
              marital_status= data.frame(marital_status@standard.error),
              edu= data.frame(edu@standard.error),
              nativity= data.frame(nativity@standard.error),

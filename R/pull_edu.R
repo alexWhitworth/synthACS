@@ -19,6 +19,8 @@ pull_edu <- function(endyear, span, geography) {
   
   # 01 -- pull data and move to lists
   #----------------------------------------------
+  oldw <- getOption("warn")
+  options(warn= -1) # suppress warnings from library(acs) / ACS API
   edu_enroll <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                               table.number = "B14001", col.names= "pretty")
   enroll_details <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
@@ -31,22 +33,18 @@ pull_edu <- function(endyear, span, geography) {
 #                           table.number = "B15010", col.names= "pretty"))
 #   edu_internet <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
 #                             table.number = "B28006", col.names= "pretty")
+  options(warn= oldw) # turn warnings back on
   
-  est <- list(edu_enroll= data.frame(edu_enroll@estimate[,-2]),
-              enroll_details= data.frame(enroll_details@estimate[, -c(2,30)]),
-              edu_attain18= data.frame(edu_attain18@estimate[,-c(2,43)]),
-              edu_attain25= data.frame(edu_attain25@estimate[, -c(2,19)])) #,
+  est <- list(edu_enroll= data.frame(t(edu_enroll@estimate[,-2])),
+              enroll_details= data.frame(t(enroll_details@estimate[, -c(2,30)])),
+              edu_attain18= data.frame(t(edu_attain18@estimate[,-c(2,43)])),
+              edu_attain25= data.frame(t(edu_attain25@estimate[, -c(2,19)]))) #,
               # deg_major25= data.frame(deg_major25@estimate)))
   
-  se <- list(edu_enroll= data.frame(edu_enroll@standard.error[,-2]),
-              enroll_details= data.frame(enroll_details@standard.error[, -c(2,30)]),
-              edu_attain18= data.frame(edu_attain18@standard.error[,-c(2,43)]),
-              edu_attain25= data.frame(edu_attain25@standard.error[, -c(2,19)]))
-  
-  orig_colnames <- list(edu_enroll= data.frame(edu_enroll@acs.colnames[-2]),
-              enroll_details= data.frame(enroll_details@acs.colnames[-c(2,30)]),
-              edu_attain18= data.frame(edu_attain18@acs.colnames[-c(2,43)]),
-              edu_attain25= data.frame(edu_attain25@acs.colnames[-c(2,19)]))
+  se <- list(edu_enroll= data.frame(t(edu_enroll@standard.error[,-2])),
+              enroll_details= data.frame(t(enroll_details@standard.error[, -c(2,30)])),
+              edu_attain18= data.frame(t(edu_attain18@standard.error[,-c(2,43)])),
+              edu_attain25= data.frame(t(edu_attain25@standard.error[, -c(2,19)])))
   
   geo <- edu_enroll@geography
   

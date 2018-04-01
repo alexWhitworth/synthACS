@@ -2,7 +2,7 @@
 % Please edit documentation in R/pull_household.R
 \name{pull_household}
 \alias{pull_household}
-\title{Pull ACS}
+\title{Pull ACS data on households and housing units}
 \usage{
 pull_household(endyear, span, geography)
 }
@@ -27,4 +27,6 @@ Additional fields, mainly percentages and aggregations, are calculated.
 }
 \seealso{
 \code{\link[acs]{acs.fetch}}, \code{\link[acs]{geo.make}}
+B28001 - TYPES OF COMPUTERS IN HOUSEHOLD
+B28002 - PRESENCE AND TYPES OF INTERNET SUBSCRIPTIONS IN HOUSEHOLD
 }

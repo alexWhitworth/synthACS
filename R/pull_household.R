@@ -1,5 +1,5 @@
 
-#' @title Pull ACS 
+#' @title Pull ACS data on households and housing units
 #' @description Pull ACS data for a specified geography from base tables
 #' B09019, B11011, B19081, B25002, B25003, B25004, B25010, B25024,
 #' B25056, B25058, B25071, and B27001.
@@ -11,8 +11,8 @@
 #' @return A \code{list} containing the endyear, span, a \code{data.frame} of estimates,
 #' a \code{data.frame} of standard errors, a character vector of the original column names,
 #' and a \code{data.frame} of the geography metadata from \code{\link[acs]{acs.fetch}}.
-#' @seealso \code{\link[acs]{acs.fetch}}, \code{\link[acs]{geo.make}}
 #' @export
+#' @seealso \code{\link[acs]{acs.fetch}}, \code{\link[acs]{geo.make}}
 pull_household <- function(endyear, span, geography) {
   # 00 -- error checking
   #----------------------------------------------
@@ -20,6 +20,8 @@ pull_household <- function(endyear, span, geography) {
   
   # 01 -- pull data and move to lists
   #----------------------------------------------
+  oldw <- getOption("warn")
+  options(warn= -1) # suppress warnings from library(acs) / ACS API
   hh_type_r <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                          table.number = "B09019", col.names= "pretty")
   hh_type_units <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
@@ -37,11 +39,12 @@ pull_household <- function(endyear, span, geography) {
   hh_rent <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                             table.number = "B25056", col.names= "pretty")
   hh_med_rent <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
-                       table.number = "B25058", col.names= "pretty")
+                                table.number = "B25058", col.names= "pretty")
   hh_med_rent_v_inc <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
-                           table.number = "B25071", col.names= "pretty")
+                                      table.number = "B25071", col.names= "pretty")
   health_ins <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B27001", col.names= "pretty")
+  options(warn= oldw) # turn warnings back on
   
   # --- these tables not available
   #' B28001 - TYPES OF COMPUTERS IN HOUSEHOLD
@@ -55,8 +58,6 @@ pull_household <- function(endyear, span, geography) {
               hh_vacancy= data.frame(hh_vacancy@estimate),
               hh_num_units= data.frame(hh_num_units@estimate),
               hh_rent= data.frame(hh_rent@estimate),
-              hh_med_rent= data.frame(hh_med_rent@estimate),
-              hh_med_rent_v_inc= data.frame(hh_med_rent_v_inc@estimate),
               health_ins= data.frame(health_ins@estimate))
   
   se <- list(hh_type_r= data.frame(hh_type_r@standard.error),
@@ -67,26 +68,10 @@ pull_household <- function(endyear, span, geography) {
               hh_vacancy= data.frame(hh_vacancy@standard.error),
               hh_num_units= data.frame(hh_num_units@standard.error),
               hh_rent= data.frame(hh_rent@standard.error),
-              hh_med_rent= data.frame(hh_med_rent@standard.error),
-              hh_med_rent_v_inc= data.frame(hh_med_rent_v_inc@standard.error),
               health_ins= data.frame(health_ins@standard.error))
-  
-  orig_colnames <- list(hh_type_r= hh_type_r@acs.colnames,
-                             hh_type_units= hh_type_units@acs.colnames,
-                             hh_inc= hh_inc@acs.colnames,
-                             hh_occ= hh_occ@acs.colnames,
-                             hh_tenure= hh_tenure@acs.colnames,
-                             hh_vacancy= hh_vacancy@acs.colnames,
-                             hh_num_units= hh_num_units@acs.colnames,
-                             hh_rent= hh_rent@acs.colnames,
-                             hh_med_rent= hh_med_rent@acs.colnames,
-                             hh_med_rent_v_inc= hh_med_rent_v_inc@acs.colnames,
-                             health_ins= health_ins@acs.colnames)
   
   geo <- hh_type_r@geography
   
-  rm(health_ins,  hh_inc,  hh_med_rent,  hh_med_rent_v_inc,  hh_num_units,  
-     hh_occ,  hh_rent,  hh_tenure,  hh_type_r,  hh_type_units,  hh_vacancy)
   
   ## 02 (A) combine columns and (B) calc percentages
   #----------------------------------------------
@@ -145,7 +130,7 @@ pull_household <- function(endyear, span, geography) {
   }
   
   est$hh_inc$pseudo_gini_coef <- apply(est$hh_inc, 1, gini_calc)
-  se$hh_inc$pseudo_gini_coef <- NA
+  se$hh_inc$pseudo_gini_coef <- as.numeric(NA)
   
   ### hh_occ
   #----------------------------------------------
@@ -198,8 +183,8 @@ pull_household <- function(endyear, span, geography) {
     rent_units= est$hh_rent[,1],
     rent_cash_rent= est$hh_rent[,2],
     rent_nocash_rent= est$hh_rent[,24],
-    med_rent= est$hh_med_rent[,1],
-    med_rent_to_income= est$hh_med_rent_v_inc[,1],
+    med_rent= hh_med_rent@estimate[,1],
+    med_rent_to_income= hh_med_rent_v_inc@estimate[,1],
     pct_rent_lt500= apply(est$hh_rent[, 3:11], 1, sum) / est$hh_rent[,2],
     pct_rent_500_lt750= apply(est$hh_rent[, 12:16], 1, sum) / est$hh_rent[,2],
     pct_rent_750_lt1000= apply(est$hh_rent[, 17:19], 1, sum) / est$hh_rent[,2],
@@ -213,8 +198,8 @@ pull_household <- function(endyear, span, geography) {
     rent_units= est$hh_rent[,1],
     rent_cash_rent= est$hh_rent[,2],
     rent_nocash_rent= est$hh_rent[,24],
-    med_rent= se$hh_med_rent[,1],
-    med_rent_to_income= se$hh_med_rent_v_inc[,1],
+    med_rent= hh_med_rent@standard.error[,1],
+    med_rent_to_income= hh_med_rent_v_inc@standard.error[,1],
     pct_rent_lt500= sqrt(apply(se$hh_rent[, 3:11]^2, 1, sum) - (
       rent_est$pct_rent_lt500^2 * se$hh_rent[,2]^2)) / est$hh_rent[,2],
     pct_rent_500_lt750= sqrt(apply(se$hh_rent[, 12:16]^2, 1, sum) - (
@@ -234,16 +219,6 @@ pull_household <- function(endyear, span, geography) {
   est$hh_rent <- rent_est
   se$hh_rent  <- rent_se
   rm(rent_est, rent_se)
-  
-  ### hh_med_rent
-  #----------------------------------------------
-  est$hh_med_rent <- NULL # included above
-  se$hh_med_rent <- NULL
-  
-  ### hh_med_rent_v_inc
-  #----------------------------------------------
-  est$hh_med_rent_v_inc <- NULL # included above
-  se$hh_med_rent_v_inc <- NULL
   
   ### health_ins
   #----------------------------------------------
@@ -309,9 +284,8 @@ pull_household <- function(endyear, span, geography) {
               geo_title= unlist(geography@geo.list))
   class(ret) <- "macroACS"
   names(ret$estimates) <- names(ret$standard_error) <- c("hh_type_by_relationship", "hh_type_by_units",
-    "mean_hh_inc_quintiles", "hh_occ_status", "hh_tenure", "hh_vacancy_status", "avg_hh_size",
-    "units_in_structure", "contract_rent", "median_contract_rent", "median_rent_pct_hh_inc",
-    "hh_ins_by_sex_age")
+    "mean_hh_inc_quintiles", "hh_occ_status", "hh_tenure", "hh_vacancy_status", # "avg_hh_size",
+    "units_in_structure", "contract_rent", "hh_ins_by_sex_age")
   
   return(ret)
 }
