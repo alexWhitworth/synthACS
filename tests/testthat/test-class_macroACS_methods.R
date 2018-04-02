@@ -2,15 +2,15 @@
 library(testthat)
 library(synthACS)
 
+# load test data:
+load("./synthACS/tests/testthat/acsdat.Rdata")
+rm(list=ls()[-which(ls() == "ca_dat")])
+
 #----------------------------------------------------------
 context("macroACS methods")
 #----------------------------------------------------------
 
 test_that("fetch - age_by_sex - estimates work", {
-  # load test data:
-  load("C:/Github/synthACS/tests/testthat/acsdat.Rdata")
-  rm(list=ls()[-which(ls() == "ca_dat")])
-  
   # run function on all types of use cases
   options(warn=-1)
   age_sex_vector_all <- fetch_data(ca_dat, geography= "*", dataset= "estimate",
