@@ -26,21 +26,17 @@ test_that("errors work", {
 test_that("returns results accurately - counties", {
   # create test geography and data
   ca_geo <- geo.make(state= 'CA', county= 'Los Angeles')
-  acs_fetch1 <- acs.fetch(endyear= 2016, span= 5, geography= ca_geo, 
-                          table.number = "B14001", col.names= "pretty")
   ca_dat <- pull_household(2014, 5, ca_geo)
   
   # test:
-  confirm_macroACS_class(ca_dat, acs_fetch1)
+  synthACS:::confirm_macroACS_class(ca_dat)
 })
 
 test_that("returns results accurately - state", {
   # create test geography and data
   ca_geo <- geo.make(state= "CA")
-  acs_fetch1 <- acs.fetch(endyear= 2016, span= 5, geography= ca_geo, 
-                          table.number = "B14001", col.names= "pretty")
   ca_dat <- pull_household(2016, 5, ca_geo)
   
   # test:
-  confirm_macroACS_class(ca_dat, acs_fetch1)
+  synthACS:::confirm_macroACS_class(ca_dat)
 })

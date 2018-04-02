@@ -20,6 +20,8 @@ pull_population <- function(endyear, span, geography) {
   
   # 01 -- pull data
   #----------------------------------------------
+  oldw <- getOption("warn")
+  options(warn= -1) # suppress warnings from library(acs) / ACS API
   age_by_sex <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B01001", col.names= "pretty")
   med_age <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
@@ -38,12 +40,13 @@ pull_population <- function(endyear, span, geography) {
                             table.number = "B06011", col.names = "pretty")
   by_pov_status <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                              table.number = "B06012", col.names = "pretty")
+  options(warn= oldw) # turn warnings back on
   
   # 02 -- create lists of EST and SE -- as data.frames
   #----------------------------------------------
   est <- list(age_by_sex= data.frame(age_by_sex@estimate),
               med_age= data.frame(med_age@estimate),
-              pop_by_race= data.frame(pop_by_race@estimate[, c(1:7)]),
+              pop_by_race= data.frame(t(pop_by_race@estimate[, c(1:7)])),
               birth_and_language= data.frame(birth_and_language@estimate),
               by_marital_status= data.frame(by_marital_status@estimate),
               by_edu= data.frame(by_edu@estimate),
@@ -53,7 +56,7 @@ pull_population <- function(endyear, span, geography) {
   
   se <- list(age_by_sex= data.frame(age_by_sex@standard.error),
              med_age= data.frame(med_age@standard.error),
-             pop_by_race= data.frame(pop_by_race@standard.error[, c(1:7)]),
+             pop_by_race= data.frame(t(pop_by_race@standard.error[, c(1:7)])),
              birth_and_language= data.frame(birth_and_language@standard.error),
              by_marital_status= data.frame(by_marital_status@standard.error),
              by_edu= data.frame(by_edu@standard.error),

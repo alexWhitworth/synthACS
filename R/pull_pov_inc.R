@@ -20,6 +20,8 @@ pull_pov_inc <- function(endyear, span, geography) {
   
   # 01 -- pull data and move to lists
   #----------------------------------------------
+  oldw <- getOption("warn")
+  options(warn= -1) # suppress warnings from library(acs) / ACS API
   pov_status <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                     table.number = "B17001", col.names= "pretty")
 #   pov_to_inc <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
@@ -36,10 +38,11 @@ pull_pov_inc <- function(endyear, span, geography) {
                       table.number = "B19055", col.names= "pretty")
   hh_psa_inc <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                       table.number = "B19057", col.names= "pretty")
+  options(warn= oldw) # turn warnings back on
   
   est <- list(pov_status= data.frame(pov_status@estimate),
               #pov_to_inc= data.frame(pov_to_inc@estimate),
-              pov_to_work= data.frame(pov_to_work@estimate[, -c(3,7,12,16)]),
+              pov_to_work= data.frame(t(pov_to_work@estimate[, -c(3,7,12,16)])),
               dis_by_age= data.frame(dis_by_age@estimate),
               hh_inc= data.frame(hh_inc@estimate),
               med_hh_inc= data.frame(med_hh_inc@estimate),
@@ -48,25 +51,14 @@ pull_pov_inc <- function(endyear, span, geography) {
   
   se <- list(pov_status= data.frame(pov_status@standard.error),
               #pov_to_inc= data.frame(pov_to_inc@standard.error),
-              pov_to_work= data.frame(pov_to_work@standard.error[, -c(3,7,12,16)]),
+              pov_to_work= data.frame(t(pov_to_work@standard.error[, -c(3,7,12,16)])),
               dis_by_age= data.frame(dis_by_age@standard.error),
               hh_inc= data.frame(hh_inc@standard.error),
               med_hh_inc= data.frame(med_hh_inc@standard.error),
               hh_ss_inc= data.frame(hh_ss_inc@standard.error),
               hh_psa_inc= data.frame(hh_psa_inc@standard.error))
   
-  orig_colnames <- list(pov_status= data.frame(pov_status@acs.colnames),
-              #pov_to_inc= data.frame(pov_to_inc@acs.colnames),
-              pov_to_work= data.frame(pov_to_work@acs.colnames[-c(3,7,12,16)]),
-              dis_by_age= data.frame(dis_by_age@acs.colnames),
-              hh_inc= data.frame(hh_inc@acs.colnames),
-              med_hh_inc= data.frame(med_hh_inc@acs.colnames),
-              hh_ss_inc= data.frame(hh_ss_inc@acs.colnames),
-              hh_psa_inc= data.frame(hh_psa_inc@acs.colnames))
-  
   geo <- pov_status@geography
-  
-  rm(pov_status, pov_to_work, dis_by_age, hh_inc, med_hh_inc, hh_ss_inc, hh_psa_inc)
   
   ## 02 -- (A) combine columns and (B) calc percentages
   ### pov_status

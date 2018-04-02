@@ -19,6 +19,8 @@ pull_mar_status <- function(endyear, span, geography) {
   
   # 01 -- pull data and move to lists
   #----------------------------------------------
+  oldw <- getOption("warn")
+  options(warn= -1) # suppress warnings from library(acs) / ACS API
   by_sex <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                         table.number = "B12001", col.names= "pretty")
   by_labor <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
@@ -27,6 +29,7 @@ pull_mar_status <- function(endyear, span, geography) {
                         table.number = "B12007", col.names= "pretty")
   num_mar <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                         table.number = "B12501", col.names= "pretty")
+  options(warn= oldw) # turn warnings back on
   
   est <- list(by_sex= data.frame(by_sex@estimate),
               by_labor= data.frame(by_labor@estimate),
@@ -37,11 +40,6 @@ pull_mar_status <- function(endyear, span, geography) {
               by_labor= data.frame(by_labor@standard.error),
               med_age_mar= data.frame(med_age_mar@standard.error),
               num_mar= data.frame(num_mar@standard.error))
-  
-  orig_colnames <- list(by_sex= data.frame(by_sex@acs.colnames),
-              by_labor= data.frame(by_labor@acs.colnames),
-              med_age_mar= data.frame(med_age_mar@acs.colnames),
-              num_mar= data.frame(num_mar@acs.colnames))
   
   geo <- by_sex@geography
   

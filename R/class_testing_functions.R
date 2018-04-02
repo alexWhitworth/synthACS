@@ -1,7 +1,6 @@
 
 # @description This function confirms that 
 # @param d A 'macroACS' class object to check
-# @param comp An 'acs' class object to compare geogrpahy information against
 # @section Details:
 # The 'macroACS' class should be a list of length 6 as noted below:
   # endyear: an integer scalar
@@ -10,7 +9,7 @@
   # standard_error: a list of data.frame's containing only numeric elements
   # geography: a data.frame describing the geography from \code{\link[acs]{geo.make}}
   # geo_title: a formall class 'geo' object from \code{\link[acs]{geo.make}}
-confirm_macroACS_class <- function(d, comp) {
+confirm_macroACS_class <- function(d) {
   # 1. confirm correct class structure
   expect_true(is.list(d))
   expect_true(length(d) == 6)
@@ -23,7 +22,6 @@ confirm_macroACS_class <- function(d, comp) {
   expect_true(all(unlist(lapply(d$standard_error, is.data.frame))))
   expect_true(is.list(d$geo_title))
   expect_true(is.data.frame(d$geography))
-  expect_equal(comp@geography, d$geography)
   
   # 2. confirm conforming data elements
   expect_true(all(unlist(

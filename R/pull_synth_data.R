@@ -23,14 +23,18 @@ pull_acs_basetables <- function(endyear, span, geography, table_vec) {
   
   nr <- length(table_vec) 
   temp_dat <- vector("list", length= nr)
+  oldw <- getOption("warn")
+  options(warn= -1) # suppress warnings from library(acs) / ACS API
   for (i in 1:nr) {
     temp_dat[[i]] <- acs::acs.fetch(endyear, span, geography, table.number= table_vec[i],
                                     col.names= "pretty")
   }
+  options(warn= oldw) # turn warnings back on
+  
   ret <- list(endyear= endyear, span= span,
-              estimates=lapply(temp_dat, function(l) {return(l@estimate)}),
-              standard_error= lapply(temp_dat, function(l) {return(l@standard.error)}),
-              geoography= temp_dat[[1]]@geography,
+              estimates=lapply(temp_dat, function(l) {return(as.data.frame(l@estimate))}),
+              standard_error= lapply(temp_dat, function(l) {return(as.data.frame(l@standard.error))}),
+              geography= temp_dat[[1]]@geography,
               geo_title= unlist(geography@geo.list)
   )
   class(ret) <- "macroACS"
@@ -65,6 +69,8 @@ pull_synth_data <- function(endyear, span, geography) {
   
   # 01 -- pull data
   #----------------------------------------------
+  oldw <- getOption("warn")
+  options(warn= -1) # suppress warnings from library(acs) / ACS API
   age_by_sex <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B01001", col.names= "pretty") # total pop
   pop_by_race <- pull_race_data(endyear= endyear, span= span, geography= geography)
@@ -88,6 +94,7 @@ pull_synth_data <- function(endyear, span, geography) {
                              table.number = "B17005", col.names = "pretty") # (age 16+, by sex & employment status)
   # pov_status2 <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
   #                          table.number = "B17007", col.names = "pretty") # B17007 - age 15+, by age and gender ... 
+  options(warn= oldw) # turn warnings back on
   
   # 02 -- create lists of EST and SE -- as data.frames
   #----------------------------------------------
@@ -98,8 +105,8 @@ pull_synth_data <- function(endyear, span, geography) {
               nativity= data.frame(nativity@estimate),
               by_inc_12mo= data.frame(by_inc_12mo@estimate),
               # geo_mob_mar_stat= data.frame(geo_mob_mar_stat@estimate[, c(1,7:dim(geo_mob_mar_stat@estimate)[[2]])]),
-              geo_mob_edu= data.frame(geo_mob_edu@estimate[, c(1,7:dim(geo_mob_edu@estimate)[[2]])]),
-              ind_inc= data.frame(geo_mob_inc@estimate[, 1:11]),
+              geo_mob_edu= data.frame(t(geo_mob_edu@estimate[, c(1,7:dim(geo_mob_edu@estimate)[[2]])])),
+              ind_inc= data.frame(t(geo_mob_inc@estimate[, 1:11])),
               emp_status= data.frame(emp_status@estimate),
               pov_status1= data.frame(pov_status1@estimate)) #,
               # pov_status2= data.frame(pov_status2@estimate))
@@ -111,16 +118,13 @@ pull_synth_data <- function(endyear, span, geography) {
              nativity= data.frame(nativity@standard.error),
              by_inc_12mo= data.frame(by_inc_12mo@standard.error),
              # geo_mob_mar_stat= data.frame(geo_mob_mar_stat@standard.error[, c(1,7:dim(geo_mob_mar_stat@standard.error)[[2]])]),
-             geo_mob_edu= data.frame(geo_mob_edu@standard.error[, c(1,7:dim(geo_mob_edu@standard.error)[[2]])]),
-             ind_inc= data.frame(geo_mob_inc@standard.error[,1:11]),
+             geo_mob_edu= data.frame(t(geo_mob_edu@standard.error[, c(1,7:dim(geo_mob_edu@standard.error)[[2]])])),
+             ind_inc= data.frame(t(geo_mob_inc@standard.error[,1:11])),
              emp_status= data.frame(emp_status@standard.error),
              pov_status1= data.frame(pov_status1@standard.error)) #,
              # pov_status2= data.frame(pov_status2@standard.error))
   
   geo <- age_by_sex@geography
-  
-  rm(age_by_sex, pop_by_race, marital_status, edu, nativity, by_inc_12mo, geo_mob_inc, 
-     geo_mob_edu, emp_status, pov_status1) # geo_mob_mar_stat, pov_status2)
   
   # 03 -- combine columns
   #----------------------------------------------
