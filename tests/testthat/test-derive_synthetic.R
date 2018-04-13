@@ -7,7 +7,6 @@ context("derive synthetic microdata for geography set")
 
 test_that("disaggregate_md works", {
   # load geography data, run disaggregation
-  load("C:/Github/synthACS/tests/testthat/acsdat.Rdata")
   m_dat <- synthACS:::disaggregate_md(ca_dat$estimates)
   
   # test outputs
@@ -24,19 +23,15 @@ test_that("error checking", {
   data(diamonds, package= "ggplot2")
   expect_error(derive_synth_datasets(diamonds, parallel= FALSE))
   
-  load("C:/Github/synthACS/tests/testthat/acsdat.Rdata")
   expect_error(derive_synth_datasets(ca_dat, parallel= TRUE, leave_cores= -1L))
   expect_error(derive_synth_datasets(ca_dat, parallel= TRUE, leave_cores= 2.5))
 })
 
 
 test_that("get correct results", {
-  # geography
-  load("C:/Github/synthACS/tests/testthat/acsdat.Rdata")
-  
+  # comment out either parallel == TRUE or FALSE for testing purposes
   ## parallel == FALSE
-  # parallel works, commenting out for testing purposes
-  #syn <- derive_synth_datasets(ca_dat, parallel= FALSE)
+  # syn <- derive_synth_datasets(ca_dat, parallel= FALSE)
   
   ## parallel == TRUE
   syn <- derive_synth_datasets(ca_dat, parallel= TRUE)

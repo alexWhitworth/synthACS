@@ -2,8 +2,6 @@
 library(testthat)
 library(synthACS)
 
-load("C:/Github/synthACS/tests/testthat/acsdat.Rdata")
-
 #----------------------------------------------------------
 context("adding constraints")
 #----------------------------------------------------------

@@ -3,14 +3,13 @@ library(testthat)
 library(synthACS)
 
 context("synth - edu")
+##---------------------------------------------------------------------------
+## 01. build out test datasets
+##---------------------------------------------------------------------------
+# load
+# load("./synthACS/tests/testthat/acsdat.Rdata")
 
 test_that("get correct results", {
-  ##---------------------------------------------------------------------------
-  ## 01. build out test datasets
-  ##---------------------------------------------------------------------------
-  # load
-  load("C:/Github/synthACS/tests/testthat/acsdat.Rdata")
-  
   # then create multiple examples
   ca <- synthACS:::synth_data_mar(synthACS:::synth_data_ag(unlist(ca_dat$estimates$age_by_sex[26,])),
     unlist(ca_dat$estimates$marital_status[26,]))

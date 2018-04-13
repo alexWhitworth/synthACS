@@ -1,5 +1,9 @@
 language: r
+warnings_are_errors: true
 cache: packages
+
+repos:
+  CRAN: https://cran.cnr.berkeley.edu/
 
 notifications:
   email:

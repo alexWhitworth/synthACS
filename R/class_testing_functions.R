@@ -11,31 +11,31 @@
   # geo_title: a formall class 'geo' object from \code{\link[acs]{geo.make}}
 confirm_macroACS_class <- function(d) {
   # 1. confirm correct class structure
-  expect_true(is.list(d))
-  expect_true(length(d) == 6)
-  expect_equal(names(d), c("endyear", "span", "estimates", "standard_error", "geography",
+  testthat::expect_true(is.list(d))
+  testthat::expect_true(length(d) == 6)
+  testthat::expect_equal(names(d), c("endyear", "span", "estimates", "standard_error", "geography",
                                 "geo_title"))
-  expect_true(is.numeric(d$endyear))
-  expect_true(is.numeric(d$span))
-  expect_true(d$span %in% c(1L, 3L, 5L))
-  expect_true(all(unlist(lapply(d$estimates, is.data.frame))))
-  expect_true(all(unlist(lapply(d$standard_error, is.data.frame))))
-  expect_true(is.list(d$geo_title))
-  expect_true(is.data.frame(d$geography))
+  testthat::expect_true(is.numeric(d$endyear))
+  testthat::expect_true(is.numeric(d$span))
+  testthat::expect_true(d$span %in% c(1L, 3L, 5L))
+  testthat::expect_true(all(unlist(lapply(d$estimates, is.data.frame))))
+  testthat::expect_true(all(unlist(lapply(d$standard_error, is.data.frame))))
+  testthat::expect_true(is.list(d$geo_title))
+  testthat::expect_true(is.data.frame(d$geography))
   
   # 2. confirm conforming data elements
-  expect_true(all(unlist(
+  testthat::expect_true(all(unlist(
     mapply(function(est, se) {all.equal(dim(est), dim(se))}, 
            est= d$estimates, se= d$standard_error, SIMPLIFY = FALSE)
     )))
-  expect_true(all(unlist(
+  testthat::expect_true(all(unlist(
     mapply(function(est, se) {all.equal(names(est), names(se))}, 
            est= d$estimates, se= d$standard_error, SIMPLIFY = FALSE)
   )))
-  expect_true(all(unlist(lapply(d$estimates, function(l) {
+  testthat::expect_true(all(unlist(lapply(d$estimates, function(l) {
     all(unlist(lapply(l, is.numeric)))
   }))))
-  expect_true(all(unlist(lapply(d$standard_error, function(l) {
+  testthat::expect_true(all(unlist(lapply(d$standard_error, function(l) {
     all(unlist(lapply(l, is.numeric)))
   }))))
 }

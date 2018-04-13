@@ -122,7 +122,7 @@ fetch_data.macroACS <- function(acs, geography, dataset= c("estimate", "st.err")
   ## check inputs
   validate_get_inputs(acs, geography, dataset)
   ## execute return
-  if (geography != "*") {
+  if (length(geography) > 1L || geography != "*") {
     rowid <- get_rowmatch(geography, acs$geography$NAME)
     if (dataset == "estimate") { return(acs$estimates[[choice]][rowid, ]) } 
     else if (dataset == "st.err") { return(acs$standard_error[[choice]][rowid, ]) }

@@ -9,7 +9,7 @@
 #' @return A \code{'macroACS'} class object
 #' @export
 #' @references \url{https://www.census.gov/programs-surveys/acs/technical-documentation/summary-file-documentation.html}
-#' #' @examples \dontrun{
+#' @examples \dontrun{
 #' # make geography
 #' la_geo <- acs::geo.make(state= "CA", county= "Los Angeles City")
 #' # pull data 

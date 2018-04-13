@@ -2,10 +2,6 @@
 library(testthat)
 library(synthACS)
 
-load("C:/Github/synthACS/tests/testthat/acsdat.Rdata")
-load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
-load("C:/Github/synthACS/tests/testthat/towork.rda")
-
 #----------------------------------------------------------
 context("new attr - bottom of recursion")
 #----------------------------------------------------------

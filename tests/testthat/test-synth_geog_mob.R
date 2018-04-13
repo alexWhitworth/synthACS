@@ -5,12 +5,6 @@ library(synthACS)
 context("synth - geographic mobility")
 
 test_that("get correct results", {
-  ##---------------------------------------------------------------------------
-  ## 01. build out test datasets
-  ##---------------------------------------------------------------------------
-  # load
-  load("C:/Github/synthACS/tests/testthat/acsdat.Rdata")
-  
   # then create multiple examples
   ca <- synthACS:::synth_data_pov(synthACS:::synth_data_nativ(
     synthACS:::synth_data_emp(synthACS:::synth_data_edu(synthACS:::synth_data_mar(

@@ -7,10 +7,6 @@ context("synthACS methods")
 #----------------------------------------------------------
 
 test_that("gender constraint creates successfully", {
-  # load test data:
-  load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
-  rm(list=ls()[-which(ls() == "syn")])
-  
   # run function
   g <- all_geog_constraint_gender(syn, method= "macro.table")
   g2 <- all_geog_constraint_gender(syn, method= "synthetic")
@@ -38,10 +34,6 @@ test_that("gender constraint creates successfully", {
 
 
 test_that("age constraint creates successfully", {
-  # load test data:
-  load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
-  rm(list=ls()[-which(ls() == "syn")])
-  
   # run function
   g <- all_geog_constraint_age(syn, method= "macro.table")
   g2 <- all_geog_constraint_age(syn, method= "synthetic")
@@ -68,10 +60,6 @@ test_that("age constraint creates successfully", {
 })
 
 test_that("marital status constraint creates successfully", {
-  # load test data:
-  load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
-  rm(list=ls()[-which(ls() == "syn")])
-  
   # run function
   g <- all_geog_constraint_marital_status(syn, method= "macro.table")
   g2 <- all_geog_constraint_marital_status(syn, method= "synthetic")
@@ -99,10 +87,6 @@ test_that("marital status constraint creates successfully", {
 
 
 test_that("employment status constraint creates successfully", {
-  # load test data:
-  load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
-  rm(list=ls()[-which(ls() == "syn")])
-  
   # run function
   g <- all_geog_constraint_employment(syn, method= "macro.table")
   g2 <- all_geog_constraint_employment(syn, method= "synthetic")
@@ -129,10 +113,6 @@ test_that("employment status constraint creates successfully", {
 })
 
 test_that("nativity status constraint creates successfully", {
-  # load test data:
-  load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
-  rm(list=ls()[-which(ls() == "syn")])
-  
   # run function
   g <- all_geog_constraint_nativity(syn, method= "macro.table")
   g2 <- all_geog_constraint_nativity(syn, method= "synthetic")
@@ -159,10 +139,6 @@ test_that("nativity status constraint creates successfully", {
 })
 
 test_that("poverty status constraint creates successfully", {
-  # load test data:
-  load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
-  rm(list=ls()[-which(ls() == "syn")])
-  
   # run function
   g <- all_geog_constraint_poverty(syn, method= "macro.table")
   g2 <- all_geog_constraint_poverty(syn, method= "synthetic")
@@ -189,10 +165,6 @@ test_that("poverty status constraint creates successfully", {
 })
 
 test_that("geographic mobility constraint creates successfully", {
-  # load test data:
-  load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
-  rm(list=ls()[-which(ls() == "syn")])
-  
   # run function
   g <- all_geog_constraint_geog_mob(syn, method= "macro.table")
   g2 <- all_geog_constraint_geog_mob(syn, method= "synthetic")
@@ -219,10 +191,6 @@ test_that("geographic mobility constraint creates successfully", {
 })
 
 test_that("individual income constraint creates successfully", {
-  # load test data:
-  load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
-  rm(list=ls()[-which(ls() == "syn")])
-  
   # run function
   g <- all_geog_constraint_income(syn, method= "macro.table")
   g2 <- all_geog_constraint_income(syn, method= "synthetic")
@@ -249,10 +217,6 @@ test_that("individual income constraint creates successfully", {
 })
 
 test_that("race constraint creates successfully", {
-  # load test data:
-  load("C:/Github/synthACS/tests/testthat/par_sim_anneal.Rdata")
-  rm(list=ls()[-which(ls() == "syn")])
-  
   # run function
   #g <- all_geog_constraint_race(syn, method= "macro.table")
   g2 <- all_geog_constraint_race(syn, method= "synthetic")
