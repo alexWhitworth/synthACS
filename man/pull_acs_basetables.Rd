@@ -23,13 +23,15 @@ A \code{'macroACS'} class object
 A wrapper function to pull multiple base tables from ACS API via 
 \code{\link[acs]{acs.fetch}}.
 }
-\references{
-\url{https://www.census.gov/programs-surveys/acs/technical-documentation/summary-file-documentation.html}
-#' @examples \dontrun{
+\examples{
+\dontrun{
 # make geography
 la_geo <- acs::geo.make(state= "CA", county= "Los Angeles City")
 # pull data 
 la_dat <- pull_acs_basetables(endyear= 2015, span= 1, geography= la_geo, 
   table_vec= c("B00001", "B00002", "B01003"))
 }
+}
+\references{
+\url{https://www.census.gov/programs-surveys/acs/technical-documentation/summary-file-documentation.html}
 }
