@@ -78,9 +78,9 @@ the ACS--is currently lacking. \textit{Spatial Microsimulation: A Reference Guid
 which provides an SMSM blueprint, provides a partial solution. However, there is still a shortage of
 general software solutions for conducting SMSM.
 
-In this paper, the author introduces \pkg{synthACS}, a package which takes advantage of the availability
+In this paper, we introduces \pkg{synthACS}, a package which takes advantage of the availability
 of reliable statistics on small area populations from the ACS to enable SMSM at any desired United 
-States geographic level. \pkg{synthACS} is thus, to the author's knowledge, the first \proglang{R} 
+States geographic level. \pkg{synthACS} is thus, to out knowledge, the first \proglang{R} 
 package which provides a general SMSM toolkit for any user-specified United States geography. 
 \pkg{synthACS} is also data-extensible. It provides flexible tools for users to add additional data
 elements, both from the ACS and otherwise, to their micro data thereby enabling more targeted 
@@ -109,19 +109,20 @@ Methods for spatial microsimulation were first described by \cite{orcutt}; altho
 not until 1984 that  one of the first generally accepted SMSM was developed \cite{clarke1984}. While 
 the general procedure for conducting SMSM has several steps (see \cite{UG_smsm}), the process can be broadly 
 categorized into two stages: collecting, or synthetically generating, micro data; and fitting this 
-micro data to the macro, or aggregate, data constraining tables.\footnote{From this point forward, the author will use the term `micro data' to indicate the sample of low level data on individuals and the term 
+micro data to the macro, or aggregate, data constraining tables.\footnote{From this point forward, we 
+will use the term `micro data' to indicate the sample of low level data on individuals and the term 
 `macro data' to indicate the aggregate constraining tables for each small area.} The only open source
-spatial microsimiulation software that the author is aware of is \pkg{sms} \cite{sms}. \pkg{sms} 
+spatial microsimiulation software that we is aware of is \pkg{sms} \cite{sms}. \pkg{sms} 
 includes tools for conducting SMSM with user-provided micro and macro datasets. \pkg{sms} performs 
 optimization between the micro and macro data using either hill-climbing or simulated annealing algorithms.
 
 Unlike \pkg{sms}, \pkg{synthACS} does not require external micro and macro datasets. Instead, it
-leverages the high quality data available from the American Community Survey and acessible in \proglang{R} 
-via \pkg{acs}. So that users are not limited to ACS data, \pkg{synthACS} also provides methods for 
-data-extensibility. But \pkg{synthACS} \textit{is} explicitly targeted at users interested in 
+leverages the high quality data available from the ACS and acessible in \proglang{R} 
+via \pkg{acs}. \pkg{synthACS} also provides methods for data-extensibility so that users are not 
+limited to ACS data. But \pkg{synthACS} is explicitly targeted at users interested in 
 modeling and analyzing United States 
 geographic data. By focusing on a single geographic region and choosing a single primary data source, 
-\pkg{synthACS}'s aims for the mantra to `do one thing well.' \pkg{synthACS} provides a 
+\pkg{synthACS}'s aims to `do one thing well.' \pkg{synthACS} provides a 
 novel method of synthetic micro data creation, including thoughtful tradeoffs around data availability 
 (see Section~\ref{sec:sample_synthetic}), that enables end-users to focus on their substantive 
 research questions instead of collecting survey data.
@@ -129,12 +130,12 @@ research questions instead of collecting survey data.
 \pkg{synthACS} also has two computational improvements over \pkg{sms}. Firstly, \pkg{synthACS} 
 makes full use of a multicore architecture compared to \pkg{sms}, which only uses half of the available 
 computing cores. Secondly, \pkg{synthACS} provides a more flexible simulated annealing algorithm than
-\pkg{sms}, which is detailed in Section~\ref{sec:SA_opt}. In the remainder of this section, the author 
-reviews the methological background of SMSM and describes the design of \pkg{synthACS} in detail.
+\pkg{sms}, which is detailed in Section~\ref{sec:SA_opt}. In the remainder of this section, we 
+review the methological background of SMSM and describes the design of \pkg{synthACS} in detail.
 
 \subsection{Spatial microsimulation literature}
 
-As noted above, the process of spatial microsimulation can be broadly divided into two stages, one 
+The process of spatial microsimulation can be broadly divided into two stages, one 
 concerning the collection of micro data and the other concerning fitting the micro data to the macro data.
 Researchers have approached this problem from multiple angles in the literature, including: 
   conditional probabilities (\cite{birkinClarke}; \cite{clarke_holm}), 
@@ -150,8 +151,8 @@ after the first is conditioned on previously assigned attributes. For instance, 
 individual's `gender', the `age' attribute would be assigned based on the conditional distribution 
 of ages within the `Male' and `Female' populations respectively.
 
-Deterministic reweighting, the next method discussed, was first introduced by \cite{ballas_etal_2005}. 
-Unlike conditional probability models, which build a synthetic micro population, deterministic reweighting \textit{requires} a sample micro population of individual records. The procedure then proportionally reweights each individual record in the sample based on the macro data. For example, if the researcher has 
+Deterministic reweighting was first introduced by \cite{ballas_etal_2005}. 
+Unlike conditional probability models, which build a synthetic micro population, deterministic reweighting requires a sample micro population of individual records. The procedure then proportionally reweights each individual record in the sample based on the macro data. For example, if the researcher has 
 a 1\% sample of individuals, a crude reweighting scheme would be to simply duplicate each record 
 one hundred times.  As with the conditional probabilities method, attributes are reweighted iteratively, for instance, proceeding from `gender' to `age' as discussed above. 
 
@@ -166,7 +167,7 @@ climbing, ``emerges as the single best solution."
 
 Each of the above methods has advantages and disadvantages as shown in Table~\ref{tbl:synth_methods} and 
 further discussed in \cite{harland}. For both conditional probability and deterministic reweighting methods, the order in which attributes are introduced is important. Best results are achieved by starting with low entropy attributes, such as gender and age, and then proceeding to higher entropy attributes such as education level, income, and race. An additional concern with deterministic reweighting and current combinatorial 
-optimization methods, since each requires a sample micro population, is the representativeness of the sample micro population to \textit{each} small area under study. Error can be minimized by only using sample 
+optimization methods, since each requires a sample micro population, is the representativeness of the sample micro population to each small area under study. Error is minimized by only using sample 
 populations which are relatively homogenous to the small area in question. This may be problematic 
 when studying a large number of heterogenous small areas. As \cite{clarke_holm} note, ``in the worst 
 but perhaps most typical case, no appropriate micro-data will be available." In this case, the only 
@@ -195,16 +196,15 @@ data fits.
 
 As with other SMSM methods, the methodology in \pkg{synthACS} can be broadly divided into two stages:
 data generation at the individual level and optimization between the micro and macro data. 
-Rather than conducting an individual level survey, \pkg{synthACS} chooses to create synthetic micro 
-data based on the rich datasets of the American Community Survey (ACS). One key contribution of 
-\pkg{synthACS} is thus that the author provides a method for highly accurate micro data fitting, via 
-simulated annealing, without requiring a micro dataset. 
+But \pkg{synthACS} creates synthetic micro data based on the ACS instead of conducting an individual 
+level survey. Therefore, one key contribution of \pkg{synthACS} is providing a fitting via 
+simulated annealing without requiring a micro dataset. 
 
-To do so, \pkg{synthACS} borrows ideas from both conditional probability and reweighting methods in synthetic data generation. Specifically, the author uses the macro data to create synthetic 
-individuals\footnote{\pkg{synthACS} \textit{only} uses individual data, not households.} and assigns each a probability of being selected during the fitting procedure via unequal probability sampling \cite{rao_unequal}. As with the conditional 
+To do so, \pkg{synthACS} borrows ideas from both conditional probability and reweighting methods in synthetic data generation. Specifically, we use the macro data to create synthetic 
+individuals\footnote{\pkg{synthACS} only uses individual data, not households.} and assigns each a probability of being selected during the fitting procedure via unequal probability sampling \cite{rao_unequal}. As with the conditional 
 probabilities method, data attributes are added iteratively and are conditioned on prior attributes. 
-However, fitting is not conducted at this stage. The author only reweights the sampling probabilty 
-for each individual when each new attribute is added. \pkg{synthACS} uses attributes
+However, fitting is not conducted at this stage; instead, we only reweight individual sampling 
+probabilities when each new attribute is added. \pkg{synthACS} uses attributes
 which are widely available in the ACS base tables; and, attribute conditioning is influenced
 by data availability in the ACS base tables. These attributes are described in Table~\ref{tbl:conditioning} 
 below. 
@@ -237,10 +237,10 @@ the order of attribute creation does not impact constraints; however, it does im
 conditioning of data attributes. Therefore, the order in which data attributes are added does matter; 
 and, attribute order was carefully chosen.
 
-In general, the detail of the ACS base tables is tremendously helpful. However, ACS base tables 
+In general, the detail of the ACS base tables is tremendously helpful. But ACS base tables 
 do not always define their populations and data attributes in exactly the same manner. A lack of perfect
 match between micro and macro datasets has long bedeviled SMSM researchers and \pkg{synthACS} is no different. 
-The following assumptions are made in the creation of synthetic data:
+\pkg{synthACS} makes the following assumptions:
 
 \begin{itemize}
   \item{Marital status: Table B12002 reports on the population age 15 and over. All individuals
@@ -266,7 +266,7 @@ The following assumptions are made in the creation of synthetic data:
   to be independent of age conditional on poverty status and nativity status.}
 \end{itemize} \label{tbl:assume}
 
-Of all these assumptions, those related to individual income are most troubling to the author. In 
+Of all these assumptions, we find those related to individual income most troubling. In 
 addition to the 
 implicit conditioning described above, the ACS reports top-coded individual incomes where the maximum 
 top coded value is ``\$75,000 and up". Researchers for whom income is a key variable in SMSM may find
@@ -287,15 +287,15 @@ absolute error (TAE) defined
 where $S_{ij}$ and $E_{ij}$ are the observed (ie. simulated) and expected (ie. census) counts for attribute
 $j; j= 1,\ldots, D$ taking on category $i; i= 1, \ldots,n_j$. 
 
-The advantages of using TAE are its simplicity of calculation and interpretation.  
-Two disadvantages are also noted. Firstly, TAE double counts misclassification. This is easily illustrated 
+TAE has the advantage of simplicity of calculation and interpretation, but we also note two 
+disadvantages. Firstly, TAE double counts misclassification, which is easily illustrated 
 using the case of one attribute with two categories. Given ten observations which are all expected 
 to be in category one but are misclassified as category two, the TAE is $|10 - 0| + |0 - 10| = 20$. 
 Secondly, we cannot calculate the gradient of TAE for any attributes. 
 The method chosen for optimization in \pkg{synthACS} is therefore simulated annealing (\cite{metropolis}; 
 \cite{fast_sa}; \cite{veryfast_sa}). As a heuristic method, simulated annealing is designed to produce
-a good solution, although there is no guarantee that the solution is optimal. The typical simulated 
-annealing algorithm is described below.
+a good solution, although there is no guarantee that the solution is optimal. We describe the typical 
+simulated annealing algorithm below.
 
 Suppose that the solution space $S$ is the finite set of all possible solutions and the loss function
 $f$ is a real-valued function defined on the members of $S$. The goal is to find a solution $i \in S$
@@ -336,15 +336,15 @@ iteration $k$
 
 \subsubsection{Options in simulated annealing} \label{sec:SA_opt}
 
-Because of the computational demands of simulated annealing, it is important to carefully consider tradeoffs
-between accuracy of fit and computation time of the SA algorithm. Three standard SA options are considered 
-in \pkg{synthACS}. The first is the initial acceptance probability to be used and the number of 
-allowable iterations. The author examined final TAE for several datasets across a test-grid of initial acceptance
-probabilities and maximum allowable iterations. Based on these results, defaults of 10,000 iterations
-and an initial acceptance probability of 40\% were chosen.
+It is important to carefully consider tradeoffs between accuracy of fit and computation time of 
+the simulated annealing algorithm. In \pkg{synthACS}, we considered three standard options. We firstly 
+examined the initial acceptance probability and the number of allowable iterations by 
+examining final TAE for several datasets across a test-grid of initial acceptance
+probabilities and maximum allowable iterations. We have chosen defaults of 10,000 iterations and 
+a 40\% initial acceptance probability based on these results.
 
-Secondly, the author considered how to move from one candidate state $i_t \in S$ to the future candidate
-states $i_{t+1} \in S$. In the typical SA formulation, it is advisable to initially take large
+Secondly, we considered how to move from one candidate state $i_t \in S$ to the future candidate
+states $i_{t+1} \in S$. It is typically advisable to initially take large
 jumps in the solution space and in later iterations to mostly move to nearby candidate solutions. This 
 is controlled by both the cooling schedule and by how candidate solutions are generated. In \pkg{synthACS}, 
 these choices are guided by understanding that candidate solutions generally improve over time 
@@ -354,9 +354,8 @@ as SA mostly moves downhill. For a thorough treatment of this, please see \cite{
 replace 10\% of the current solution's observations for the first 100 iterations. It then 
 generates new candidate solutions by replacing \code{max(500, n * .005)} observations in each iteration. 
 In addition, a large jump in the candidate space, \code{n * 0.2} observations, is proposed every 500 
-iterations to increase the probability of avoiding local minima. As with the choice of initial
-acceptance probability and maximum iterations, these choices were guided by examining results based on
-several datasets and a test-grid of mini-batch sizes.
+iterations to increase the probability of avoiding local minima. These choices were guided by 
+experimental results, as with the choice of initial acceptance probability and maximum iterations.
 
 Thirdly, \pkg{synthACS} allows for early stopping. To be clear,
 early stopping is defined here as taking fewer iterations than the maximum allowable iterations
@@ -371,7 +370,7 @@ of 1 individual per thousand for each constraining attribute.
 \section{User guide} \label{sec:user_guide}
 %------------------------------------------------------------
 
-The author now turns to the use of \pkg{synthACS}, which is available as a package for the 
+We now turn to the use of \pkg{synthACS}, which is available as a package for the 
 statistical software \proglang{R} (\cite{r_core}) and can be run in any environment that \proglang{R} can. 
 \proglang{R} is freely available from \url{https://www.r-project.org/}. To install \pkg{synthACS} 
 from a CRAN (Comprehensive R Archive Network) mirror, simply type the following command in the 
@@ -414,7 +413,7 @@ To begin using \pkg{synthACS} researchers first define the geography they wish t
 \code{acs::geo.make}. After defining a geography, users should pull data on their geography.
 The first feature to note in \pkg{synthACS} is an extension of \pkg{acs} that provides functions for accessing specific 
 macro data contained in the ACS base tables. In essence, these functions provide easy access to a curated set 
-of base tables which the author thinks may be of interest to researchers. In the case that researchers 
+of base tables which we thinks may be of interest to researchers. In the case that researchers 
 are interested in alternative tables, they can still use the \code{acs::acs.fetch} function to access 
 them. Table~\ref{tbl:other_funcs} enumerates these functions and detailed 
 descriptions for each function can be found via the \proglang{R} help documenation. 
@@ -438,7 +437,7 @@ descriptions for each function can be found via the \proglang{R} help documenati
 \label{tbl:other_funcs}
 \end{table}
 
-These functions share a common syntax for use. To illustrate, the author defines the geography of 
+These functions share a common syntax. To illustrate, we define the geography of 
 interest as all counties in California and pulls rolling five-year data on bachelors degrees awarded
 with end year 2014. Here, \code{endyear} is used to specify the end year of the data collection
 period, \code{span} is used to indicate the length in years of data collection, and \code{geography}
@@ -460,8 +459,7 @@ a very similar structure to the S4 class \code{acs-class} from the \pkg{acs} pac
 from \code{`acs-class'} objects, while the \code{estimates} and \code{standard_error} elements are 
 \code{list}s of \code{data.frame}s instead of objects of class \code{matrix} as in \code{`acs-class'} 
 objects. There is an additional element as well, \code{geo_title}, which gives summary information on 
-the geography set. The \code{macroACS} class also provides several methods, to which the author now 
-turns attention. 
+the geography set. The \code{macroACS} class also provides several methods, which are discussed below. 
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -481,7 +479,7 @@ Section~\ref{sec:new_attributes} respectively. The other methods are described h
     data collection span, data collection endyear, and the geography of the \code{macroACS} object.}
   \item{\code{get_dataset_names} is used to return the names of the datasets which can be supplied to
     \code{fetch_data}.} 
-  \item{The \code{fetch_data} method returns macro data from either the \code{estimates} or 
+  \item{\code{fetch_data} returns macro data from either the \code{estimates} or 
     \code{standard_error} elements of the \code{macroACS} object for a subset of the object's geographies.} 
 \end{itemize}
 
@@ -568,16 +566,15 @@ generation, as outlined in Table~\ref{tbl:conditioning}, and marks our entry int
 derive the sample of synthetic micro data (Section~\ref{sec:sample_synthetic}) and,
 to constrain the simulated annealing algorithm (Section~\ref{sec:sim_anneal}). 
 
-It is worth noting that deriving the sample synthetic micro data is a memory intensive process. For
+Deriving the sample synthetic micro data is a memory intensive process. For
 the California county data illustrated here, the 20th-percentile county's synthetic sample contains
 2.9 million rows and takes roughly 140 mb of memory. It is therefore best to use \pkg{synthACS} on a 
-high performance machine. In the case that such a machine is not available, the \code{macroACS} class
+high performance machine. If such a machine is not available, the \code{macroACS} class
 offers the \code{split} method. \code{split} allows users to split the task of SMSM into sets of tasks
 which your machine's memory can handle. Recombining the output will be discussed in Section~\ref{sec:ex_output}. 
-
-The syntax for \code{split} is straightforward. The below call will split the object 
-\code{ca_dat_SMSM}, which contains fifty-eight counties into ten subsets, eight containing six 
-counties and two containing five counties.
+\code{split} has straightforward syntax. The below command splits \code{ca_dat_SMSM}, which 
+contains fifty-eight counties into ten subsets, eight containing six counties and two containing 
+five counties.
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -585,8 +582,7 @@ counties and two containing five counties.
 \end{CodeInput}
 \end{CodeChunk}
 
-The author now returns 
-from the digression on splitting to the main topic of conducting the SMSM. The next step in this process
+We now return to the main topic of conducting the SMSM. The next step in this process
 is to derive the sample synthetic micro datasets. This is accomplished via \code{derive_synth_datasets},
 which operates in parallel by default, and returns an object with the S3 class \code{synthACS}. 
 
@@ -597,8 +593,8 @@ which operates in parallel by default, and returns an object with the S3 class \
 \end{CodeInput}
 \end{CodeChunk}
 
-If desired, users can indicate that they wish to leave one or more of the cores on their multicore 
-machine available for other tasks, via the argument \code{leave_cores}.
+The argument \code{leave_cores} allows users to optionally leave one or more of the cores on 
+their multicore machine available for other tasks.
 
 \subsubsection{Flexible tools for new data attributes} \label{sec:new_attributes}
 
@@ -607,12 +603,12 @@ These attributes should be sufficient for most research questions; and, if so, u
 proceed immediately to fitting the data to the macro constraining tables via simulated annealing 
 (see Section~\ref{sec:SMSM_viaSA}). But many users' research questions will not be properly served 
 by the defaults. \pkg{synthACS} provides flexible tools for both adding new data attributes to the 
-default elements and for marginalizing unneeded attributes. For example, users might wish to use 
+default elements and for removing unneeded attributes. For example, users might wish to use 
 an alternative income metric such as data from the 
 Current Population Survey (CPS), found at \url{http://www.census.gov/programs-surveys/cps/data-detail.html}. 
 Or they may not be interested in the \code{race}, \code{pov_status}, or other default attributes.
 
-Marginalizing attributes is straightforward and accomplished by the \code{marginalize_attr} method. 
+Marginalizing attributes is straightforward and accomplished by \code{marginalize_attr}. 
 Users simply provide the object with which they wish to work, the attribute list to marginalize, 
 and whether they wish to keep the specified attributes or to remove them.
 
@@ -623,8 +619,8 @@ and whether they wish to keep the specified attributes or to remove them.
 \end{CodeInput}
 \end{CodeChunk}
 
-Here, the author removes the attributes \code{race}, \code{ind_income}, \code{nativity}, and 
-\code{geog_mobility} from the synthetic datasets. The last argument, \code{marginalize_out} indicates that
+Here, we remove the attributes \code{race}, \code{ind_income}, \code{nativity}, and 
+\code{geog_mobility} from the synthetic datasets, where \code{marginalize_out} indicates that
 we wish to remove the listed attributes instead of keep them. By default, \code{marginalize_out} is 
 \code{FALSE}.
 
@@ -647,10 +643,9 @@ general case of complete joint dependence.
 All four conditional models are supported by \pkg{synthACS}, via \code{synthetic_new_attribute} for a 
 single small area and \code{all_geog_synthetic_new_attribute} for a set of small areas. 
 
-To illustrate, the author pulls data on the mode of transit to work from the ACS and incorporates this 
-into the sample synthetic micro data assuming a \textit{conditional independence} model. That is, 
-mode of transit to work is dependent on both employment status and age and independent of all 
-other attributes. 
+To illustrate, we utilize mode of transit to work data from the ACS assuming a conditional 
+independence model. Mode of transit to work is dependent on both employment status and age and 
+independent of all other attributes. 
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -675,9 +670,10 @@ other attributes.
 records that individuals either do not work, or get to work via driving along, carpooling, taking 
 public transit, walking, other methods, or work at home. \code{transit_work}, also specified above, 
 is ACS data on the counts of individuals in each county where counts are tabulated by age and method 
-of transport to work. An example of the raw data is provided below using the first county in California alphabetically (Alameda County, California).\footnote{Calculated percentages have been removed
-from the displayed output to simplify presentation and ease comprehension.} \code{transit\_work} 
-will be used to reweight the existing synthetic records when deriving the new attribute. 
+of transport to work. An example of the raw data is provided below.\footnote{Calculated percentages 
+have been removed from the displayed output to simplify presentation and ease comprehension.} 
+\code{transit\_work} will be used to reweight the existing synthetic records when deriving the 
+new attribute. 
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -715,10 +711,10 @@ Readers should immediately notice two things when looking at \code{transit\_work
 specified do not exactly match the ages in the synthetic
 micro data; and (2) employment status is not explicitly stated. For the first issue, users have to 
 make intelligent choices to map differences in age groupings; for the second, note that transit to 
-work \textit{implicitly} assumes that the individual is employed.\footnote{This can also be seen in the 
+work implicitly assumes that the individual is employed.\footnote{This can also be seen in the 
 counts. The transit vector counts 701,525 individuals; but there are 1,559,308 individuals in the 
 county population.} For the second issue, the data must be augmented to account for individuals not 
-employed; and, for the first, the author assumes the following:
+employed; and, for the first, we assume the following:
 
 \begin{enumerate}
   \item{Ages 15-17 can be best represented by the age 16-19 transit to work data.}
@@ -728,7 +724,7 @@ employed; and, for the first, the author assumes the following:
   bucket in the transit to work data: 24-44, 45-54, 60-64, 65+.}
 \end{enumerate}
 
-The author now manipulates \code{transit\_work}, via anonymous function passed to \code{lapply}, 
+We now manipulate \code{transit\_work}, via anonymous function passed to \code{lapply}, 
 so that it is an acceptable input to \code{all\_geog\_synthetic\_new\_attribute}. 
 
 \begin{CodeChunk}
@@ -781,8 +777,8 @@ so that it is an acceptable input to \code{all\_geog\_synthetic\_new\_attribute}
 \end{CodeInput}
 \end{CodeChunk}
 
-The resulting output is a symbol table, where the \textit{key} in the symbol table's \textit{key-value}
-pair is the set of conditioning variables and their values; and the \textit{value} is the 
+The resulting output is a symbol table, where the key in the symbol table's key-value
+pair is the set of conditioning variables and their values; and the value is the 
 new attribute's conditional counts and the associated new attribute value. To satisfy the general case
 of joint attribute dependence, \pkg{synthACS} allows
 for any number of conditioning variables; however, data is rarely available for more than a handful. 
@@ -804,7 +800,7 @@ condition the new attribute upon, and \code{st_list} is the list of symbol table
 \end{CodeInput}
 \end{CodeChunk}
 
-The author now returns to unmodified synthetic microdata to discuss simulated annealing.
+We now return to the unmodified synthetic microdata to continue our discussion of SMSM.
 
 \subsection{SMSM via simulated annealing} \label{sec:SMSM_viaSA}
 
@@ -816,12 +812,11 @@ status may be critical. After determining which attributes to optimize against, 
 builds constraints from the macro tables and maps them between the micro and macro data. Finally, 
 the researcher conducts simulated annealing. These steps are illustrated below.
 
-For our example, the author chooses \code{age}, 
-\code{gender}, \code{mar_status}, \code{race}, and \code{edu_attain} to optimize against. The next 
-step is to build the constraints and map them to the data. For the ten default data attributes 
-provided in \code{pull_synth_data}, \pkg{synthACS} provides user friendly methods for building 
-constraints. A general method is also provided for mapping constraints between the micro and 
-macro dataset.
+We optimize against \code{age}, \code{gender}, \code{mar_status}, \code{race}, 
+and \code{edu_attain} for our example. We now build constraints and map them to the data. 
+For the ten default data attributes provided in \code{pull_synth_data}, \pkg{synthACS} provides 
+user friendly methods for building constraints and for for mapping constraints between the micro 
+and macro dataset.
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -854,7 +849,7 @@ in the populations on which the ACS base tables are defined.
 \end{CodeInput}
 \end{CodeChunk}
 
-The defined constraints are then mapped to the data via \code{all_geogs_add_constraint}.
+These constraints are then mapped to the data via \code{all_geogs_add_constraint}.
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -878,10 +873,9 @@ The defined constraints are then mapped to the data via \code{all_geogs_add_cons
 Here, \code{attr_name} provides the attribute name in the micro data, \code{attr_total_list} provides 
 the previously generated constraints, \code{macro_micro} provides the 
 dataset on which we will conduct SMSM, and \code{constraint_list_list} is used to indicate that we 
-are adding a new constraint to an existing constraint set.
+are updating an existing constraint set.
 
-Finally, we are ready to conduct SMSM via simulated annealing, which is done via the function 
-\code{all_geog_optimize_microdata}.
+We are finally ready for simulated annealing, performed via \code{all_geog_optimize_microdata}.
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -931,12 +925,12 @@ names.
 
 \begin{figure}[h]
   \begin{subfigure}{0.475\textwidth}
-    \includegraphics[width=\textwidth]{images/tae_SC.png}
+    \includegraphics[width=\textwidth]{figures/tae_SC.png}
     \caption{Santa Clara County, CA}
   \end{subfigure}
   \hfill
   \begin{subfigure}{0.475\textwidth}
-    \includegraphics[width=\textwidth]{images/tae_Yuba.png}
+    \includegraphics[width=\textwidth]{figures/tae_Yuba.png}
     \caption{Yuba County, CA}
   \end{subfigure}
   \caption{Plots of TAE paths from simulated annealing.}
@@ -982,22 +976,20 @@ percentage TAE was 0.000496.
 \end{CodeOutput}
 \end{CodeChunk}
 
-Lastly, recall that in Section~\ref{sec:synth_micro} the author noted that synthetic data creation 
-in \pkg{synthACS} is very 
-memory intensive. For users without access to a machine with a lot of RAM, the \code{split} method
-was proposed to allow users to work with objects of manageable size. To recombine seperately optimized
-objects of class \code{`smsm_set'}, the function \code{combine_smsm} is provided. This function gives 
-a straightforward method which inputs a list of \code{`smsm_set'} objects and outputs a single combined 
-\code{`smsm_set'} object. 
+Lastly, recall that in Section~\ref{sec:synth_micro} we noted that synthetic data creation 
+in \pkg{synthACS} is very memory intensive. We proposed the \code{split} method to work with 
+objects of manageable size. To recombine objects which were \code{split}, users should use 
+\code{combine_smsm}. This function inputs a list of \code{`smsm_set'} objects and outputs a single 
+combined \code{`smsm_set'} object. 
 
 \FloatBarrier
 %------------------------------------------------------------
 \section{Case study} \label{sec:cases}
 %------------------------------------------------------------
 
-The author now presents a case study related to population dynamics to illustrate how \pkg{synthACS} 
-and the microsimulation modeling framework can be used in practice. The author looks at both
-fertility and mortality in Los Angeles County, California and examines the spatial 
+We now present a case study related to population dynamics to illustrate how \pkg{synthACS} 
+and the microsimulation modeling framework can be used in practice. We look at both
+fertility and mortality in Los Angeles County, California and examine the spatial 
 distribution of both demographic events. Examining fertility and mortality within a spatial 
 framework enables policy makers and community health officials to assess whether existing health 
 facilities are sufficient to support the community, whether a geographic region provides equal access 
@@ -1023,9 +1015,9 @@ and that these events can be generalized by age, gender, and event type. For eac
 the impact on population for a given event is determined by the size of the cohort and the incidence 
 rate among that cohort. 
 
-In the macro \textit{deterministic} approach, the change in population is calculated by multiplying
+In the macro deterministic approach, the change in population is calculated by multiplying
 the incidence rate for each cohort and event by the cohort size and then summing across both event type
-and cohort. In the SMSM framework, the deterministic approach is replaced by a \textit{random experiment} 
+and cohort. In the SMSM framework, the deterministic approach is replaced by a random experiment 
 for each individual using the Monte Carlo method. While SMSMs do exist for population projection 
 \cite{imhoff}, most population projections are currently done deterministically 
 using the cohort component method (eg. \cite{un_population}; \cite{us_census_pop}; \cite{bayes_pop}).
@@ -1033,7 +1025,7 @@ using the cohort component method (eg. \cite{un_population}; \cite{us_census_pop
 \subsection{Fertility and mortality in Los Angeles County}
 
 The data examined in this case study is of Los Angeles County, California at the census
-tract level. The author uses five-year data with end year 2014. As historic data, the data
+tract level. We use five-year data with end year 2014. As historic data, the data
 does not account for population changes that have occured between the time of data collection and present
 day. For instance,
 the California State Demographic Research Unit estimates that population has grown from 9,889,520 in
@@ -1043,12 +1035,12 @@ Accessed: 7-12-2016} The total population from the five-year ACS data used in th
  
 Data on fertility and mortality rates comes from the National Vital Statistics System (\cite{fertility}, 
 \cite{mortality}). For fertility, data on female birth rate by age, race and hispanic
-origin, and marital status are used. Additonally, the author includes an adjustment for multiple births
+origin, and marital status are used. Additonally, we include an adjustment for multiple births
 (eg. twins and triplets) and birth rates are adjusted for the difference between the state of
 California and the US as a whole. Mortality data used includes death rate by gender, age, and race and
 hispanic origin. These datasets have been made available in the \pkg{synthACS} package.
 
-To prepare the data for population projection, the author conducts SMSM for all census tracts in Los Angeles County,
+To prepare the data for population projection, we conduct SMSM for all census tracts in Los Angeles County,
 California as outlined in Section~\ref{sec:user_guide}. The following attributes were used to constrain
 the simulated annealing algorithm: \code{age}, \code{race}, \code{gender}, \code{mar_status}, and
 \code{edu_attain}. The resulting misclassification rate across the 2,319 census tracts in Los Angeles
@@ -1058,7 +1050,7 @@ percentile, and 3.40 individuals per 1,000 at the 90th percentile.
 One thousand simulations were run for both fertility and mortality in each census tract. Summary 
 data for both demographic events are provided in Table~\ref{tbl:pop_projections}.
 The fertility data is broken out by major racial groups and the mortality data is broken out by major
-age brackets. The author notes that the choice of racial and age groups are arbitrary, reporting can be
+age brackets. We note that the choice of racial and age groups are arbitrary, reporting can be
 done by any cross sectional attribute the researcher desires. It is clear from examining 
 Table~\ref{tbl:pop_projections} that most census tracts will have either 
 no deaths or one death in many age groups. This leads to assymetric distributions about 
@@ -1115,7 +1107,7 @@ Differences in the mortality data may be due to differences in the  2014 end-yea
 census or from differences in death rates in Los Angeles County relative to the United States. 
 
 In addition to examining simulation accuracy, different quantiles of the simulations can be contextualized 
-spatially. The author illustrates this in the below figures.\footnote{The author has excluded Catalina Island 
+spatially. This is illustrated in the below figures.\footnote{Catalina Island has beed excluded 
 from the below figures.}
 
 
@@ -1123,21 +1115,21 @@ from the below figures.}
 %--------------------------------------
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.6\textwidth]{images/la_births.png}
+  \includegraphics[width=0.6\textwidth]{figures/la_births.png}
   \caption{The 50th percentile simulation of births in Los Angeles County, CA.}
   \label{fig:births50}
 \end{figure}
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.6\textwidth]{images/la_births90.png}
+  \includegraphics[width=0.6\textwidth]{figures/la_births90.png}
   \caption{The 90th percentile simulation of births in Los Angeles County, CA.}
   \label{fig:births90}
 \end{figure}
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.6\textwidth]{images/la_births_hosp.png}
+  \includegraphics[width=0.6\textwidth]{figures/la_births_hosp.png}
   \caption{The 50th percentile simulation of births in Los Angeles County, CA 
     with overlay of hospital locations (NAICS: 622110).}
   \label{fig:births50_hosp}
@@ -1145,7 +1137,7 @@ from the below figures.}
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.6\textwidth]{images/la_births90_hosp.png}
+  \includegraphics[width=0.6\textwidth]{figures/la_births90_hosp.png}
   \caption{The 90th percentile simulation of births in Los Angeles County, CA 
     with overlay of hospital locations (NAICS: 622110).}
   \label{fig:births90_hosp}
@@ -1155,14 +1147,14 @@ from the below figures.}
 %--------------------------------------
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.6\textwidth]{images/la_deaths.png}
+  \includegraphics[width=0.6\textwidth]{figures/la_deaths.png}
   \caption{The 50th percentile simulation of deaths in Los Angeles County, CA.}
   \label{fig:deaths50}
 \end{figure}
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.6\textwidth]{images/la_deaths90.png}
+  \includegraphics[width=0.6\textwidth]{figures/la_deaths90.png}
   \caption{The 90th percentile simulation of deaths in Los Angeles County, CA.}
   \label{fig:deaths90}
 \end{figure}
@@ -1170,7 +1162,7 @@ from the below figures.}
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.6\textwidth]{images/la_deaths_hosp.png}
+  \includegraphics[width=0.6\textwidth]{figures/la_deaths_hosp.png}
   \caption{The 50th percentile simulation of deaths in Los Angeles County, CA 
     with overlay of hospital locations (NAICS: 622110).}
   \label{fig:deaths50_hosp}
@@ -1178,7 +1170,7 @@ from the below figures.}
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.6\textwidth]{images/la_deaths90_hosp.png}
+  \includegraphics[width=0.6\textwidth]{figures/la_deaths90_hosp.png}
   \caption{The 90th percentile simulation of deaths in Los Angeles County, CA 
     with overlay of hospital locations (NAICS: 622110).}
   \label{fig:deaths90_hosp}
@@ -1188,14 +1180,14 @@ from the below figures.}
 %--------------------------------------
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.6\textwidth, height=0.45\textheight]{images/hisp_births.png}
+  \includegraphics[width=0.6\textwidth, height=0.45\textheight]{figures/hisp_births.png}
   \caption{The 50th percentile simulation of births to hispanic mothers in Los Angeles County, CA.}
   \label{fig:hisp_mo}
 \end{figure}
 
 \begin{figure}[hb]
   \centering
-  \includegraphics[width=0.6\textwidth, height=0.45\textheight]{images/la_deaths65.png}
+  \includegraphics[width=0.6\textwidth, height=0.45\textheight]{figures/la_deaths65.png}
   \caption{The 50th percentile simulation of deaths of individuals aged 65 or older in Los Angeles 
     County, CA.}
   \label{fig:old_deaths}
@@ -1211,17 +1203,17 @@ as well as several smaller towns.
 
 Looking at Figures~\ref{fig:deaths50_hosp} and \ref{fig:deaths90_hosp} in particular, it appears that 
 the Northern region of Los
-Angeles County may be underserved with health facilities. Specifically, the author sees an elevated 
+Angeles County may be underserved with health facilities. Specifically, we observe an elevated 
 number of deaths relative to the number of hospitals, where hospitals are businesses with NAICS code 
-622110. In addition, when looking at Figure~\ref{fig:hisp_mo}, the author notes
+622110. In addition, when looking at Figure~\ref{fig:hisp_mo}, we observe
 that the area of East Los Angeles County has a high rate of births to hispanic mothers, corresponding
 to the large hispanic population there. However, as can be seen in Figure~\ref{fig:births50_hosp}, 
 there appears to be a relative dearth of hospitals in this area. 
 
-While policy suggestions are beyond the scope of this paper, the author notes that,
+While policy suggestions are beyond the scope of this paper, we note that,
 based on this limited case study, health officials in Los Angeles County may wish to examine the 
 equality of access to health facilities in the Northern half of Los Angeles County as well as 
-in East Los Angeles County. The author acknowledges that more substantial study would be needed 
+in East Los Angeles County. We acknowledge that more substantial study would be needed 
 to validate these observations.
 
 \FloatBarrier
@@ -1245,7 +1237,7 @@ simulation for every individual requires substantially more computation and memo
 
 Another critique of the standard cohort-component model is that cohorts are defined soley by age and gender. This leaves out a richness of attributes, such as education levels and race, which may be of interest 
 to researchers. Another potential benefit of using SMSM for population projection is therefore the 
-possibility to model the these extra individual attributes. The author expects that population projection 
+possibility to model the these extra individual attributes. We expect that population projection 
 methods with estimates that ``carry along" these additional individual attributes would be very useful to researchers.
 This is especially true in the case where researchers wish to examine the behavior of future populations where 
 individuals express differential actions and preferences based on these attributes. For example, 
@@ -1257,7 +1249,7 @@ among population subgroups within an SMSM framework.
 \section{Conclusion} \label{sec:conclude}
 %------------------------------------------------------------
 
-In this paper, the author introduced \pkg{synthACS}, an \proglang{R} package which provides a general 
+In this paper, we introduced \pkg{synthACS}, an \proglang{R} package which provides a general 
 toolkit for conducting SMSM with any user-specified US geography. \pkg{synthACS} conducts SMSM by 
 first creating synthetic micro data and then using simulated annealing with unequal probability sampling
 for optimization. The choice to use synthetic data is guided by the availability of high quality ACS 
@@ -1272,8 +1264,8 @@ structure.
 
 This paper also provided a motivating example for \pkg{synthACS}, which examined the use of SMSMs 
 for population projection and to assess the geographic equality of healthcare access. Specifically, 
-the author showed that SMSM can simulate births and deaths in Los Angeles County, California with a 
-very high degree of accuracy. The author also notes that SMSMs, unlike the standard deterministic
+we showed that SMSM can simulate births and deaths in Los Angeles County, California with a 
+very high degree of accuracy. We also notes that SMSMs, unlike the standard deterministic
 cohort-component method, naturally provide a measure of uncertainty in demographic events. We
 suggest that further research on the use of SMSM for population projection should explore Monte Carlo 
 methods for estimating and projecting individual attributes beyond just age and gender. These more 
