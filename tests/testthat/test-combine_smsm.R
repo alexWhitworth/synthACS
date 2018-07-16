@@ -36,7 +36,13 @@ test_that("expected errors and warnings are generated", {
   opt_geog_2 <- smsm_subset(opt_geog, 2)
   opt_geog_3 <- smsm_subset(opt_geog, 3)
   opt_geog_4 <- smsm_subset(opt_geog, 4)
-  data(diamonds, package= "ggplot2")
+  diamonds <- data.frame(
+    carat= rexp(100),
+    cut= factor(sample(c("A", "B", "C"), size= 100, replace= TRUE)),
+    x= runif(100, min= 0, max= 10),
+    y= runif(100, min= 0, max= 10),
+    x= runif(100, min= 0, max= 10)
+  )
   
   # insert some problems
   opt_geog_4$D <- 100L

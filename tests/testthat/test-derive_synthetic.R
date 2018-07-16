@@ -20,7 +20,13 @@ test_that("disaggregate_md works", {
 
 
 test_that("error checking", {
-  data(diamonds, package= "ggplot2")
+  diamonds <- data.frame(
+    carat= rexp(100),
+    cut= factor(sample(c("A", "B", "C"), size= 100, replace= TRUE)),
+    x= runif(100, min= 0, max= 10),
+    y= runif(100, min= 0, max= 10),
+    x= runif(100, min= 0, max= 10)
+  )
   expect_error(derive_synth_datasets(diamonds, parallel= FALSE))
   
   expect_error(derive_synth_datasets(ca_dat, parallel= TRUE, leave_cores= -1L))

@@ -7,7 +7,13 @@ context("pull_inc_earnings")
 test_that("errors work", {
   # create test geography
   ca_counties <- geo.make(state= 'CA', county= '*')
-  data(diamonds, package= "ggplot2")
+  diamonds <- data.frame(
+    carat= rexp(100),
+    cut= factor(sample(c("A", "B", "C"), size= 100, replace= TRUE)),
+    x= runif(100, min= 0, max= 10),
+    y= runif(100, min= 0, max= 10),
+    x= runif(100, min= 0, max= 10)
+  )
   
   # standard errors
   expect_error(pull_inc_earnings(endyear= 2016, span=0, ca_counties))

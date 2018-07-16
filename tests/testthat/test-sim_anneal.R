@@ -8,7 +8,13 @@ context("adding constraints")
 
 test_that("constraint errors work", {
   # geography
-  data(diamonds, package= "ggplot2")
+  diamonds <- data.frame(
+    carat= rexp(100),
+    cut= factor(sample(c("A", "B", "C"), size= 100, replace= TRUE)),
+    x= runif(100, min= 0, max= 10),
+    y= runif(100, min= 0, max= 10),
+    x= runif(100, min= 0, max= 10)
+  )
   let <- letters
   
   # errors:
