@@ -1,3 +1,5 @@
+^Meta$
+^doc$
 .travis.yml
 tests/testthat/acsdat.Rdata
 tests/testthat/par_sim_anneal.Rdata

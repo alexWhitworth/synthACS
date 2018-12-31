@@ -4,7 +4,8 @@
 \alias{fetch_data}
 \title{Get Aggregate Data Specified Geography}
 \usage{
-fetch_data(acs, geography, dataset = c("estimate", "st.err"), choice = NULL)
+fetch_data(acs, geography, dataset = c("estimate", "st.err"),
+  choice = NULL)
 }
 \arguments{
 \item{acs}{An object of class \code{"macroACS"}.}

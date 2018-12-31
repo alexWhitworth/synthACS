@@ -5,11 +5,12 @@
 \title{Optimize the selection of a micro data population.}
 \usage{
 optimize_microdata(micro_data, prob_name = "p", constraint_list,
-  tolerance = round(sum(constraint_list[[1]])/2000 * length(constraint_list),
-  0), resample_size = min(sum(constraint_list[[1]]), max(500,
+  tolerance = round(sum(constraint_list[[1]])/2000 *
+  length(constraint_list), 0),
+  resample_size = min(sum(constraint_list[[1]]), max(500,
   round(sum(constraint_list[[1]]) * 0.005, 0))), p_accept = 0.4,
-  max_iter = 10000L, seed = sample.int(10000L, size = 1, replace = FALSE),
-  verbose = TRUE)
+  max_iter = 10000L, seed = sample.int(10000L, size = 1, replace =
+  FALSE), verbose = TRUE)
 }
 \arguments{
 \item{micro_data}{A \code{data.frame} of micro data observations.}
