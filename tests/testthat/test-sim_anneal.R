@@ -326,7 +326,13 @@ context("simulated annealing")
 
 test_that("errors work", {
   # build up some test data:
-  data(diamonds, package= "ggplot2")
+  diamonds <- data.frame(
+    carat= rexp(100),
+    cut= factor(sample(c("A", "B", "C"), size= 100, replace= TRUE)),
+    x= runif(100, min= 0, max= 10),
+    y= runif(100, min= 0, max= 10),
+    x= runif(100, min= 0, max= 10)
+  )
   
   # build out constraints
   c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)

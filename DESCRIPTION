@@ -1,6 +1,6 @@
 Package: synthACS
 Title: Synthetic Microdata and Spatial MicroSimulation Modeling for ACS Data
-Version: 1.4.3
+Version: 1.4.4
 Authors@R: person(given= "Alex", family= "Whitworth", middle= NULL,
   email = "whitworth.alex@gmail.com", c("aut", "cre"))
 Description: Provides access to curated American Community Survey (ACS) base tables via a wrapper
