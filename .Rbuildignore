@@ -8,5 +8,5 @@ tests/testthat/par_sim_anneal.Rdata
 .RData
 /tests/testthat/build_test_dat1.R
 /tests/testthat/towork.rda
-inst/doc
 .travis.yml.save
+..Rcheck
