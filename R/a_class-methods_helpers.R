@@ -1,13 +1,10 @@
 
 # Solving namespace issues:
 #--------------------------------------
-#' @importFrom acs acs.fetch 
-#' @importFrom acs is.geo.set
-#' @importFrom data.table data.table
+#' @importFrom acs acs.fetch is.geo.set
+#' @importFrom data.table data.table is.data.table := setnames
 #' @useDynLib synthACS
 #' @importFrom Rcpp sourceCpp
-#' @importFrom data.table is.data.table
-#' @importFrom data.table :=
 NULL
 #--------------------------------------
 

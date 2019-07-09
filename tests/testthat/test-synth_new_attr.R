@@ -14,7 +14,7 @@ test_that("mapply - works as designed (df)", {
                    edu= factor(sample(c("hs", "col", "grad"), size= 100, replace=T)),
                    p= runif(100))
   df$p <- df$p / sum(df$p)
-  df2  <- setDT(df)
+  df2  <- data.table::setDT(df)
   
   attr <- data.frame(pct= 0.5, level= "new")
   a_name <- "var_new"
@@ -70,10 +70,10 @@ test_that("lapply - bug catches", {
   ST4 <- data.frame(lvl= c("employed", "unemp", "not_in_labor_force"),
                     attr_cnts= c(60, 10, 30))
   
-  expect_error(add_synth_attr(l= df, prob_name= "p", sym_tbl= ST, attr_name= "variable"))
-  expect_error(add_synth_attr(l= df, prob_name= "p", sym_tbl= ST2, attr_name= "variable"))
-  expect_error(add_synth_attr(l= df, prob_name= "p", sym_tbl= ST3, attr_name= "variable"))
-  expect_error(add_synth_attr(l= df, prob_name= "p", sym_tbl= ST4, attr_name= "variable"))
+  expect_error(synthACS:::add_synth_attr(l= df, prob_name= "p", sym_tbl= ST, attr_name= "variable"))
+  expect_error(synthACS:::add_synth_attr(l= df, prob_name= "p", sym_tbl= ST2, attr_name= "variable"))
+  expect_error(synthACS:::add_synth_attr(l= df, prob_name= "p", sym_tbl= ST3, attr_name= "variable"))
+  expect_error(synthACS:::add_synth_attr(l= df, prob_name= "p", sym_tbl= ST4, attr_name= "variable"))
 })
 
 test_that("lapply - valid output with percentages (df)", {
@@ -89,7 +89,7 @@ test_that("lapply - valid output with percentages (df)", {
   sym_tbl <- data.frame(attr_cnts= c(0.6, 0.1, 0.3),
                         lev= c("employed", "unemp", "not_in_labor_force"))
   
-  dat <- add_synth_attr(l= df, prob_name= "p", sym_tbl= sym_tbl, attr_name= "variable")
+  dat <- synthACS:::add_synth_attr(l= df, prob_name= "p", sym_tbl= sym_tbl, attr_name= "variable")
   
   # test output
   expect_equal(nrow(df) * nrow(sym_tbl), nrow(dat))
@@ -114,14 +114,14 @@ test_that("lapply - valid output with percentages (dt)", {
                    edu= factor(sample(c("hs", "col", "grad"), size= 100, replace=T)),
                    p= runif(100))
   df$p <- df$p / sum(df$p)
-  setDT(df)
+  data.table::setDT(df)
   
   # and example test elements
   sym_tbl <- data.frame(attr_cnts= c(0.6, 0.1, 0.3),
                         lev= c("employed", "unemp", "not_in_labor_force"))
-  setDT(sym_tbl)
+  data.table::setDT(sym_tbl)
   
-  dat <- add_synth_attr(l= df, prob_name= "p", sym_tbl= sym_tbl, attr_name= "variable")
+  dat <- synthACS:::add_synth_attr(l= df, prob_name= "p", sym_tbl= sym_tbl, attr_name= "variable")
   
   # test output
   expect_equal(nrow(df) * nrow(sym_tbl), nrow(dat))
@@ -152,7 +152,7 @@ test_that("lapply - valid output with counts  -- DF", {
   sym_tbl <- data.frame(attr_cnts= c(60, 10, 30),
                         lev= c("employed", "unemp", "not_in_labor_force"))
   
-  dat <- add_synth_attr(l= df, prob_name= "p", sym_tbl= sym_tbl, attr_name= "variable")
+  dat <- synthACS:::add_synth_attr(l= df, prob_name= "p", sym_tbl= sym_tbl, attr_name= "variable")
   
   # test output
   expect_equal(nrow(df) * nrow(sym_tbl), nrow(dat))
@@ -177,14 +177,14 @@ test_that("lapply - valid output with counts -- DT", {
                    edu= factor(sample(c("hs", "col", "grad"), size= 100, replace=T)),
                    p= runif(100))
   df$p <- df$p / sum(df$p)
-  setDT(df)
+  data.table::setDT(df)
   
   # and example test elements
   sym_tbl <- data.frame(attr_cnts= c(60, 10, 30),
                         lev= c("employed", "unemp", "not_in_labor_force"))
-  setDT(sym_tbl)
+  data.table::setDT(sym_tbl)
   
-  dat <- add_synth_attr(l= df, prob_name= "p", sym_tbl= sym_tbl, attr_name= "variable")
+  dat <- synthACS:::add_synth_attr(l= df, prob_name= "p", sym_tbl= sym_tbl, attr_name= "variable")
   
   # test output
   expect_equal(nrow(df) * nrow(sym_tbl), nrow(dat))
@@ -263,7 +263,7 @@ test_that("conditional split -- fully specified conditioning (DT)", {
                         pov= rep(c("lt_pov", "gt_eq_pov"), each= 6),
                         cnts= c(52, 8, 268, 72, 12, 228, 1338, 93, 297, 921, 105, 554),
                         lvls= rep(levels, 4))
-  setDT(df); setDT(sym_tbl)
+  data.table::setDT(df); data.table::setDT(sym_tbl)
   
   # run code
   dat <- synthACS:::cond_var_split(df, "p", attr_name= "variable", 
@@ -431,7 +431,7 @@ test_that("new attr (top level) - standard conditioning (DT)", {
                         pov= rep(c("lt_pov", "gt_eq_pov"), each= 6),
                         cnts= c(52, 8, 268, 72, 12, 228, 1338, 93, 297, 921, 105, 554),
                         lvls= rep(levels, 4))
-  setDT(df); setDT(sym_tbl)
+  data.table::setDT(df); data.table::setDT(sym_tbl)
   
   # run
   syn <- synthetic_new_attribute(df= df, prob_name= "p", attr_name= "variable",
@@ -570,7 +570,7 @@ test_that("single synthetic dataset -- real df, fake ST (DT)", {
   ST$pct <- rep(c(0.33, 0.34, 0.33), 35)
   ST$levels <- rep(levels, 35)
   
-  setDT(test_micro); setDT(ST)
+  data.table::setDT(test_micro); data.table::setDT(ST)
   # run
   syn <- synthetic_new_attribute(df= test_micro, prob_name= "p", attr_name= "variable",
                                  conditional_vars= c("marital_status", "race"), sym_tbl= ST)
@@ -692,7 +692,7 @@ test_that("can add extra attributes in parallel (DT)", {
                         pov= rep(c("lt_pov", "gt_eq_pov"), each= 6),
                         cnts= c(52, 8, 268, 72, 12, 228, 1338, 93, 297, 921, 105, 554),
                         lvls= rep(levels, 4))
-  setDT(df); setDT(sym_tbl)
+  data.table::setDT(df); data.table::setDT(sym_tbl)
   
   
   df_list <- replicate(10, df, simplify= FALSE)
