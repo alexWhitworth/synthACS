@@ -53,7 +53,7 @@ edu_lapply <- function(l, ht, edu_v, edu_levels) {
     edu_comp <- edu_v[which(grepl(l_age_comp, names(edu_v)))]
     if (sum(edu_comp) > 0) edu_comp <- (edu_comp / sum(edu_comp)) 
     
-    st <- data.frame(pct= edu_comp, levels= edu_levels)
+    st <- data.frame(pct= edu_comp, levels= factor(levels, levels= levels))
     st <- base::split(st, 1:nrow(st))
     
     dat <- replicate(length(edu_levels), l, simplify = FALSE)

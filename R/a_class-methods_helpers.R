@@ -433,7 +433,8 @@ all_geog_constraint_marital_status.synthACS <- function(obj, method= c("syntheti
       # (matches assumptions from synth_data_mar)
       pop_u15 <- sum(l$macro_constraints$age_by_sex[c(4,20)])
       
-      constr_vec <- c("never_mar"= nv_mar + pop_u15, "married"= mar, "mar_apart"=mar_apart, "widowed"= wid, "divorced"=div)
+      constr_vec <- c("never_mar"= nv_mar + pop_u15, "married"= mar, "mar_apart"=mar_apart, 
+                      "widowed"= wid, "divorced"= div)
       return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
     })
   }

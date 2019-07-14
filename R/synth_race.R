@@ -32,7 +32,7 @@ synth_data_race <- function(agmeenpgi_dat, race_vec) {
 race_lapply <- function(l, v, levels) {
   if (sum(v) > 0) comp <- v / sum(v)
   
-  st <- data.frame(pct= comp, levels= levels)
+  st <- data.frame(pct= comp, levels= facotr(levels, levels= levels))
   st <- base::split(st, 1:nrow(st))
   
   dat <- replicate(length(levels), l, simplify = FALSE)

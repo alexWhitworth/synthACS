@@ -21,8 +21,8 @@ synth_data_pov <- function(agmeen_dat, pov_ge_vec, total_pop) {
   dat <- agmeen_dat[[1]]
   # 1. create age hash table, marginalize pov by employment status / gender
   age_ht <- data.frame(age_dat= agmeen_dat[[2]],
-                       age_new= c("15_17", "15_17", "18_24", rep("25_34", 2), rep("35_44",2), rep("45_54", 2),
-                                  rep("55_64", 2), rep("65_75", 2), rep("75up", 3)),
+                       age_new= c("15_17", "15_17", "18_24", rep("25_34", 2), rep("35_44",2), 
+                                  rep("45_54", 2), rep("55_64", 2), rep("65_75", 2), rep("75up", 3)),
                        stringsAsFactors = FALSE)
   
   # marginalize pov by gender/employment status by emp status (sep by gender)
@@ -63,7 +63,7 @@ pov_lapply <- function(l, levels, emp_marg) {
   comp <- emp_marg[which(names(emp_marg) %in% emp_levels)]
   comp <- c(comp, 1-comp)
   
-  st <- data.frame(pct= comp, levels= levels)
+  st <- data.frame(pct= comp, levels= factor(levels, levels= levels))
   st <- base::split(st, 1:nrow(st))
   
   dat <- replicate(length(emp_levels), l, simplify = FALSE)

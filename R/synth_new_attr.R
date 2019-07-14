@@ -225,7 +225,6 @@ add_synth_attr <- function(l, prob_name, sym_tbl, attr_name= "variable") {
 # @param attr A vector of length two. The first element must be the attribute probability and
 # the second element must be the attribute level.
 # @param attr_name A string specifying the name of the new attribute. (eg. "gender")
-# @param level A string specifying the value which the new attribute will take on. (eg. "female") 
 add_synth_attr_level <- function(dat, prob_name, attr, attr_name= "variable") {
   p <- get(prob_name, as.environment(dat))
   if (is.data.table(dat)) {

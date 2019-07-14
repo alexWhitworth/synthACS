@@ -59,7 +59,7 @@ inc_lapply <- function(l, ht, v, levels) { # need to normalize by poverty rates 
   comp <- v[which(grepl(l_comp, names(v)))]
   if (sum(comp) > 0) comp <- (comp / sum(comp)) 
   
-  st <- data.frame(pct= comp, levels= levels)
+  st <- data.frame(pct= comp, levels= factor(levels, levels= levels))
   st <- base::split(st, 1:nrow(st))
   
   dat <- replicate(length(levels), l, simplify = FALSE)

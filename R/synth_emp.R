@@ -54,7 +54,7 @@ emp_lapply <- function(l, ht, emp_v, emp_levels) {
     emp_comp <- emp_v[which(grepl(l_age_comp, names(emp_v)))]
     if (sum(emp_comp) > 0) emp_comp <- (emp_comp / sum(emp_comp)) 
     
-    st <- data.frame(pct= emp_comp, levels= emp_levels)
+    st <- data.frame(pct= emp_comp, levels= factor(levels, levels= levels))
     st <- base::split(st, 1:nrow(st))
     
     dat <- replicate(length(emp_levels), l, simplify = FALSE)
