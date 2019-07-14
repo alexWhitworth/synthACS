@@ -6,7 +6,7 @@ tests/testthat/par_sim_anneal.Rdata
 .Rproj.user
 .Rhistory
 .RData
-/tests/testthat/build_test_dat1.R
-/tests/testthat/towork.rda
+tests/testthat/build_test_dat1.R
+tests/testthat/towork.rda
 .travis.yml.save
 ..Rcheck
