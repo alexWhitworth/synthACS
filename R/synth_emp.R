@@ -9,7 +9,8 @@ synth_data_emp <- function(agme_dat, emp_status_vec) {
   # 1. create hash table of age/gender ages to employment status ages
   age_ht <- data.frame(age_gen= agme_dat[[2]],
                        emp= c(NA, "16_19", "20_24", "25_29", "30_34", rep("35_44",2), rep("45_54",2),
-                              "55_59", "60_64", "65_69", "70_74", rep("75up", 3)), stringsAsFactors = FALSE)
+                              "55_59", "60_64", "65_69", "70_74", rep("75up", 3)), 
+                       stringsAsFactors = FALSE)
   
   # 2. create age/gender buckets on which to condition
   ag_list <- split(dat, dat$gender)
@@ -27,10 +28,10 @@ synth_data_emp <- function(agme_dat, emp_status_vec) {
   
   ag_list[[1]] <- do.call("rbind", 
                            lapply(ag_list[[1]], emp_lapply, ht= age_ht, 
-                                  emp_v= emp_m, emp_levels= emp_levels))
+                                  emp_v= emp_m, levels= emp_levels))
   ag_list[[2]] <- do.call("rbind", 
                            lapply(ag_list[[2]], emp_lapply, ht= age_ht, 
-                                  emp_v= emp_f, emp_levels= emp_levels))
+                                  emp_v= emp_f, levels= emp_levels))
   
   dat <- do.call("rbind", ag_list)
   dat <- factor_return(dat, prob_name= "p")
@@ -39,7 +40,7 @@ synth_data_emp <- function(agme_dat, emp_status_vec) {
   
   
 # helper function for synth_data_emp. 
-emp_lapply <- function(l, ht, emp_v, emp_levels) {
+emp_lapply <- function(l, ht, emp_v, levels) {
   if (is.na(l$age[1])) # error catch, break/next not allowed in lapply
     return(data.frame(age= "under15", gender= "Male", 
                       marital_status= "never_mar", edu_attain= "lt_hs",
@@ -47,7 +48,7 @@ emp_lapply <- function(l, ht, emp_v, emp_levels) {
   else if (l$age[1] == "under15") {
     return(data.frame(age=l$age, gender= l$gender, 
                       marital_status= l$marital_status, edu_attain= l$edu_attain,
-                      emp_status= emp_levels[3],
+                      emp_status= levels[3],
                       p= l$p))
   } else {
     l_age_comp <- ht[,2][which(l$age[1] == ht[,1])]
@@ -57,7 +58,7 @@ emp_lapply <- function(l, ht, emp_v, emp_levels) {
     st <- data.frame(pct= emp_comp, levels= factor(levels, levels= levels))
     st <- base::split(st, 1:nrow(st))
     
-    dat <- replicate(length(emp_levels), l, simplify = FALSE)
+    dat <- replicate(length(levels), l, simplify = FALSE)
     dat <- do.call("rbind", mapply(add_synth_attr_level, dat= dat, prob_name= "p", attr= st,
                                    attr_name= "emp_status", SIMPLIFY = FALSE))
     return(dat)

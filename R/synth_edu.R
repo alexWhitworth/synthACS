@@ -27,9 +27,9 @@ synth_data_edu <- function(agm_dat, edu_vec) {
   edu_levels <- c("lt_hs", "some_hs", "hs_grad", "some_col", "assoc_dec", "ba_deg", "grad_deg")
   
   agm_list[[1]] <- do.call("rbind", 
-       lapply(agm_list[[1]], edu_lapply, ht= age_ht, edu_v= edu_m, edu_levels= edu_levels))
+       lapply(agm_list[[1]], edu_lapply, ht= age_ht, edu_v= edu_m, levels= edu_levels))
   agm_list[[2]] <- do.call("rbind", 
-       lapply(agm_list[[2]], edu_lapply, ht= age_ht, edu_v= edu_f, edu_levels= edu_levels))
+       lapply(agm_list[[2]], edu_lapply, ht= age_ht, edu_v= edu_f, levels= edu_levels))
   
   dat <- do.call("rbind", agm_list)
   dat <- factor_return(dat, prob_name= "p")
@@ -38,7 +38,7 @@ synth_data_edu <- function(agm_dat, edu_vec) {
 
 
 # helper function for synth_data_edu. 
-edu_lapply <- function(l, ht, edu_v, edu_levels) {
+edu_lapply <- function(l, ht, edu_v, levels) {
   if (is.na(l$age[1])) # error catch, break/next not allowed in lapply
     return(data.frame(age= "under15", gender= "Male", 
                       marital_status= "never_mar", edu_attain= "lt_hs", p= 0)) 
@@ -56,7 +56,7 @@ edu_lapply <- function(l, ht, edu_v, edu_levels) {
     st <- data.frame(pct= edu_comp, levels= factor(levels, levels= levels))
     st <- base::split(st, 1:nrow(st))
     
-    dat <- replicate(length(edu_levels), l, simplify = FALSE)
+    dat <- replicate(length(levels), l, simplify = FALSE)
     return(do.call("rbind", mapply(add_synth_attr_level, dat= dat, prob_name= "p", 
                                    attr_name= "edu_attain", attr= st, 
                                    SIMPLIFY = FALSE)))

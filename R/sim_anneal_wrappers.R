@@ -127,6 +127,8 @@ all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_
   if (grepl("Windows", utils::sessionInfo()$running)) {cl <- parallel::makeCluster(nnodes, type= "PSOCK")}
   else {cl <- parallel::makeCluster(nnodes, type= "FORK")}
   
+  parallel::clusterExport(cl, "data.table", envir= as.environment("package:data.table"))
+  
   geography_anneal <- parallel::clusterMap(cl, RECYCLE= TRUE, SIMPLIFY= FALSE, .scheduling= "dynamic",
                                  fun= optimize_microdata, 
                                  micro_data= micro_datas, prob_name= prob_name,

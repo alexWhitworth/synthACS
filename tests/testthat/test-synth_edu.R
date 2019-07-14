@@ -14,10 +14,13 @@ test_that("get correct results", {
   ca <- synthACS:::synth_data_mar(synthACS:::synth_data_ag(unlist(ca_dat$estimates$age_by_sex[26,])),
     unlist(ca_dat$estimates$marital_status[26,]))
   
-  ca_ag1 <- synthACS:::synth_data_edu(synthACS:::synth_data_mar(
-    synthACS:::synth_data_ag(unlist(ca_dat$estimates$age_by_sex[1,])),
-      unlist(ca_dat$estimates$marital_status[1,])),
-    unlist(ca_dat$estimates$edu[1,]))
+  ca_ag1 <- 
+    synthACS:::synth_data_edu(
+      synthACS:::synth_data_mar(
+        synthACS:::synth_data_ag(unlist(ca_dat$estimates$age_by_sex[1,])), 
+        unlist(ca_dat$estimates$marital_status[1,])),
+      unlist(ca_dat$estimates$edu[1,])
+    )
   ca_ag2 <- synthACS:::synth_data_edu(ca, unlist(ca_dat$estimates$edu[26,]))
   ca_ag3 <- synthACS:::synth_data_edu(synthACS:::synth_data_mar(
     synthACS:::synth_data_ag(unlist(ca_dat$estimates$age_by_sex[50,])),

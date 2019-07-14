@@ -318,6 +318,7 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
 
 # helper function to save typing
 sample_micro <- function(df, size, prob_name) {
+  if (!data.table::is.data.table(df)) {data.table::setDT(df)}
   data.table::data.table(df[sample.int(nrow(df), size= size, replace= TRUE, prob= df[[prob_name]]),
-                -which(names(df) == prob_name)])
+                -which(names(df) == prob_name), with= FALSE])
 }
