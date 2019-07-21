@@ -1047,7 +1047,7 @@ combine_smsm <- function(...) {
    seed <- unlist(lapply(smsm, "[[", "seed"))
    if (!all(seed == seed[1])) warning("'smsm_set' objects do not have equal seed values. Returning all seed values.")
    else {seed <- seed[1]}
-   message("call will be set to NULL.")
+   # [remove, message is confusing] message("call will be set to NULL.")
    
    # 02. create return structure / combine list of smsm_set objects
    ret <- list(best_fit=  do.call("c", lapply(smsm, "[[", "best_fit")),
@@ -1056,7 +1056,7 @@ combine_smsm <- function(...) {
                p_accept=  p_accept,
                iter=      do.call("c", lapply(smsm, "[[", "iter")),
                max_iter=  max_iter,
-               tae_paths= drop(lapply(smsm, "[[", "tae_paths")),
+               tae_paths= c(lapply(smsm, "[[", "tae_paths")),
                seed=      seed,
                D=         D)
    class(ret) <- "smsm_set"

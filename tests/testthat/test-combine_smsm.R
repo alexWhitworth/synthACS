@@ -78,11 +78,21 @@ test_that("returns correctly", {
   
   # ... and split it
   smsm_subset <- function(object, idx) {
-    out <- list(best_fit= list(object$best_fit[[idx]]),
-                tae= list(object$tae[[idx]]),
+    nm <- names(object$best_fit)[idx]
+    out <- list(best_fit= {
+                  tmp <- list(object$best_fit[[idx]])
+                  names(tmp) <- nm; tmp
+                },
+                tae= {
+                    tmp <- list(object$tae[[idx]])
+                    names(tmp) <- nm; tmp
+                },
                 call= NULL,
                 p_accept= object$p_accept,
-                iter= list(object$iter[[idx]]),
+                iter= {
+                  tmp <- list(object$iter[[idx]])
+                  names(tmp) <- nm; tmp
+                },
                 max_iter= object$max_iter,
                 tae_paths= object$tae_paths[[idx]],
                 seed= object$seed,
@@ -98,6 +108,7 @@ test_that("returns correctly", {
   
   # recombine / run function
   comb_smsm <- combine_smsm(opt_geog_1, opt_geog_2, opt_geog_3, opt_geog_4)
+  names(comb_smsm$tae_paths) <- names(opt_geog$tae_paths)
   
   # test output structure
   expect_equal(class(comb_smsm), "smsm_set")
