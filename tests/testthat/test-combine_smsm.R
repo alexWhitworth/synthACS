@@ -78,37 +78,26 @@ test_that("returns correctly", {
   
   # ... and split it
   smsm_subset <- function(object, idx) {
-    nm <- names(object$best_fit)[idx]
-    out <- list(best_fit= {
-                  tmp <- list(object$best_fit[[idx]])
-                  names(tmp) <- nm; tmp
-                },
-                tae= {
-                    tmp <- list(object$tae[[idx]])
-                    names(tmp) <- nm; tmp
-                },
+    out <- list(best_fit= object$best_fit[idx],
+                tae= object$tae[idx],
                 call= NULL,
                 p_accept= object$p_accept,
-                iter= {
-                  tmp <- list(object$iter[[idx]])
-                  names(tmp) <- nm; tmp
-                },
+                iter= object$iter[idx],
                 max_iter= object$max_iter,
-                tae_paths= object$tae_paths[[idx]],
+                tae_paths= object$tae_paths[idx],
                 seed= object$seed,
                 D= object$D)
     class(out) <- "smsm_set"
     return(out)
   }
   
-  opt_geog_1 <- smsm_subset(opt_geog, 1)
-  opt_geog_2 <- smsm_subset(opt_geog, 2)
+  opt_geog_1 <- smsm_subset(opt_geog, 1:2)
+  opt_geog_2 <- smsm_subset(opt_geog, 3:4)
   opt_geog_3 <- smsm_subset(opt_geog, 3)
   opt_geog_4 <- smsm_subset(opt_geog, 4)
   
   # recombine / run function
-  comb_smsm <- combine_smsm(opt_geog_1, opt_geog_2, opt_geog_3, opt_geog_4)
-  names(comb_smsm$tae_paths) <- names(opt_geog$tae_paths)
+  comb_smsm <- combine_smsm(opt_geog_1, opt_geog_2)
   
   # test output structure
   expect_equal(class(comb_smsm), "smsm_set")

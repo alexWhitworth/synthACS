@@ -1056,7 +1056,7 @@ combine_smsm <- function(...) {
                p_accept=  p_accept,
                iter=      do.call("c", lapply(smsm, "[[", "iter")),
                max_iter=  max_iter,
-               tae_paths= c(lapply(smsm, "[[", "tae_paths")),
+               tae_paths= do.call("c", lapply(smsm, "[[", "tae_paths")),
                seed=      seed,
                D=         D)
    class(ret) <- "smsm_set"
