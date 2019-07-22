@@ -107,7 +107,6 @@
 # MORTALITY DATA
 #----------------------------------------------------------
 
-
 #' @title Raw Death Rate by race and gender
 #' @description A dataset containing raw death rate data by race and gender of the deceased. Data  
 #' is provided for 1980-2013.
@@ -195,3 +194,22 @@
 #' @references Xu, J. Q., S. L. Murphy, and K. D. Kochanek. "Deaths: final data for 2013." National 
 #' Vital Statistics Reports 64.2 (2015).
 "AgeRaceDR"
+
+#----------------------------------------------------------
+# LA Hospitals
+#----------------------------------------------------------
+
+#' @title Hospitals in Los Angeles County, CA USA
+#' @description An anonymized dataset containing the geographic information of hospitals in Los 
+#' Angeles County California, USA.
+#' @format A \code{data.frame} with 631 observations and 7 variables
+#' \describe{
+#'   \item{geo_long}{The hospital's longitude.}
+#'   \item{geo_lat}{The hospital's lattitude.}
+#'   \item{city}{The hospital's postal city.}
+#'   \item{state_fips}{The hospital's alpha FIPS code.}
+#'   \item{zip}{The hospital's five digit postal ZIP code.}
+#'   \item{census_tract}{The census tract in which the hospital is located.}
+#'   \item{county_name}{The hospital's county -- "LOS ANGELES".}
+#' }
+"la_hospitals"
