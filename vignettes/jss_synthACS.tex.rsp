@@ -446,6 +446,7 @@ is used to specify the geography of interest.
 \begin{CodeChunk}
 \begin{CodeInput}
   R> library("synthACS")
+  R> library(data.table)
   R> ca_geo <- geo.make(state = "CA", county = "*")
   R> ca_bachelors <- pull_bachelors(endyear = 2014, span = 5, 
        geography = ca_geo)
