@@ -38,4 +38,13 @@ confirm_macroACS_class <- function(d) {
   testthat::expect_true(all(unlist(lapply(d$standard_error, function(l) {
     all(unlist(lapply(l, is.numeric)))
   }))))
+  
+  # 3. Confirm sorted
+  alpha <- order(d$geography$NAME)
+  alpha_e <- order(rownames(d$estimates[[1]]))
+  alpha_se <- order(rownames(d$standard_error[[1]]))
+  nr <- length(d$geography$NAME)
+  expect_equal(alpha, 1:nr)
+  expect_equal(alpha, alpha_e)
+  expect_equal(alpha, alpha_se)
 }
