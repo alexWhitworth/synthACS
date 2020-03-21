@@ -946,7 +946,7 @@ marginalize_attr.synthACS <- function(obj, varlist, marginalize_out= FALSE) {
     l[[2]] <- marginalize_attr.micro_synthetic(l[[2]], v, m)
     return(l)
   }, v= varlist, m= marginalize_out)
-  class(obj) <- c("list", "synthACS")
+  class(obj) <- c("synthACS", "list")
   return(obj)
 }
 

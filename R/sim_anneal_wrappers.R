@@ -118,7 +118,7 @@ all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_
     stop("macro_micro must be supplied as a class 'synthACS' object.")
   if (!is.numeric(p_accept) | p_accept <= 0 | p_accept >= 1) stop("p_accept must be numeric in (0,1).")
   if ((max_iter %% 1 != 0) | max_iter < 1) stop("max_iter must be an integer.")
-  if ((leave_cores %% 1 != 0) | max_iter < 0) stop("leave_cores must be a non-negative integer.")
+  if ((leave_cores %% 1 != 0) | leave_cores < 0) stop("leave_cores must be a non-negative integer.")
   
   # 02. wrap optimize micro in parallel
   #------------------------------------
@@ -226,7 +226,7 @@ all_geog_synthetic_new_attribute <- function(df_list, prob_name= "p",
     if (length(df_list) != length(st_list))
       stop("when conditioning, st_list and df_list must have equal lengths")
   }
-  if ((leave_cores %% 1 != 0) | max_iter < 0) stop("leave_cores must be a non-negative integer.")
+  if ((leave_cores %% 1 != 0) | leave_cores < 0) stop("leave_cores must be a non-negative integer.")
  
   # 02. wrap synthetic_new_attribute in parallel
   #------------------------------------
