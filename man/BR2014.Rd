@@ -4,7 +4,8 @@
 \name{BR2014}
 \alias{BR2014}
 \title{Birth Rates by Age and Race of Mother}
-\format{A \code{data.frame} with 1,750 observations and 4 variables.
+\format{
+A \code{data.frame} with 1,750 observations and 4 variables.
 \describe{
  \item{year}{The year for which data was was recorded.}
  \item{race}{The racial group of the mothers. One of \code{all} all races; \code{white} 
@@ -13,7 +14,8 @@
  American.}
  \item{age_group}{The age group of the mother.}
  \item{birth_rate}{The birth rate. See Details.}
-}}
+}
+}
 \source{
 \url{http://www.cdc.gov/nchs/nvss/births.htm}
 }

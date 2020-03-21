@@ -4,9 +4,14 @@
 \alias{all_geog_synthetic_new_attribute}
 \title{Add a new attribute to a set (ie list) of synthetic_micro datasets}
 \usage{
-all_geog_synthetic_new_attribute(df_list, prob_name = "p",
-  attr_name = "variable", conditional_vars = NULL, st_list = NULL,
-  leave_cores = 1L)
+all_geog_synthetic_new_attribute(
+  df_list,
+  prob_name = "p",
+  attr_name = "variable",
+  conditional_vars = NULL,
+  st_list = NULL,
+  leave_cores = 1L
+)
 }
 \arguments{
 \item{df_list}{A \code{list} of R objects each of class "synthetic_micro".}

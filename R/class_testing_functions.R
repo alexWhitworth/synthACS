@@ -44,7 +44,7 @@ confirm_macroACS_class <- function(d) {
   alpha_e <- order(rownames(d$estimates[[1]]))
   alpha_se <- order(rownames(d$standard_error[[1]]))
   nr <- length(d$geography$NAME)
-  expect_equal(alpha, 1:nr)
-  expect_equal(alpha, alpha_e)
-  expect_equal(alpha, alpha_se)
+  testthat::expect_equal(alpha, 1:nr)
+  testthat::expect_equal(alpha, alpha_e)
+  testthat::expect_equal(alpha, alpha_se)
 }

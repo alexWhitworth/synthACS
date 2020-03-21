@@ -4,7 +4,8 @@
 \name{TFR}
 \alias{TFR}
 \title{Total Fertility Rate by race of mother}
-\format{A \code{data.frame} with 175 observations and 3 variables.
+\format{
+A \code{data.frame} with 175 observations and 3 variables.
 \describe{
  \item{year}{The year for which data was was recorded.}
  \item{race}{The racial group of the mothers. One of \code{all} all races; \code{white} 
@@ -12,7 +13,8 @@
  or Native Alaskan; \code{asian_isl} Asian or Pacific Islander; \code{hisp_lat} Hispanic or Latin 
  American.}
  \item{tfr}{The Total Fertility Rate. See Details} 
-}}
+}
+}
 \source{
 \url{http://www.cdc.gov/nchs/nvss/births.htm}
 }

@@ -4,8 +4,13 @@
 \alias{calculate_TAE}
 \title{Calculate the total absolute error (TAE) between sample data and constraints.}
 \usage{
-calculate_TAE(sample_data, constraint_list, prior_sample_totals = NULL,
-  dropped_obs_totals = NULL, new_obs = NULL)
+calculate_TAE(
+  sample_data,
+  constraint_list,
+  prior_sample_totals = NULL,
+  dropped_obs_totals = NULL,
+  new_obs = NULL
+)
 }
 \arguments{
 \item{sample_data}{A \code{data.frame} with attributes matching \code{constraint_list}.}

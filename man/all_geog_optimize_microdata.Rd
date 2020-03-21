@@ -4,10 +4,16 @@
 \alias{all_geog_optimize_microdata}
 \title{Optimize the selection of a micro data population for a set of geographies.}
 \usage{
-all_geog_optimize_microdata(macro_micro, prob_name = "p",
-  constraint_list_list, p_accept = 0.4, max_iter = 10000L,
+all_geog_optimize_microdata(
+  macro_micro,
+  prob_name = "p",
+  constraint_list_list,
+  p_accept = 0.4,
+  max_iter = 10000L,
   seed = sample.int(10000L, size = 1, replace = FALSE),
-  leave_cores = 1L, verbose = TRUE)
+  leave_cores = 1L,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{macro_micro}{The geographical dataset of macro and micro data. Should be of class 

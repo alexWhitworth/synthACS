@@ -4,8 +4,7 @@
 \alias{all_geog_constraint_employment}
 \title{Create employment status constraint list to a set of geographies}
 \usage{
-all_geog_constraint_employment(obj, method = c("synthetic",
-  "macro.table"))
+all_geog_constraint_employment(obj, method = c("synthetic", "macro.table"))
 }
 \arguments{
 \item{obj}{An object of class \code{"synthACS"}.}

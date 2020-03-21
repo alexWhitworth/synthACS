@@ -4,7 +4,8 @@
 \name{LifeExp}
 \alias{LifeExp}
 \title{Life expectancy at certain ages; United States, 2013}
-\format{A \code{data.frame} with 396 observations and 4 variables.
+\format{
+A \code{data.frame} with 396 observations and 4 variables.
 \describe{
  \item{age}{The exact age, in years, at which life expectany is calculated.}
  \item{race}{The racial group of the deceased One of \code{all} all races; \code{white} 
@@ -13,7 +14,8 @@
  \item{gender}{The gender of the deceased. One of \code{c(both, male, female)}}
  \item{life_expectancy}{The life expectancy for an individual at the exact age with the given 
  race and gender.}
-}}
+}
+}
 \source{
 \url{http://www.cdc.gov/nchs/nvss/deaths.htm}
 }

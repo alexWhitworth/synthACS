@@ -4,12 +4,14 @@
 \name{stateFR}
 \alias{stateFR}
 \title{Birth rates, by age of mother: United States, each state and territory, 2014}
-\format{A \code{data.frame} with 612 observations and 3 variables.
+\format{
+A \code{data.frame} with 612 observations and 3 variables.
 \describe{
  \item{state}{The state or territory for which data was was recorded.}
  \item{age_group}{The age group of the mother.}
  \item{birth_rate}{The birth rate. See Details.}
-}}
+}
+}
 \source{
 \url{http://www.cdc.gov/nchs/nvss/births.htm}
 }

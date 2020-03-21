@@ -4,7 +4,8 @@
 \name{la_hospitals}
 \alias{la_hospitals}
 \title{Hospitals in Los Angeles County, CA USA}
-\format{A \code{data.frame} with 631 observations and 7 variables
+\format{
+A \code{data.frame} with 631 observations and 7 variables
 \describe{
   \item{geo_long}{The hospital's longitude.}
   \item{geo_lat}{The hospital's lattitude.}
@@ -13,7 +14,8 @@
   \item{zip}{The hospital's five digit postal ZIP code.}
   \item{census_tract}{The census tract in which the hospital is located.}
   \item{county_name}{The hospital's county -- "LOS ANGELES".}
-}}
+}
+}
 \usage{
 la_hospitals
 }

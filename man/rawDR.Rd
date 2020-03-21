@@ -4,7 +4,8 @@
 \name{rawDR}
 \alias{rawDR}
 \title{Raw Death Rate by race and gender}
-\format{A \code{data.frame} with 612 observations and 4 variables.
+\format{
+A \code{data.frame} with 612 observations and 4 variables.
 \describe{
  \item{year}{The year for which data was was recorded.}
  \item{race}{The racial group of the deceased One of \code{all} all races; \code{white} 
@@ -12,7 +13,8 @@
  or Native Alaskan; \code{asian_isl} Asian or Pacific Islander; \code{hisp_lat} Hispanic.}
  \item{gender}{The gender of the deceased. One of \code{c(both, male, female)}}
  \item{death_rate}{The raw death rate. See details.}
-}}
+}
+}
 \source{
 \url{http://www.cdc.gov/nchs/nvss/deaths.htm}
 }

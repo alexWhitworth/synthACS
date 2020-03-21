@@ -4,8 +4,12 @@
 \alias{add_constraint}
 \title{Add new constraint to constraint table}
 \usage{
-add_constraint(attr_name = "variable", attr_totals, micro_data,
-  constraint_list = NULL)
+add_constraint(
+  attr_name = "variable",
+  attr_totals,
+  micro_data,
+  constraint_list = NULL
+)
 }
 \arguments{
 \item{attr_name}{The name of the attribute, or variable, that you wish to constrain.}

@@ -4,8 +4,7 @@
 \alias{all_geog_constraint_marital_status}
 \title{Create marital status constraint list to a set of geographies}
 \usage{
-all_geog_constraint_marital_status(obj, method = c("synthetic",
-  "macro.table"))
+all_geog_constraint_marital_status(obj, method = c("synthetic", "macro.table"))
 }
 \arguments{
 \item{obj}{An object of class \code{"synthACS"}.}

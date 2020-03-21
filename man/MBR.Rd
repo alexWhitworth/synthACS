@@ -4,7 +4,8 @@
 \name{MBR}
 \alias{MBR}
 \title{Multiple Birth Rate data by year and race of mother}
-\format{A \code{data.frame} with 110 observations and 8 variables.
+\format{
+A \code{data.frame} with 110 observations and 8 variables.
 \describe{
  \item{year}{The year for which data was was recorded.}
  \item{race}{The racial group of the mothers. One of \code{all} all races; \code{white} 
@@ -18,7 +19,8 @@
  \item{twinBR}{The number of live births in all twin deliveries per 1,000 live births.}
  \item{twinBR}{The number of live births in all triplet or higher order deliveries per 100,000 
  live births.}
-}}
+}
+}
 \source{
 \url{http://www.cdc.gov/nchs/nvss/births.htm}
 }

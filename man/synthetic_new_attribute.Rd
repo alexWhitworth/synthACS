@@ -4,8 +4,13 @@
 \alias{synthetic_new_attribute}
 \title{Add a new attribute to a synthetic_micro dataset}
 \usage{
-synthetic_new_attribute(df, prob_name = "p", attr_name = "variable",
-  conditional_vars = NULL, sym_tbl = NULL)
+synthetic_new_attribute(
+  df,
+  prob_name = "p",
+  attr_name = "variable",
+  conditional_vars = NULL,
+  sym_tbl = NULL
+)
 }
 \arguments{
 \item{df}{An R object of class "synthetic_micro".}

@@ -4,8 +4,12 @@
 \alias{all_geogs_add_constraint}
 \title{Add new constraint to a set of geographies}
 \usage{
-all_geogs_add_constraint(attr_name = "variable", attr_total_list,
-  macro_micro, constraint_list_list = NULL)
+all_geogs_add_constraint(
+  attr_name = "variable",
+  attr_total_list,
+  macro_micro,
+  constraint_list_list = NULL
+)
 }
 \arguments{
 \item{attr_name}{The name of the attribute, or variable, that you wish to constrain.}
