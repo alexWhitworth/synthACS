@@ -22,6 +22,7 @@ pull_population <- function(endyear, span, geography) {
   #----------------------------------------------
   oldw <- getOption("warn")
   options(warn= -1) # suppress warnings from library(acs) / ACS API
+  on.exit(options(oldw)) # turn warnings back on
   age_by_sex <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B01001", col.names= "pretty")
   med_age <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
@@ -40,7 +41,6 @@ pull_population <- function(endyear, span, geography) {
                             table.number = "B06011", col.names = "pretty")
   by_pov_status <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                              table.number = "B06012", col.names = "pretty")
-  options(warn= oldw) # turn warnings back on
   
   # 02 -- create lists of EST and SE -- as data.frames
   #----------------------------------------------

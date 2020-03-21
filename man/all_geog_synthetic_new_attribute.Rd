@@ -5,7 +5,8 @@
 \title{Add a new attribute to a set (ie list) of synthetic_micro datasets}
 \usage{
 all_geog_synthetic_new_attribute(df_list, prob_name = "p",
-  attr_name = "variable", conditional_vars = NULL, st_list = NULL)
+  attr_name = "variable", conditional_vars = NULL, st_list = NULL,
+  leave_cores = 1L)
 }
 \arguments{
 \item{df_list}{A \code{list} of R objects each of class "synthetic_micro".}
@@ -24,6 +25,9 @@ a \code{data.frame} symbol table with N + 2 columns. The last two columns must b
 1. A vector containing the new attribute counts or percentages; 2. is a vector of the new attribute 
 levels. The first N columns must match the conditioning scheme imposed by the variables in 
 \code{conditional_vars}. See \code{\link{synthetic_new_attribute}} and examples.}
+
+\item{leave_cores}{An \code{integer} for the number of cores you wish to leave open for other
+processing.}
 }
 \value{
 A list of new synthetic_micro datasets each with class "synthetic_micro".

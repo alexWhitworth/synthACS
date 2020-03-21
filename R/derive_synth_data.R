@@ -97,7 +97,7 @@ derive_synth_datasets <- function(macro_data,
     class(l) <- c("list", "macro_micro")
     return(l)
   })
-  class(syn) <- c("list", "synthACS")
+  class(syn) <- c("synthACS", "list")
   return(synthetic_data= syn)
 }
 

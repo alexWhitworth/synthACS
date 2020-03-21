@@ -94,6 +94,8 @@ all_geogs_add_constraint <- function(attr_name= "variable", attr_total_list, mac
 #' @param p_accept The acceptance probability for the Metropolis acceptance criteria.
 #' @param max_iter The maximum number of allowable iterations. Defaults to \code{10000L}
 #' @param seed A seed for reproducibility. See \code{\link[base]{set.seed}}
+#' @param leave_cores An \code{integer} for the number of cores you wish to leave open for other
+#' processing.
 #' @param verbose Logical. Do you wish to see verbose output? Defaults to \code{TRUE}
 #' @seealso \code{\link{optimize_microdata}}
 #' @export
@@ -107,6 +109,7 @@ all_geogs_add_constraint <- function(attr_name= "variable", attr_total_list, mac
 all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_list_list, 
                                         p_accept= 0.40, max_iter= 10000L,
                                         seed= sample.int(10000L, size=1, replace=FALSE),
+                                        leave_cores= 1L,
                                         verbose= TRUE) {
   
   # 01. error checking
@@ -115,6 +118,7 @@ all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_
     stop("macro_micro must be supplied as a class 'synthACS' object.")
   if (!is.numeric(p_accept) | p_accept <= 0 | p_accept >= 1) stop("p_accept must be numeric in (0,1).")
   if ((max_iter %% 1 != 0) | max_iter < 1) stop("max_iter must be an integer.")
+  if ((leave_cores %% 1 != 0) | max_iter < 0) stop("leave_cores must be a non-negative integer.")
   
   # 02. wrap optimize micro in parallel
   #------------------------------------
@@ -123,8 +127,8 @@ all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_
   
   if (verbose) message("Beginning parallel optimization...")
   
-  nnodes <- min(parallel::detectCores() - 1, length(micro_datas))
-  if (grepl("Windows", utils::sessionInfo()$running)) {cl <- parallel::makeCluster(nnodes, type= "PSOCK")}
+  nnodes <- min(parallel::detectCores() - leave_cores, length(micro_datas))
+  if (.Platform$OS.type != "unix") {cl <- parallel::makeCluster(nnodes, type= "PSOCK")}
   else {cl <- parallel::makeCluster(nnodes, type= "FORK")}
   
   parallel::clusterExport(cl, "data.table", envir= as.environment("package:data.table"))
@@ -177,6 +181,8 @@ all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_
 #' 1. A vector containing the new attribute counts or percentages; 2. is a vector of the new attribute 
 #' levels. The first N columns must match the conditioning scheme imposed by the variables in 
 #' \code{conditional_vars}. See \code{\link{synthetic_new_attribute}} and examples.
+#' @param leave_cores An \code{integer} for the number of cores you wish to leave open for other
+#' processing.
 #' @return A list of new synthetic_micro datasets each with class "synthetic_micro".
 #' @seealso \code{\link{synthetic_new_attribute}}
 #' @examples \dontrun{
@@ -211,7 +217,8 @@ all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_
 all_geog_synthetic_new_attribute <- function(df_list, prob_name= "p",
                                              attr_name= "variable",
                                              conditional_vars= NULL,
-                                             st_list= NULL) {
+                                             st_list= NULL,
+                                             leave_cores= 1L) {
  
   # 01. error checking
   #------------------------------------
@@ -219,6 +226,7 @@ all_geog_synthetic_new_attribute <- function(df_list, prob_name= "p",
     if (length(df_list) != length(st_list))
       stop("when conditioning, st_list and df_list must have equal lengths")
   }
+  if ((leave_cores %% 1 != 0) | max_iter < 0) stop("leave_cores must be a non-negative integer.")
  
   # 02. wrap synthetic_new_attribute in parallel
   #------------------------------------
@@ -228,8 +236,8 @@ all_geog_synthetic_new_attribute <- function(df_list, prob_name= "p",
     conditional_vars <- replicate(len, conditional_vars, simplify= FALSE)
   }
   
-  nnodes <- min(parallel::detectCores() - 1, len)
-  if (grepl("Windows", utils::sessionInfo()$running)) {cl <- parallel::makeCluster(nnodes, type= "PSOCK")}
+  nnodes <- min(parallel::detectCores() - leave_cores, len)
+  if (.Platform$OS.type != "unix") {cl <- parallel::makeCluster(nnodes, type= "PSOCK")}
   else {cl <- parallel::makeCluster(nnodes, type= "FORK")}
   
   # to allow simplified testing (using non synthACS class objects)
@@ -253,6 +261,6 @@ all_geog_synthetic_new_attribute <- function(df_list, prob_name= "p",
                     y= synthetic_data, 
                     SIMPLIFY = FALSE)
   
-  class(df_list) <- c("list", "synthACS")
+  class(df_list) <- c("synthACS", "list")
   return(df_list) 
 }

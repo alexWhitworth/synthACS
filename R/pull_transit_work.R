@@ -19,6 +19,9 @@ pull_transit_work <- function(endyear, span, geography) {
   
   # 01 -- pull data and move to lists
   #----------------------------------------------
+  oldw <- getOption("warn")
+  options(warn= -1) # suppress warnings from library(acs) / ACS API
+  on.exit(options(oldw)) # turn warnings back on
   travel_to_work <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                               table.number = "B08012", col.names= "pretty")
   

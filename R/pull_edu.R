@@ -21,6 +21,7 @@ pull_edu <- function(endyear, span, geography) {
   #----------------------------------------------
   oldw <- getOption("warn")
   options(warn= -1) # suppress warnings from library(acs) / ACS API
+  on.exit(options(oldw)) # turn warnings back on
   edu_enroll <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                               table.number = "B14001", col.names= "pretty")
   enroll_details <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
@@ -33,7 +34,6 @@ pull_edu <- function(endyear, span, geography) {
 #                           table.number = "B15010", col.names= "pretty"))
 #   edu_internet <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
 #                             table.number = "B28006", col.names= "pretty")
-  options(warn= oldw) # turn warnings back on
   
   est <- list(edu_enroll= data.frame(t(edu_enroll@estimate[,-2])),
               enroll_details= data.frame(t(enroll_details@estimate[, -c(2,30)])),

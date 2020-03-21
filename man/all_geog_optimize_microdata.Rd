@@ -6,7 +6,8 @@
 \usage{
 all_geog_optimize_microdata(macro_micro, prob_name = "p",
   constraint_list_list, p_accept = 0.4, max_iter = 10000L,
-  seed = sample.int(10000L, size = 1, replace = FALSE), verbose = TRUE)
+  seed = sample.int(10000L, size = 1, replace = FALSE),
+  leave_cores = 1L, verbose = TRUE)
 }
 \arguments{
 \item{macro_micro}{The geographical dataset of macro and micro data. Should be of class 
@@ -24,6 +25,9 @@ of selection.}
 \item{max_iter}{The maximum number of allowable iterations. Defaults to \code{10000L}}
 
 \item{seed}{A seed for reproducibility. See \code{\link[base]{set.seed}}}
+
+\item{leave_cores}{An \code{integer} for the number of cores you wish to leave open for other
+processing.}
 
 \item{verbose}{Logical. Do you wish to see verbose output? Defaults to \code{TRUE}}
 }

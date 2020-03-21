@@ -733,7 +733,7 @@ test_that("parallel - real DF, fake ST", {
                                           conditional_vars= c("marital_status", "race"),
                                           st_list= st_list)
   # test 
-  expect_equal(class(syn2), c("list", "synthACS"))
+  expect_equal(class(syn2), c("synthACS", "list"))
   expect_true(is.synthACS(syn2))
   expect_true(all(unlist(lapply(syn2, function(l) is.micro_synthetic(l[[2]])))))
   expect_true(all.equal(unlist(lapply(syn2, function(l) sum(l[[2]]$p))), rep(1, 4), check.attributes = FALSE)) 

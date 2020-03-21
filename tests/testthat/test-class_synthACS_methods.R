@@ -272,13 +272,13 @@ test_that("marginalize_attr correctly", {
   df_list <- replicate(10, df, simplify= FALSE)
   dummy_list <- replicate(10, list(letters[1:3]), simplify= FALSE)
   df_list <- mapply(function(a,b) {return(list(a, b))}, a= dummy_list, b= df_list, SIMPLIFY = FALSE)
-  class(df_list) <- c("list", "synthACS")
+  class(df_list) <- c("synthACS", "list")
   df_list2 <- marginalize_attr(df_list, varlist= c("gender", "age"))
   
   ## test:
   expect_true(all( unlist(lapply(df_list2, function(l) sum(l[[2]]$p))) == 1))
   expect_equal(unlist(lapply(df_list, function(l) { length(levels(l[[2]]$gender)) * length(levels(l[[2]]$age)) })),
                unlist(lapply(df_list2, function(l) { nrow(l[[2]]) })))
-  expect_equal(class(df_list2), c("list", "synthACS"))
+  expect_equal(class(df_list2), c("synthACS", "list"))
   
 })

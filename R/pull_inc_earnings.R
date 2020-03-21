@@ -22,6 +22,7 @@ pull_inc_earnings <- function(endyear, span, geography) {
   #----------------------------------------------
   oldw <- getOption("warn")
   options(warn= -1) # suppress warnings from library(acs) / ACS API
+  on.exit(options(oldw)) # turn warnings back on
   gini <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                     table.number = "B19083", col.names= "pretty")
   inc_pc <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
@@ -38,7 +39,6 @@ pull_inc_earnings <- function(endyear, span, geography) {
                           table.number = "B24011", col.names= "pretty")
 #   inc_by_int <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
 #                           table.number = "B28004", col.names= "pretty")
-  options(warn= oldw) # turn warnings back on
   
   est <- list(gini= data.frame(gini@estimate),
               inc_pc= data.frame(inc_pc@estimate),

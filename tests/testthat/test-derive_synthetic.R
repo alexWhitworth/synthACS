@@ -43,7 +43,7 @@ test_that("get correct results", {
   syn <- derive_synth_datasets(ca_dat, parallel= TRUE)
   
   # test class, structure, dimensions, etc
-  expect_equal(class(syn), c("list", "synthACS"))
+  expect_equal(class(syn), c("synthACS","list"))
   expect_true(is.synthACS(syn))
   expect_true(all(unlist(lapply(syn, is.macro_micro))))
   expect_equal(nrow(ca_dat$estimates[[1]]), length(syn))

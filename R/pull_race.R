@@ -21,6 +21,7 @@ pull_race_data <- function(endyear, span, geography) {
   #----------------------------------------------
   oldw <- getOption("warn")
   options(warn= -1) # suppress warnings from library(acs) / ACS API
+  on.exit(options(oldw)) # turn warnings back on
   race_all <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                         table.number = "B02001", col.names = "pretty")
   race_aa <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
@@ -39,7 +40,6 @@ pull_race_data <- function(endyear, span, geography) {
                        table.number = "B01001H", col.names = "pretty")
   race_hisp <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                        table.number = "B01001I", col.names = "pretty")
-  options(warn= oldw) # turn warnings back on
   
   # 02 -- create lists of EST and SE -- as data.frames
   #----------------------------------------------

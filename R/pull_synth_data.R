@@ -25,11 +25,11 @@ pull_acs_basetables <- function(endyear, span, geography, table_vec) {
   temp_dat <- vector("list", length= nr)
   oldw <- getOption("warn")
   options(warn= -1) # suppress warnings from library(acs) / ACS API
+  on.exit(options(oldw)) # turn warnings back on
   for (i in 1:nr) {
     temp_dat[[i]] <- acs::acs.fetch(endyear, span, geography, table.number= table_vec[i],
                                     col.names= "pretty")
   }
-  options(warn= oldw) # turn warnings back on
   
   ret <- list(endyear= endyear, span= span,
               estimates=lapply(temp_dat, function(l) {return(as.data.frame(l@estimate))}),

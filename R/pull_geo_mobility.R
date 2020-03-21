@@ -23,6 +23,7 @@ pull_geo_mobility <- function(endyear, span, geography) {
   #----------------------------------------------
   oldw <- getOption("warn")
   options(warn= -1) # suppress warnings from library(acs) / ACS API
+  on.exit(options(oldw)) # turn warnings back on
   geo_by_age <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B07001", col.names= "pretty")
   
@@ -37,7 +38,6 @@ pull_geo_mobility <- function(endyear, span, geography) {
   
   geo_by_inc <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B07010", col.names= "pretty")
-  options(warn= oldw) # turn warnings back on
   
   est <- list(by_age= data.frame(t(geo_by_age@estimate[, c(1,17:dim(geo_by_age@estimate)[[2]])])),
               by_sex= data.frame(t(geo_by_sex@estimate[, c(1,4:dim(geo_by_sex@estimate)[[2]])])),
