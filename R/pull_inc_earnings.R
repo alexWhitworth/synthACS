@@ -22,7 +22,7 @@ pull_inc_earnings <- function(endyear, span, geography) {
   #----------------------------------------------
   oldw <- getOption("warn")
   options(warn= -1) # suppress warnings from library(acs) / ACS API
-  on.exit(options(oldw)) # turn warnings back on
+  on.exit(options(warn= oldw)) # turn warnings back on
   gini <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                     table.number = "B19083", col.names= "pretty")
   inc_pc <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
@@ -102,8 +102,13 @@ pull_inc_earnings <- function(endyear, span, geography) {
       "farm_fish_forest_occ", "construct_occ","maint_rep_occ", "production_occ", 
       "transport_occ", "material_move_occ")
   
-  # 03 -- combine and return
+  # 03 -- sort, combine and return
   #----------------------------------------------
+  geo_sorted <- geo_alphabetize(geo= geo, est= est, se= se)
+  geo <- geo_sorted[["geo"]]
+  est <- geo_sorted[["est"]]
+  se <- geo_sorted[["se"]]
+  
   ret <- list(endyear= endyear, span= span,
               estimates= est,
               standard_error= se,

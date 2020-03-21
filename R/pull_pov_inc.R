@@ -22,7 +22,7 @@ pull_pov_inc <- function(endyear, span, geography) {
   #----------------------------------------------
   oldw <- getOption("warn")
   options(warn= -1) # suppress warnings from library(acs) / ACS API
-  on.exit(options(oldw)) # turn warnings back on
+  on.exit(options(warn= oldw)) # turn warnings back on
   pov_status <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                     table.number = "B17001", col.names= "pretty")
 #   pov_to_inc <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
@@ -162,8 +162,13 @@ pull_pov_inc <- function(endyear, span, geography) {
   ### hh_psa_inc
   names(est$hh_psa_inc) <- names(se$hh_psa_inc) <- c("psa_inc_total", "psa_inc_wPSA", "psa_inc_woPSA")
   
-  # 03 -- combine and return
+  # 03 -- sort, combine, and return
   #----------------------------------------------
+  geo_sorted <- geo_alphabetize(geo= geo, est= est, se= se)
+  geo <- geo_sorted[["geo"]]
+  est <- geo_sorted[["est"]]
+  se <- geo_sorted[["se"]]
+  
   ret <- list(endyear= endyear, span= span,
               estimates= est,
               standard_error= se,

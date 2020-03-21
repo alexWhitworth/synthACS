@@ -23,7 +23,7 @@ pull_geo_mobility <- function(endyear, span, geography) {
   #----------------------------------------------
   oldw <- getOption("warn")
   options(warn= -1) # suppress warnings from library(acs) / ACS API
-  on.exit(options(oldw)) # turn warnings back on
+  on.exit(options(warn= oldw)) # turn warnings back on
   geo_by_age <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B07001", col.names= "pretty")
   
@@ -188,8 +188,13 @@ pull_geo_mobility <- function(endyear, span, geography) {
   est$by_inc <- est$by_inc[, -c(4,15,26,37,48)]
   se$by_inc  <- se$by_inc[, -c(4,15,26,37,48)]
   
-  # 07 -- combine and return
+  # 07 -- sort, combine, and return
   #----------------------------------------------
+  geo_sorted <- geo_alphabetize(geo= geo, est= est, se= se)
+  geo <- geo_sorted[["geo"]]
+  est <- geo_sorted[["est"]]
+  se <- geo_sorted[["se"]]
+  
   ret <- list(endyear= endyear, span= span,
               estimates= est,
               standard_error= se,

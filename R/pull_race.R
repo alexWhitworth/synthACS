@@ -21,7 +21,7 @@ pull_race_data <- function(endyear, span, geography) {
   #----------------------------------------------
   oldw <- getOption("warn")
   options(warn= -1) # suppress warnings from library(acs) / ACS API
-  on.exit(options(oldw)) # turn warnings back on
+  on.exit(options(warn= oldw)) # turn warnings back on
   race_all <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                         table.number = "B02001", col.names = "pretty")
   race_aa <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
@@ -78,8 +78,13 @@ pull_race_data <- function(endyear, span, geography) {
       rep(c("black", "nat_amer", "asian", "pac_isl", "other", "2p_races", "white_alone", "hisp_lat"), 3), sep="_"))
   
   
-  # 04 -- combine and return
+  # 04 -- sort, combine and return
   #----------------------------------------------
+  geo_sorted <- geo_alphabetize(geo= geo, est= est, se= se)
+  geo <- geo_sorted[["geo"]]
+  est <- geo_sorted[["est"]]
+  se <- geo_sorted[["se"]]
+  
   ret <- list(endyear= endyear, span= span,
               estimates= list(pop_by_race= est),
               standard_error= list(pop_by_race= se),

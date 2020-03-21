@@ -21,7 +21,7 @@ pull_mar_status <- function(endyear, span, geography) {
   #----------------------------------------------
   oldw <- getOption("warn")
   options(warn= -1) # suppress warnings from library(acs) / ACS API
-  on.exit(options(oldw)) # turn warnings back on
+  on.exit(options(warn= oldw)) # turn warnings back on
   by_sex <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                         table.number = "B12001", col.names= "pretty")
   by_labor <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
@@ -100,8 +100,13 @@ pull_mar_status <- function(endyear, span, geography) {
     rep(c("all", "never_mar", "ever_mar", "ever_mar_last_yr", "ever_mar_not_last_yr"), 2), sep= "_"))
   
   
-  # 03 -- combine and return
+  # 03 -- sort, combine, and return
   #----------------------------------------------
+  geo_sorted <- geo_alphabetize(geo= geo, est= est, se= se)
+  geo <- geo_sorted[["geo"]]
+  est <- geo_sorted[["est"]]
+  se <- geo_sorted[["se"]]
+  
   ret <- list(endyear= endyear, span= span,
               estimates= est,
               standard_error= se,

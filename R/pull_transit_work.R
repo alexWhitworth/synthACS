@@ -21,7 +21,7 @@ pull_transit_work <- function(endyear, span, geography) {
   #----------------------------------------------
   oldw <- getOption("warn")
   options(warn= -1) # suppress warnings from library(acs) / ACS API
-  on.exit(options(oldw)) # turn warnings back on
+  on.exit(options(warn= oldw)) # turn warnings back on
   travel_to_work <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                               table.number = "B08012", col.names= "pretty")
   
@@ -237,8 +237,13 @@ pull_transit_work <- function(endyear, span, geography) {
     rep(c("live_city", "live_out_city"), each= 5),
     rep(c("all", "work_same_microsa", "work_diff_microsa", "work_msa", "work_rural"), 2), sep= "_")), sep="_")
   
-  # 09 -- combine and return
+  # 09 -- sort, combine, and return
   #----------------------------------------------
+  geo_sorted <- geo_alphabetize(geo= geo, est= est, se= se)
+  geo <- geo_sorted[["geo"]]
+  est <- geo_sorted[["est"]]
+  se <- geo_sorted[["se"]]
+  
   ret <- list(endyear= endyear, span= span,
               estimates= est,
               standard_error= se,

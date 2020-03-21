@@ -25,3 +25,13 @@ factor_return <- function(df, prob_name) {
   return(df[stats::complete.cases(df) & df[prob_name] > 0,])
 }
 
+# helper function during return phase of all pull_* functions to alphabetize all datasets
+# Needed for consistency as library(acs) does not return consistent dataset ordering across
+# versions
+geo_alphabetize <- function(geo, est, se) {
+  ord <- order(geo$NAME)
+  est <- lapply(est, function(l, ord) {return(l[ord,])}, ord= ord)
+  se <- lapply(se, function(l, ord) {return(l[ord,])}, ord= ord)
+  geo <- geo[ord,] 
+  return(list(geo= geo, est= est, se= se))
+}

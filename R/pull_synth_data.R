@@ -25,7 +25,7 @@ pull_acs_basetables <- function(endyear, span, geography, table_vec) {
   temp_dat <- vector("list", length= nr)
   oldw <- getOption("warn")
   options(warn= -1) # suppress warnings from library(acs) / ACS API
-  on.exit(options(oldw)) # turn warnings back on
+  on.exit(options(warn= oldw)) # turn warnings back on
   for (i in 1:nr) {
     temp_dat[[i]] <- acs::acs.fetch(endyear, span, geography, table.number= table_vec[i],
                                     col.names= "pretty")
@@ -417,8 +417,13 @@ pull_synth_data <- function(endyear, span, geography) {
   #   rep(c("lt_pov", "gt_eq_pov"), each= 16),
   #   rep(c("15_17", "18_24", "25_34", "35_44", "45_54", "55_64", "65_74", "75up")), sep= "_"))
   
-  # 05 -- combine and return
+  # 05 -- sort, combine and return
   #----------------------------------------------
+  geo_sorted <- geo_alphabetize(geo= geo, est= est, se= se)
+  geo <- geo_sorted[["geo"]]
+  est <- geo_sorted[["est"]]
+  se <- geo_sorted[["se"]]
+  
   ret <- list(endyear= endyear, span= span,
        estimates= est,
        standard_error= se,

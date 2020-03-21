@@ -20,7 +20,7 @@ pull_bachelors <- function(endyear, span, geography) {
   #----------------------------------------------
   oldw <- getOption("warn")
   options(warn= -1) # suppress warnings from library(acs) / ACS API
-  on.exit(options(oldw)) # turn warnings back on
+  on.exit(options(warn= oldw)) # turn warnings back on
   # ba_deg25up <- acs.fetch(endyear= 2014, span= 5, geography= la_tracts, table.number = "C15010",
   #                    col.names= "pretty")
   by_sex_age <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, table.number = "B15011",
@@ -51,8 +51,13 @@ pull_bachelors <- function(endyear, span, geography) {
       "education", "lit_lang", "lib_arts_history", "arts", "communications", "other")
   
   
-  # 03 -- combine and return
+  # 03 -- sort, combine, and return
   #----------------------------------------------
+  geo_sorted <- geo_alphabetize(geo= geo, est= est, se= se)
+  geo <- geo_sorted[["geo"]]
+  est <- geo_sorted[["est"]]
+  se <- geo_sorted[["se"]]
+  
   ret <- list(endyear= endyear, span= span,
               estimates= est,
               standard_error= se,

@@ -22,7 +22,7 @@ pull_population <- function(endyear, span, geography) {
   #----------------------------------------------
   oldw <- getOption("warn")
   options(warn= -1) # suppress warnings from library(acs) / ACS API
-  on.exit(options(oldw)) # turn warnings back on
+  on.exit(options(warn= oldw)) # turn warnings back on
   age_by_sex <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B01001", col.names= "pretty")
   med_age <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
@@ -223,8 +223,13 @@ pull_population <- function(endyear, span, geography) {
   se$pop_by_race$pct_other <- sqrt(se$pop_by_race$other^2 - (
     (est$pop_by_race$other / est$pop_by_race$total)^2 * se$pop_by_race$total^2)) / est$pop_by_race$total
   
-  # 05 -- combine and return
+  # 05 -- sort, combine, and return
   #----------------------------------------------
+  geo_sorted <- geo_alphabetize(geo= geo, est= est, se= se)
+  geo <- geo_sorted[["geo"]]
+  est <- geo_sorted[["est"]]
+  se <- geo_sorted[["se"]]
+  
   ret <- list(endyear= endyear, span= span,
               estimates= est,
               standard_error= se,
