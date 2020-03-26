@@ -11,7 +11,7 @@
 #' @references \url{https://www.census.gov/programs-surveys/acs/technical-documentation/summary-file-documentation.html}
 #' @examples \dontrun{
 #' # make geography
-#' la_geo <- acs::geo.make(state= "CA", county= "Los Angeles City")
+#' la_geo <- acs::geo.make(state= "CA", county= "Los Angeles")
 #' # pull data 
 #' la_dat <- pull_acs_basetables(endyear= 2015, span= 1, geography= la_geo, 
 #'   table_vec= c("B00001", "B00002", "B01003"))
@@ -71,6 +71,7 @@ pull_synth_data <- function(endyear, span, geography) {
   #----------------------------------------------
   oldw <- getOption("warn")
   options(warn= -1) # suppress warnings from library(acs) / ACS API
+  on.exit(options(warn= oldw)) # turn warnings back on
   age_by_sex <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B01001", col.names= "pretty") # total pop
   pop_by_race <- pull_race_data(endyear= endyear, span= span, geography= geography)
@@ -94,7 +95,6 @@ pull_synth_data <- function(endyear, span, geography) {
                              table.number = "B17005", col.names = "pretty") # (age 16+, by sex & employment status)
   # pov_status2 <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
   #                          table.number = "B17007", col.names = "pretty") # B17007 - age 15+, by age and gender ... 
-  options(warn= oldw) # turn warnings back on
   
   # 02 -- create lists of EST and SE -- as data.frames
   #----------------------------------------------

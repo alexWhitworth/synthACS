@@ -30,8 +30,13 @@ factor_return <- function(df, prob_name) {
 # versions
 geo_alphabetize <- function(geo, est, se) {
   ord <- order(geo$NAME)
-  est <- lapply(est, function(l, ord) {return(l[ord,])}, ord= ord)
-  se <- lapply(se, function(l, ord) {return(l[ord,])}, ord= ord)
+  if (is.data.frame(est)) {
+    est <- est[ord,]
+    se <- se[ord,]
+  } else {
+    est <- lapply(est, function(l, ord) {return(l[ord,])}, ord= ord)
+    se <- lapply(se, function(l, ord) {return(l[ord,])}, ord= ord)
+  }
   geo <- geo[ord,] 
   return(list(geo= geo, est= est, se= se))
 }

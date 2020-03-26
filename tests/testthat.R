@@ -10,7 +10,7 @@ library(data.table)
 # ca_geo <- geo.make(state= 'CA', county= '*')
 # ca_dat <- pull_synth_data(2012, 5, ca_geo)
 # save.image("./synthACS/tests/testthat/acsdat.Rdata")
-
+# towork.Rda == object transit_work from paper
 
 # LOAD ALL TEST DATA
 #------------------------------------------------

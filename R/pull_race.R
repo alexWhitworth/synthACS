@@ -69,7 +69,7 @@ pull_race_data <- function(endyear, span, geography) {
   
   # 03 -- combine columns
   #----------------------------------------------
-  est <- as.data.frame(do.call("cbind", est)); se <- as.data.frame(do.call("cbind", se))
+  est <- as.data.frame(t(unlist(est))); se <- as.data.frame(t(unlist(se)))
   est <- est[, c(1:2, seq(3,26,3), seq(4,26,3), seq(5,26,3))]
   se <-  se[, c(1:2, seq(3,26,3), seq(4,26,3), seq(5,26,3))]
   
