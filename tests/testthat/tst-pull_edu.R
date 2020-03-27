@@ -32,7 +32,7 @@ test_that("errors work", {
 test_that("returns results accurately - counties", {
   # create test geography and data
   ca_geo <- geo.make(state= 'CA', county= 'Los Angeles')
-  ca_dat <- pull_edu(2012, 5, ca_geo)
+  ca_dat <- pull_edu(2014, 5, ca_geo)
   
   # test:
   synthACS:::confirm_macroACS_class(ca_dat)
@@ -42,7 +42,11 @@ test_that("returns results accurately - state", {
   # create test geography and data
   ca_geo <- geo.make(state= "CA")
   ca_dat <- pull_edu(2016, 5, ca_geo)
+  # test:
+  synthACS:::confirm_macroACS_class(ca_dat)
   
+  ca_geo <- geo.make(state = "CA", county = "*")
+  ca_dat <- pull_edu(endyear = 2014, span = 5, geography = ca_geo)
   # test:
   synthACS:::confirm_macroACS_class(ca_dat)
 })

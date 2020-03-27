@@ -28,9 +28,9 @@ pull_bachelors <- function(endyear, span, geography) {
   ba_total <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, table.number = "B15012",
                      col.names = "pretty")
   
-  est <- list(by_sex_age= as.data.frame(t(by_sex_age@estimate[,c(1,2,21, 3:20, 22:39)])),
-              ba_total= as.data.frame(ba_total@estimate))
-  se <- list(by_sex_age= data.frame(t(by_sex_age@standard.error[,c(1,2,21, 3:20, 22:39)])),
+  est <- list(by_sex_age= data.frame(by_sex_age@estimate[,c(1,2,21, 3:20, 22:39), drop= FALSE]),
+              ba_total= data.frame(ba_total@estimate))
+  se <- list(by_sex_age= data.frame(by_sex_age@standard.error[,c(1,2,21, 3:20, 22:39), drop= FALSE]),
              ba_total= data.frame(ba_total@standard.error))
   geo <- by_sex_age@geography
   

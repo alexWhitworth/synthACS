@@ -46,8 +46,8 @@ pull_inc_earnings <- function(endyear, span, geography) {
               vet_status= data.frame(vet_status@estimate),
               snap= data.frame(snap@estimate),
               mean_hrs_work= data.frame(mean_hrs_work@estimate),
-              med_earn= data.frame(t(med_earn@estimate[, c(1,4,5,7:9,11:14, 16:17,19,21:25,27,28,
-                                                         30:32,34:36)])))
+              med_earn= data.frame(med_earn@estimate[, c(1,4,5,7:9,11:14, 16:17,19,21:25,27,28,
+                                                         30:32,34:36), drop= FALSE]))
   
   se <- list(gini= data.frame(gini@standard.error),
               inc_pc= data.frame(inc_pc@standard.error),
@@ -55,8 +55,8 @@ pull_inc_earnings <- function(endyear, span, geography) {
               vet_status= data.frame(vet_status@standard.error),
               snap= data.frame(snap@standard.error),
               mean_hrs_work= data.frame(mean_hrs_work@standard.error),
-              med_earn= data.frame(t(med_earn@standard.error[, c(1,4,5,7:9,11:14, 16:17,19,21:25,27,28,
-                                                         30:32,34:36)])))
+              med_earn= data.frame(med_earn@standard.error[, c(1,4,5,7:9,11:14, 16:17,19,21:25,27,28,
+                                                         30:32,34:36), drop= FALSE]))
   
   geo <- gini@geography
   
@@ -75,7 +75,7 @@ pull_inc_earnings <- function(endyear, span, geography) {
     "med_inc_m_oth", "med_inc_f", "med_inc_f_FTwork", "med_inc_f_oth")
   
   ### vet_status
-  s <- 4:39; s <- s[!(s %in% c(seq(7,19,3), seq(25,37,3)))]
+  s <- c(7:21, 25:39); s <- s[!(s %in% c(seq(7,19,3), seq(25,37,3)))]
   est$vet_status <- est$vet_status[, c(1:3,s)]
   se$vet_status <- se$vet_status[, c(1:3,s)]
   

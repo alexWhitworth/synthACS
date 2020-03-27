@@ -31,11 +31,11 @@ factor_return <- function(df, prob_name) {
 geo_alphabetize <- function(geo, est, se) {
   ord <- order(geo$NAME)
   if (is.data.frame(est)) {
-    est <- est[ord,]
-    se <- se[ord,]
+    est <- est[ord, , drop= FALSE]
+    se <- se[ord, , drop= FALSE]
   } else {
-    est <- lapply(est, function(l, ord) {return(l[ord,])}, ord= ord)
-    se <- lapply(se, function(l, ord) {return(l[ord,])}, ord= ord)
+    est <- lapply(est, function(l, ord) {return(l[ord, , drop= FALSE])}, ord= ord)
+    se <- lapply(se, function(l, ord) {return(l[ord, , drop= FALSE])}, ord= ord)
   }
   geo <- geo[ord,] 
   return(list(geo= geo, est= est, se= se))

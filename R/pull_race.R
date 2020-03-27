@@ -43,25 +43,25 @@ pull_race_data <- function(endyear, span, geography) {
   
   # 02 -- create lists of EST and SE -- as data.frames
   #----------------------------------------------
-  est <- list(tot_pop= data.frame(race_all@estimate[, c(1:2)]),
-              aa_pop = data.frame(race_aa@estimate[,c(1,2,17)]),
-              nat_pop= data.frame(race_nat@estimate[,c(1,2,17)]),
-              asn_pop= data.frame(race_asian@estimate[,c(1,2,17)]),
-              isl_pop= data.frame(race_isl@estimate[,c(1,2,17)]),
-              oth_pop= data.frame(race_oth@estimate[,c(1,2,17)]),
-              r2_pop = data.frame(race_2p@estimate[,c(1,2,17)]),
-              whi_pop= data.frame(race_white@estimate[,c(1,2,17)]),
-              his_pop= data.frame(race_hisp@estimate[,c(1,2,17)]))
+  est <- list(tot_pop= data.frame(race_all@estimate[, c(1:2), drop= FALSE]),
+              aa_pop = data.frame(race_aa@estimate[,c(1,2,17), drop= FALSE]),
+              nat_pop= data.frame(race_nat@estimate[,c(1,2,17), drop= FALSE]),
+              asn_pop= data.frame(race_asian@estimate[,c(1,2,17), drop= FALSE]),
+              isl_pop= data.frame(race_isl@estimate[,c(1,2,17), drop= FALSE]),
+              oth_pop= data.frame(race_oth@estimate[,c(1,2,17), drop= FALSE]),
+              r2_pop = data.frame(race_2p@estimate[,c(1,2,17), drop= FALSE]),
+              whi_pop= data.frame(race_white@estimate[,c(1,2,17), drop= FALSE]),
+              his_pop= data.frame(race_hisp@estimate[,c(1,2,17), drop= FALSE]))
   
-  se <- list(tot_pop= data.frame(race_all@standard.error[, c(1:2)]),
-              aa_pop = data.frame(race_aa@standard.error[,c(1,2,17)]),
-              nat_pop= data.frame(race_nat@standard.error[,c(1,2,17)]),
-              asn_pop= data.frame(race_asian@standard.error[,c(1,2,17)]),
-              isl_pop= data.frame(race_isl@standard.error[,c(1,2,17)]),
-              oth_pop= data.frame(race_oth@standard.error[,c(1,2,17)]),
-              r2_pop = data.frame(race_2p@standard.error[,c(1,2,17)]),
-              whi_pop= data.frame(race_white@standard.error[,c(1,2,17)]),
-              his_pop= data.frame(race_hisp@standard.error[,c(1,2,17)]))
+  se <- list(tot_pop= data.frame(race_all@standard.error[, c(1:2), drop= FALSE]),
+              aa_pop = data.frame(race_aa@standard.error[,c(1,2,17), drop= FALSE]),
+              nat_pop= data.frame(race_nat@standard.error[,c(1,2,17), drop= FALSE]),
+              asn_pop= data.frame(race_asian@standard.error[,c(1,2,17), drop= FALSE]),
+              isl_pop= data.frame(race_isl@standard.error[,c(1,2,17), drop= FALSE]),
+              oth_pop= data.frame(race_oth@standard.error[,c(1,2,17), drop= FALSE]),
+              r2_pop = data.frame(race_2p@standard.error[,c(1,2,17), drop= FALSE]),
+              whi_pop= data.frame(race_white@standard.error[,c(1,2,17), drop= FALSE]),
+              his_pop= data.frame(race_hisp@standard.error[,c(1,2,17), drop= FALSE]))
   
   geo <- race_all@geography
   
@@ -69,7 +69,7 @@ pull_race_data <- function(endyear, span, geography) {
   
   # 03 -- combine columns
   #----------------------------------------------
-  est <- as.data.frame(t(unlist(est))); se <- as.data.frame(t(unlist(se)))
+  est <- data.frame(do.call("cbind", est)); se <- data.frame(do.call("cbind", se))
   est <- est[, c(1:2, seq(3,26,3), seq(4,26,3), seq(5,26,3))]
   se <-  se[, c(1:2, seq(3,26,3), seq(4,26,3), seq(5,26,3))]
   

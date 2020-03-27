@@ -39,17 +39,22 @@ pull_geo_mobility <- function(endyear, span, geography) {
   geo_by_inc <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B07010", col.names= "pretty")
   
-  est <- list(by_age= data.frame(t(geo_by_age@estimate[, c(1,17:dim(geo_by_age@estimate)[[2]])])),
-              by_sex= data.frame(t(geo_by_sex@estimate[, c(1,4:dim(geo_by_sex@estimate)[[2]])])),
-              by_mar= data.frame(t(geo_by_mar@estimate[, c(1,7:dim(geo_by_mar@estimate)[[2]])])),
-              by_edu= data.frame(t(geo_by_edu@estimate[, c(1,7:dim(geo_by_edu@estimate)[[2]])])),
-              by_inc= data.frame(t(geo_by_inc@estimate[, c(1,12:dim(geo_by_inc@estimate)[[2]])])))
+  est <- list(by_age= data.frame(geo_by_age@estimate[, c(1,17:dim(geo_by_age@estimate)[[2]]), drop= FALSE]),
+              by_sex= data.frame(geo_by_sex@estimate[, c(1,4:dim(geo_by_sex@estimate)[[2]]), drop= FALSE]),
+              by_mar= data.frame(geo_by_mar@estimate[, c(1,7:dim(geo_by_mar@estimate)[[2]]), drop= FALSE]),
+              by_edu= data.frame(geo_by_edu@estimate[, c(1,7:dim(geo_by_edu@estimate)[[2]]), drop= FALSE]),
+              by_inc= data.frame(geo_by_inc@estimate[, c(1,12:dim(geo_by_inc@estimate)[[2]]), drop= FALSE]))
   
-  se <- list(by_age= data.frame(t(geo_by_age@standard.error[, c(1,17:dim(geo_by_age@standard.error)[[2]])])),
-             by_sex= data.frame(t(geo_by_sex@standard.error[, c(1,4:dim(geo_by_sex@standard.error)[[2]])])),
-             by_mar= data.frame(t(geo_by_mar@standard.error[, c(1,7:dim(geo_by_mar@standard.error)[[2]])])),
-             by_edu= data.frame(t(geo_by_edu@standard.error[, c(1,7:dim(geo_by_edu@standard.error)[[2]])])),
-             by_inc= data.frame(t(geo_by_inc@standard.error[, c(1,12:dim(geo_by_inc@standard.error)[[2]])])))
+  se <- list(by_age= data.frame(geo_by_age@standard.error[, c(1,17:dim(geo_by_age@standard.error)[[2]]), 
+                                                          drop= FALSE]),
+             by_sex= data.frame(geo_by_sex@standard.error[, c(1,4:dim(geo_by_sex@standard.error)[[2]]), 
+                                                          drop= FALSE]),
+             by_mar= data.frame(geo_by_mar@standard.error[, c(1,7:dim(geo_by_mar@standard.error)[[2]]), 
+                                                          drop= FALSE]),
+             by_edu= data.frame(geo_by_edu@standard.error[, c(1,7:dim(geo_by_edu@standard.error)[[2]]), 
+                                                          drop= FALSE]),
+             by_inc= data.frame(geo_by_inc@standard.error[, c(1,12:dim(geo_by_inc@standard.error)[[2]]), 
+                                                          drop= FALSE]))
   
   geo <- geo_by_age@geography
   

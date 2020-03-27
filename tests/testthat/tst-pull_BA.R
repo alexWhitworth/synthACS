@@ -6,7 +6,7 @@ context("pull_bachelors")
 
 test_that("errors work", {
   # create test geography
-  ca_counties <- geo.make(state= 'CA', county= '*')
+  ca_counties <- acs::geo.make(state= 'CA', county= '*')
   diamonds <- data.frame(
     carat= rexp(100),
     cut= factor(sample(c("A", "B", "C"), size= 100, replace= TRUE)),
@@ -31,7 +31,7 @@ test_that("errors work", {
 
 test_that("returns results accurately - counties", {
   # create test geography and data
-  ca_geo <- geo.make(state= 'CA', county= 'Los Angeles')
+  ca_geo <- acs::geo.make(state= 'CA', county= 'Los Angeles')
   ca_dat <- pull_bachelors(2016, 5, ca_geo)
   # test:
   synthACS:::confirm_macroACS_class(ca_dat)
@@ -39,9 +39,13 @@ test_that("returns results accurately - counties", {
 
 test_that("returns results accurately - state", {
   # create test geography and data
-  ca_geo <- geo.make(state= "CA")
-  ca_dat <- pull_bachelors(2012, 5, ca_geo)
+  ca_geo <- acs::geo.make(state= "CA")
+  ca_dat <- pull_bachelors(2016, 5, ca_geo)
+  # test:
+  synthACS:::confirm_macroACS_class(ca_dat)
   
+  ca_geo <- acs::geo.make(state= "CA", county= '*')
+  ca_dat <- pull_bachelors(2016, 5, ca_geo)
   # test:
   synthACS:::confirm_macroACS_class(ca_dat)
 })

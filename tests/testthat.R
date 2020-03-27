@@ -1,4 +1,5 @@
 library(testthat)
+library(acs)
 library(synthACS)
 library(data.table)
 # test_check("synthACS")

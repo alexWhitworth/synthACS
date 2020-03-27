@@ -35,16 +35,16 @@ pull_edu <- function(endyear, span, geography) {
 #   edu_internet <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
 #                             table.number = "B28006", col.names= "pretty")
   
-  est <- list(edu_enroll= data.frame(t(edu_enroll@estimate[,-2])),
-              enroll_details= data.frame(t(enroll_details@estimate[, -c(2,30)])),
-              edu_attain18= data.frame(t(edu_attain18@estimate[,-c(2,43)])),
-              edu_attain25= data.frame(t(edu_attain25@estimate[, -c(2,19)]))) #,
+  est <- list(edu_enroll= data.frame(edu_enroll@estimate[,-2, drop= FALSE]),
+              enroll_details= data.frame(enroll_details@estimate[, -c(2,30), drop= FALSE]),
+              edu_attain18= data.frame(edu_attain18@estimate[,-c(2,43), drop= FALSE]),
+              edu_attain25= data.frame(edu_attain25@estimate[, -c(2,19), drop= FALSE])) #,
               # deg_major25= data.frame(deg_major25@estimate)))
   
-  se <- list(edu_enroll= data.frame(t(edu_enroll@standard.error[,-2])),
-              enroll_details= data.frame(t(enroll_details@standard.error[, -c(2,30)])),
-              edu_attain18= data.frame(t(edu_attain18@standard.error[,-c(2,43)])),
-              edu_attain25= data.frame(t(edu_attain25@standard.error[, -c(2,19)])))
+  se <- list(edu_enroll= data.frame(edu_enroll@standard.error[,-2, drop= FALSE]),
+              enroll_details= data.frame(enroll_details@standard.error[, -c(2,30), drop= FALSE]),
+              edu_attain18= data.frame(edu_attain18@standard.error[,-c(2,43), drop= FALSE]),
+              edu_attain25= data.frame(edu_attain25@standard.error[, -c(2,19), drop= FALSE]))
   
   geo <- edu_enroll@geography
   

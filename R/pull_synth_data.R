@@ -14,7 +14,7 @@
 #' la_geo <- acs::geo.make(state= "CA", county= "Los Angeles")
 #' # pull data 
 #' la_dat <- pull_acs_basetables(endyear= 2015, span= 1, geography= la_geo, 
-#'   table_vec= c("B00001", "B00002", "B01003"))
+#'   table_vec= c("B01001", "B01002", "B01003"))
 #' }
 pull_acs_basetables <- function(endyear, span, geography, table_vec) {
   check_geo_inputs(endyear, span, geography)
@@ -105,8 +105,10 @@ pull_synth_data <- function(endyear, span, geography) {
               nativity= data.frame(nativity@estimate),
               by_inc_12mo= data.frame(by_inc_12mo@estimate),
               # geo_mob_mar_stat= data.frame(geo_mob_mar_stat@estimate[, c(1,7:dim(geo_mob_mar_stat@estimate)[[2]])]),
-              geo_mob_edu= data.frame(geo_mob_edu@estimate[, c(1,7:dim(geo_mob_edu@estimate)[[2]])]),
-              ind_inc= data.frame(geo_mob_inc@estimate[, 1:11]),
+              geo_mob_edu= data.frame(
+                geo_mob_edu@estimate[, c(1,7:dim(geo_mob_edu@estimate)[[2]]), drop= FALSE]
+              ),
+              ind_inc= data.frame(geo_mob_inc@estimate[, 1:11, drop= FALSE]),
               emp_status= data.frame(emp_status@estimate),
               pov_status1= data.frame(pov_status1@estimate)) #,
               # pov_status2= data.frame(pov_status2@estimate))
@@ -118,8 +120,10 @@ pull_synth_data <- function(endyear, span, geography) {
              nativity= data.frame(nativity@standard.error),
              by_inc_12mo= data.frame(by_inc_12mo@standard.error),
              # geo_mob_mar_stat= data.frame(geo_mob_mar_stat@standard.error[, c(1,7:dim(geo_mob_mar_stat@standard.error)[[2]])]),
-             geo_mob_edu= data.frame(geo_mob_edu@standard.error[, c(1,7:dim(geo_mob_edu@standard.error)[[2]])]),
-             ind_inc= data.frame(geo_mob_inc@standard.error[,1:11]),
+             geo_mob_edu= data.frame(
+               geo_mob_edu@standard.error[, c(1,7:dim(geo_mob_edu@standard.error)[[2]]), drop= FALSE]
+             ),
+             ind_inc= data.frame(geo_mob_inc@standard.error[,1:11, drop= FALSE]),
              emp_status= data.frame(emp_status@standard.error),
              pov_status1= data.frame(pov_status1@standard.error)) #,
              # pov_status2= data.frame(pov_status2@standard.error))

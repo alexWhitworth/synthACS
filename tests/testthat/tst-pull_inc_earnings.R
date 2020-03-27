@@ -42,7 +42,11 @@ test_that("returns results accurately - state", {
   # create test geography and data
   ca_geo <- geo.make(state= "CA")
   ca_dat <- pull_inc_earnings(2016, 5, ca_geo)
-  
+  # test:
+  synthACS:::confirm_macroACS_class(ca_dat)
+  # create test geography and data
+  ca_geo <- geo.make(state= "CA", county= "*")
+  ca_dat <- pull_inc_earnings(2016, 5, ca_geo)
   # test:
   synthACS:::confirm_macroACS_class(ca_dat)
 })

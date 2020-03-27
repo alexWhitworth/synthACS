@@ -41,8 +41,13 @@ test_that("returns results accurately - counties", {
 test_that("returns results accurately - state", {
   # create test geography and data
   ca_geo <- geo.make(state= "CA")
-  ca_dat <- pull_race_data(2012, 5, ca_geo)
+  ca_dat <- pull_race_data(2014, 5, ca_geo)
+  # test:
+  synthACS:::confirm_macroACS_class(ca_dat)
   
+  # create test geography and data
+  ca_geo <- geo.make(state= "CA", county= '*')
+  ca_dat <- pull_race_data(2014, 5, ca_geo)
   # test:
   synthACS:::confirm_macroACS_class(ca_dat)
 })
