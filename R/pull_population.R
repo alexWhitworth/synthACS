@@ -46,7 +46,7 @@ pull_population <- function(endyear, span, geography) {
   #----------------------------------------------
   est <- list(age_by_sex= data.frame(age_by_sex@estimate),
               med_age= data.frame(med_age@estimate),
-              pop_by_race= data.frame(t(pop_by_race@estimate[, c(1:7)])),
+              pop_by_race= data.frame(pop_by_race@estimate[, c(1:7), drop= FALSE]),
               birth_and_language= data.frame(birth_and_language@estimate),
               by_marital_status= data.frame(by_marital_status@estimate),
               by_edu= data.frame(by_edu@estimate),
@@ -56,7 +56,7 @@ pull_population <- function(endyear, span, geography) {
   
   se <- list(age_by_sex= data.frame(age_by_sex@standard.error),
              med_age= data.frame(med_age@standard.error),
-             pop_by_race= data.frame(t(pop_by_race@standard.error[, c(1:7)])),
+             pop_by_race= data.frame(pop_by_race@standard.error[, c(1:7), drop= FALSE]),
              birth_and_language= data.frame(birth_and_language@standard.error),
              by_marital_status= data.frame(by_marital_status@standard.error),
              by_edu= data.frame(by_edu@standard.error),
