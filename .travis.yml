@@ -4,7 +4,7 @@ cache:
   packages: true
 
 repos:
-  CRAN: https://cran.cnr.berkeley.edu/
+  CRAN: https://cloud.r-project.org
 
 notifications:
   email:
