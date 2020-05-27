@@ -1,6 +1,7 @@
 language: r
 warnings_are_errors: true
-cache: packages
+cache: 
+  packages: true
 
 repos:
   CRAN: https://cran.cnr.berkeley.edu/
@@ -13,8 +14,6 @@ notifications:
 service_name: travis-pro
 repo_token: mYAwUYufK46TBtlMOSzFxN2RB96dK7nOM
 
-r_github_packages:
-  - jimhester/covr
 
 after_success:
   - Rscript -e 'covr::codecov()'
