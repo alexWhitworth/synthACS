@@ -3,7 +3,7 @@
 library(testthat)
 library(synthACS)
 
-context("derive synthetic microdata for geography set")
+context("CRAN - derive synthetic microdata for geography set")
 
 test_that("disaggregate_md works", {
   # load geography data, run disaggregation
@@ -31,32 +31,4 @@ test_that("error checking", {
   
   expect_error(derive_synth_datasets(ca_dat, parallel= TRUE, leave_cores= -1L))
   expect_error(derive_synth_datasets(ca_dat, parallel= TRUE, leave_cores= 2.5))
-})
-
-
-test_that("get correct results", {
-  # comment out either parallel == TRUE or FALSE for testing purposes
-  ## parallel == FALSE
-  # syn <- derive_synth_datasets(ca_dat, parallel= FALSE)
-  
-  ## parallel == TRUE
-  syn <- derive_synth_datasets(ca_dat, parallel= TRUE)
-  
-  # test class, structure, dimensions, etc
-  expect_equal(class(syn), c("synthACS","list"))
-  expect_true(is.synthACS(syn))
-  expect_true(all(unlist(lapply(syn, is.macro_micro))))
-  expect_equal(nrow(ca_dat$estimates[[1]]), length(syn))
-  expect_true(all(unlist(lapply(syn, length)) == 2))
-  expect_true(all(unlist(lapply(syn, function(l) ncol(l[[2]]))) == length(ca_dat$estimates) + 1))
-  expect_true(all.equal(lapply(syn, function(l) names(l[[2]])),
-               replicate(length(syn), 
-                 c("age", "gender", "marital_status", "edu_attain", "emp_status", "nativity", 
-                   "pov_status", "geog_mobility", "ind_income", "race", "p"), simplify=FALSE), 
-               check.attributes= FALSE))
-  
-  # test total probabilities
-  expect_true(all.equal(unlist(lapply(syn, function(l) sum(l[[2]]$p))), rep(1,58), 
-                        tolerance= 1e-14, check.attributes= FALSE))
-  
 })

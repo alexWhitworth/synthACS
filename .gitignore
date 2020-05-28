@@ -4,8 +4,7 @@ doc
 .Rhistory
 .RData
 /tests/testthat/build_test_dat1.R
-/tests/testthat/acsdat.Rdata
-/tests/testthat/par_sim_anneal.Rdata
-/tests/testthat/towork.rda
+/tests/testthat/dat-test_micro.xz
+/tests/testthat/dat-par_sim_anneal.Rdata
 inst/doc
 .travis.yml.save

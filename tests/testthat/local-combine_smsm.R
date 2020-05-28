@@ -9,6 +9,11 @@ context("combine smsm_set objects")
 #------------------------------------------------------------------------------
 
 test_that("expected errors and warnings are generated", {
+  #-------------------------------
+  testthat::skip_on_cran()
+  testthat::skip_on_covr()
+  testthat::skip_on_travis()
+  #-------------------------------
   # create smsm_set object 
   cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a_par, macro_micro= syn)
   cll <- all_geogs_add_constraint(attr_name= "gender", attr_total_list= g_par, macro_micro= syn, constraint_list_list= cll)
@@ -68,7 +73,12 @@ test_that("expected errors and warnings are generated", {
 })
 
 test_that("returns correctly", {
- # create smsm_set object 
+  #-------------------------------
+  testthat::skip_on_cran()
+  testthat::skip_on_covr()
+  testthat::skip_on_travis()
+  #-------------------------------
+  # create smsm_set object 
   cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a_par, macro_micro= syn)
   cll <- all_geogs_add_constraint(attr_name= "gender", attr_total_list= g_par, macro_micro= syn, constraint_list_list= cll)
   cll <- all_geogs_add_constraint(attr_name= "edu_attain", attr_total_list= e_par, macro_micro= syn, constraint_list_list= cll)

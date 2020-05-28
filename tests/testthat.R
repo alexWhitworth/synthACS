@@ -1,9 +1,16 @@
-library(testthat)
+library(data.table)
 library(acs)
 library(synthACS)
-library(data.table)
-# test_check("synthACS")
+library(testthat)
 
+test_check("synthACS")
+
+# LOAD ALL TEST DATA
+#------------------------------------------------
+load("dat-acsdat.Rda")
+load("dat-towork.rda")
+# load("./tests/testthat/dat-test_micro.xz")
+# load("./tests/testthat/dat-par_sim_anneal.Rdata")
 
 # MAKE TEST DATA
 #------------------------------------------------
@@ -13,8 +20,3 @@ library(data.table)
 # save.image("./synthACS/tests/testthat/acsdat.Rdata")
 # towork.Rda == object transit_work from paper
 
-# LOAD ALL TEST DATA
-#------------------------------------------------
-# load("./synthACS/tests/testthat/acsdat.Rdata")
-# load("./synthACS/tests/testthat/par_sim_anneal.Rdata")
-# load("./synthACS/tests/testthat/towork.rda")
