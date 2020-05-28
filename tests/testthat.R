@@ -5,10 +5,8 @@ library(testthat)
 
 test_check("synthACS")
 
-# LOAD ALL TEST DATA
+# LOAD TEST DATA FOR LOCAL TESTS
 #------------------------------------------------
-load("dat-acsdat.Rda")
-load("dat-towork.rda")
 # load("./tests/testthat/dat-test_micro.xz")
 # load("./tests/testthat/dat-par_sim_anneal.Rdata")
 
