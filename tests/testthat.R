@@ -3,7 +3,7 @@ library(acs)
 library(synthACS)
 library(testthat)
 
-test_check("synthACS")
+# test_check("synthACS")
 
 # LOAD TEST DATA FOR LOCAL TESTS
 #------------------------------------------------

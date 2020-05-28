@@ -202,7 +202,7 @@ test_that("TAE ouptuts appropriately - no iterations", {
                            constraint_list= c_list)
   c_list <- add_constraint(attr_name= "gender", attr_totals= g, micro_data= test_micro,
                            constraint_list= c_list)
-  c_list <- c_list <- add_constraint(attr_name= "nativity", attr_totals= n, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "nativity", attr_totals= n, micro_data= test_micro,
                                      constraint_list= c_list)
   # sample data and run
   set.seed(235L)

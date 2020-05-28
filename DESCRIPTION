@@ -8,7 +8,7 @@ Description: Provides access to curated American Community Survey (ACS) base tab
   annealing.  SMSM is conducted in parallel by default. Lastly, we provide functionality for
   data-extensibility of micro-datasets.
 Depends:
-    R (>= 3.2.3)
+    R (>= 3.5.0)
 Imports:
     data.table (>= 1.9.6),
     Rcpp,
@@ -18,8 +18,6 @@ LazyData: true
 Suggests:
     testthat,
     sp (>= 1.2),
-    leaflet (>= 1.0),
-    shiny (>= 0.13),
     knitr,
     rmarkdown,
     R.rsp

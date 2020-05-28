@@ -8,3 +8,4 @@ doc
 /tests/testthat/dat-par_sim_anneal.Rdata
 inst/doc
 .travis.yml.save
+.DS_Store
