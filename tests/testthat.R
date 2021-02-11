@@ -3,11 +3,11 @@ library(acs)
 library(synthACS)
 library(testthat)
 
-# test_check("synthACS")
+test_check("synthACS")
 
 # LOAD TEST DATA FOR LOCAL TESTS
 #------------------------------------------------
-# load("./tests/testthat/dat-test_micro.xz")
+# load("./synthACS/tests/testthat/dat-test_micro.xz")
 # load("./tests/testthat/dat-par_sim_anneal.Rdata")
 
 # MAKE TEST DATA

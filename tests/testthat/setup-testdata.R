@@ -1,7 +1,9 @@
 
-load(system.file("testdata", 'dat-acsdata.Rda', package= "synthACS"))
-# load("/Users/alexwhitworth/github_projects/synthACS/inst/testdata/dat-acsdata.Rda")
-# devtools::load_all() imported
+# load(system.file("testdata", 'dat-acsdata.Rda', package= "synthACS"))
+ca_dat <- readRDS(file= system.file("testdata", 'dat-cadat.rds', package= "synthACS"))
+towork <- readRDS(file= system.file("testdata", 'dat-towork.rds', package= "synthACS"))
+test_macro <- readRDS(file= system.file("testdata", 'dat-testmacro.rds', package= "synthACS"))
+
 
 
 ## constraint lists

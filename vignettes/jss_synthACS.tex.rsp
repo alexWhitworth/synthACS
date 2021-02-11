@@ -112,7 +112,7 @@ categorized into two stages: collecting, or synthetically generating, micro data
 micro data to the macro, or aggregate, data constraining tables.\footnote{From this point forward, we 
 will use the term `micro data' to indicate the sample of low level data on individuals and the term 
 `macro data' to indicate the aggregate constraining tables for each small area.} The only open source
-spatial microsimiulation software that we is aware of is \pkg{sms} \cite{sms}. \pkg{sms} 
+spatial microsimiulation software that we are aware of is \pkg{sms} \cite{sms}. \pkg{sms} 
 includes tools for conducting SMSM with user-provided micro and macro datasets. \pkg{sms} performs 
 optimization between the micro and macro data using either hill-climbing or simulated annealing algorithms.
 
