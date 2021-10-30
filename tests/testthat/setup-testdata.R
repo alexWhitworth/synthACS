@@ -1,8 +1,11 @@
 
 # load(system.file("testdata", 'dat-acsdata.Rda', package= "synthACS"))
-ca_dat <- readRDS(file= system.file("testdata", 'dat-cadat.rds', package= "synthACS"))
-towork <- readRDS(file= system.file("testdata", 'dat-towork.rds', package= "synthACS"))
-test_macro <- readRDS(file= system.file("testdata", 'dat-testmacro.rds', package= "synthACS"))
+ca_dat <- readRDS(file= system.file("tests", "testdata", 'dat-cadat.rds'
+                                    , package= "synthACS"))
+towork <- readRDS(file= system.file("tests", "testdata", 'dat-towork.rds'
+                                    , package= "synthACS"))
+test_macro <- readRDS(file= system.file("tests", "testdata", 'dat-testmacro.rds'
+                                        , package= "synthACS"))
 
 
 
