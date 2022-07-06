@@ -16,8 +16,9 @@ test_check("synthACS")
 
 # LOAD TEST DATA FOR LOCAL TESTS
 #------------------------------------------------
-# load("./synthACS/tests/testthat/dat-test_micro.xz")
+# below file is ~69 mb; saved on dropbox. Must port to local install
 # load("./tests/testthat/dat-par_sim_anneal.Rdata")
+
 
 # MAKE TEST DATA
 #------------------------------------------------

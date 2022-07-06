@@ -561,7 +561,8 @@ test_that("can add extra attributes in parallel (DF)", {
   expect_true( all(unlist(lapply(syn, function(l) is.data.frame(l[[2]])))) )
   
   # test ouput probabilities
-  expect_true(all(unlist(lapply(syn, function(l) sum(l[[2]]$p) == 1))))
+  pr <- unlist(lapply(syn, function(l) sum(l[[2]]$p)))
+  expect_true(all.equal(pr, rep(1, length(pr)), tolerance = 1e-08))
   expect_equal(lapply(syn, function(l) {tapply(l[[2]]$p, l[[2]]$gender, sum)}),
                lapply(df_list, function(l) {tapply(l$p, l$gender, sum)}))
   expect_equal(lapply(syn, function(l) {tapply(l[[2]]$p, l[[2]]$pov, sum)}),
@@ -602,7 +603,8 @@ test_that("can add extra attributes in parallel (DT)", {
   expect_true( all(unlist(lapply(syn, function(l) is.data.frame(l[[2]])))) )
   
   # test ouput probabilities
-  expect_true(all(unlist(lapply(syn, function(l) sum(l[[2]]$p) == 1))))
+  pr <- unlist(lapply(syn, function(l) sum(l[[2]]$p)))
+  expect_true(all.equal(pr, rep(1, length(pr)), tolerance = 1e-08))
   expect_equal(lapply(syn, function(l) {tapply(l[[2]]$p, l[[2]]$gender, sum)}),
                lapply(df_list, function(l) {tapply(l$p, l$gender, sum)}))
   expect_equal(lapply(syn, function(l) {tapply(l[[2]]$p, l[[2]]$pov, sum)}),
