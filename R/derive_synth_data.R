@@ -25,9 +25,10 @@
 #' This function provides a synthetic population with the following characteristics as well as each 
 #' synthetic individual's probability of inclusion. The included characteristics are: age, gender, 
 #' marital status, educational attainment, employment status, nativity, poverty status, geographic 
-#' mobility in the prior year, individual income, and race. **Note** that these are INDIVIDUAL attributes; 
-#' they are not at the HOUSEHOLD level. Additional attributes which interest the user may be added 
-#' in a similar manner via \code{\link{synthetic_new_attribute}}.
+#' mobility in the prior year, individual income, and race. Additional attributes which interest the 
+#' user may be added in a similar manner via \code{\link{synthetic_new_attribute}}.
+#' 
+#' **Note:** INDIVIDUAL, not HOUSEHOLD level, synthetic population datasets are created.
 #' 
 #' @param macro_data A macro dataset list: the result of \code{\link{pull_synth_data}}.
 #' @param parallel Logical, defaults to \code{TRUE}. Do you wish to run the operation in

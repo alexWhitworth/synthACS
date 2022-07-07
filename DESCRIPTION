@@ -21,7 +21,7 @@ Suggests:
     knitr,
     rmarkdown,
     R.rsp
-RoxygenNote: 7.1.0
+RoxygenNote: 7.2.0
 Encoding: UTF-8
 LinkingTo: Rcpp
 VignetteBuilder: knitr, R.rsp

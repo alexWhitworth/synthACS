@@ -89,8 +89,14 @@ validate_get_inputs <- function(acs, geography, dataset= c("estimate", "st.err")
   if (!is.character(geography)) {
     stop("geography must be specified as a character vector.")
   } else {
-    if (geography != "*" && any(nchar(geography) < 4)) 
-      stop("Please specify at least 4 characters for geography.")
+    if (length(geography) == 1L) {
+        if (all(geography != "*", nchar(geography < 4))) {
+            stop("Please specify at least 4 characters for geography.")
+        }
+        else if (all(any(geography != "*"), any(nchar(geography) < 4))) {
+            stop("Please specify at least 4 characters for geography.")
+        }
+    } 
   }
   # if no error, okay
 }
@@ -435,6 +441,7 @@ all_geog_constraint_marital_status.synthACS <- function(obj, method= c("syntheti
       
       constr_vec <- c("never_mar"= nv_mar + pop_u15, "married"= mar, "mar_apart"=mar_apart, 
                       "widowed"= wid, "divorced"= div)
+      constr_vec <- constr_vec[order(names(constr_vec))]
       return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
     })
   }
