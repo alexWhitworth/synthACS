@@ -13,7 +13,7 @@ A \code{data.frame} with 612 observations and 3 variables.
 }
 }
 \source{
-\url{http://www.cdc.gov/nchs/nvss/births.htm}
+\url{https://www.cdc.gov/nchs/nvss/births.htm}
 }
 \usage{
 stateFR

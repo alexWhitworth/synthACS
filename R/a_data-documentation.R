@@ -24,7 +24,7 @@
 #' \item{Beginning in 1997, birth rates for age group 45up by relating births to all women age 45 or
 #' older to this group. Prior to 1997, only births to women age 45-49 were included.} 
 #' }
-#' @source \url{http://www.cdc.gov/nchs/nvss/births.htm}
+#' @source \url{https://www.cdc.gov/nchs/nvss/births.htm}
 #' @references Hamilton, Brady E., et al. "Births: final data for 2014." National Vital Statistics 
 #' Reports 64.12 (2015): 1-64.
 "BR2014"
@@ -44,7 +44,7 @@
 #' @section Details:
 #' The Total Fertility Rate is defined as the sums of the birth rates for the 5-year age groups
 #' found in \code{\link{BR2014}} multiplied by 5. 
-#' @source \url{http://www.cdc.gov/nchs/nvss/births.htm}
+#' @source \url{https://www.cdc.gov/nchs/nvss/births.htm}
 #' @references Hamilton, Brady E., et al. "Births: final data for 2014." National Vital Statistics 
 #' Reports 64.12 (2015): 1-64.
 "TFR"
@@ -74,7 +74,7 @@
 #'  \item{Race and Hispanic origin are reported separately on birth certificates. Persons of Hispanic
 #'  origin may be of any race.}
 #' }
-#' @source \url{http://www.cdc.gov/nchs/nvss/births.htm}
+#' @source \url{https://www.cdc.gov/nchs/nvss/births.htm}
 #' @references Hamilton, Brady E., et al. "Births: final data for 2014." National Vital Statistics 
 #' Reports 64.12 (2015): 1-64.
 "MBR"
@@ -98,7 +98,7 @@
 #'  \item{Data is missing (eg. \code{NA}) when data does not meet standards of reliability or percision; 
 #'  birth rates based on fewer than 20 births.}
 #' }
-#' @source \url{http://www.cdc.gov/nchs/nvss/births.htm}
+#' @source \url{https://www.cdc.gov/nchs/nvss/births.htm}
 #' @references Hamilton, Brady E., et al. "Births: final data for 2014." National Vital Statistics 
 #' Reports 64.12 (2015): 1-64.
 "stateFR"
@@ -125,7 +125,7 @@
 #' \item{Populations are based on census counts enumerated as of April 1 of the census year and estimated
 #' as of July 1 for non-census years.}
 #' }
-#' @source \url{http://www.cdc.gov/nchs/nvss/deaths.htm}
+#' @source \url{https://www.cdc.gov/nchs/nvss/deaths.htm}
 #' @references Xu, J. Q., S. L. Murphy, and K. D. Kochanek. "Deaths: final data for 2013." National 
 #' Vital Statistics Reports 64.2 (2015).
 "rawDR"
@@ -151,7 +151,7 @@
 #' \item{Populations are based on census counts enumerated as of April 1 of the census year and estimated
 #' as of July 1 for non-census years.}
 #' }
-#' @source \url{http://www.cdc.gov/nchs/nvss/deaths.htm}
+#' @source \url{https://www.cdc.gov/nchs/nvss/deaths.htm}
 #' @references Xu, J. Q., S. L. Murphy, and K. D. Kochanek. "Deaths: final data for 2013." National 
 #' Vital Statistics Reports 64.2 (2015).
 "adjDR"
@@ -169,7 +169,7 @@
 #'  \item{life_expectancy}{The life expectancy for an individual at the exact age with the given 
 #'  race and gender.}
 #' }
-#' @source \url{http://www.cdc.gov/nchs/nvss/deaths.htm}
+#' @source \url{https://www.cdc.gov/nchs/nvss/deaths.htm}
 #' @references Xu, J. Q., S. L. Murphy, and K. D. Kochanek. "Deaths: final data for 2013." National 
 #' Vital Statistics Reports 64.2 (2015).
 "LifeExp"
@@ -190,7 +190,7 @@
 #' \itemize{
 #' \item{The death rate is defined as deaths per 100,000 population.} 
 #' }
-#' @source \url{http://www.cdc.gov/nchs/nvss/deaths.htm}
+#' @source \url{https://www.cdc.gov/nchs/nvss/deaths.htm}
 #' @references Xu, J. Q., S. L. Murphy, and K. D. Kochanek. "Deaths: final data for 2013." National 
 #' Vital Statistics Reports 64.2 (2015).
 "AgeRaceDR"

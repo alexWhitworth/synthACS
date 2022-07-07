@@ -8,7 +8,7 @@
 #' @param table_vec A \code{character} vector specifying ACS base tables.
 #' @return A \code{'macroACS'} class object
 #' @export
-#' @references \url{https://www.census.gov/programs-surveys/acs/technical-documentation/summary-file-documentation.html}
+#' @references \url{https://data.census.gov/cedsci/}
 #' @examples \dontrun{
 #' # make geography
 #' la_geo <- acs::geo.make(state= "CA", county= "Los Angeles")

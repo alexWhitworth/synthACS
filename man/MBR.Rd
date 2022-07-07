@@ -22,7 +22,7 @@ A \code{data.frame} with 110 observations and 8 variables.
 }
 }
 \source{
-\url{http://www.cdc.gov/nchs/nvss/births.htm}
+\url{https://www.cdc.gov/nchs/nvss/births.htm}
 }
 \usage{
 MBR

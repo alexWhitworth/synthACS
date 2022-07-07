@@ -17,7 +17,7 @@ A \code{data.frame} with 396 observations and 4 variables.
 }
 }
 \source{
-\url{http://www.cdc.gov/nchs/nvss/deaths.htm}
+\url{https://www.cdc.gov/nchs/nvss/deaths.htm}
 }
 \usage{
 LifeExp

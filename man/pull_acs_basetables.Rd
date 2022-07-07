@@ -33,5 +33,5 @@ la_dat <- pull_acs_basetables(endyear= 2015, span= 1, geography= la_geo,
 }
 }
 \references{
-\url{https://www.census.gov/programs-surveys/acs/technical-documentation/summary-file-documentation.html}
+\url{https://data.census.gov/cedsci/}
 }

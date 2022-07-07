@@ -17,7 +17,7 @@ A \code{data.frame} with 1,750 observations and 4 variables.
 }
 }
 \source{
-\url{http://www.cdc.gov/nchs/nvss/births.htm}
+\url{https://www.cdc.gov/nchs/nvss/births.htm}
 }
 \usage{
 BR2014
