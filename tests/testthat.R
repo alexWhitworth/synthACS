@@ -4,15 +4,15 @@ library(synthACS)
 library(testthat)
 
 # load(system.file("testdata", 'dat-acsdata.Rda', package= "synthACS"))
-ca_dat <- readRDS(file= system.file("tests", "testdata", 'dat-cadat.rds'
-                                    , package= "synthACS"))
-towork <- readRDS(file= system.file("tests", "testdata", 'dat-towork.rds'
-                                    , package= "synthACS"))
-test_macro <- readRDS(file= system.file("tests", "testdata", 'dat-testmacro.rds'
-                                        , package= "synthACS"))
+# ca_dat <- readRDS(file= system.file("tests", "testdata", 'dat-cadat.rds'
+#                                     , package= "synthACS"))
+# towork <- readRDS(file= system.file("tests", "testdata", 'dat-towork.rds'
+#                                     , package= "synthACS"))
+# test_macro <- readRDS(file= system.file("tests", "testdata", 'dat-testmacro.rds'
+#                                         , package= "synthACS"))
 
 
-test_check("synthACS")
+# test_check("synthACS")
 
 # LOAD TEST DATA FOR LOCAL TESTS
 #------------------------------------------------
