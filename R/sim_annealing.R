@@ -322,3 +322,26 @@ sample_micro <- function(df, size, prob_name) {
   data.table::data.table(df[sample.int(nrow(df), size= size, replace= TRUE, prob= df[[prob_name]]),
                 -which(names(df) == prob_name), with= FALSE])
 }
+
+# retry::retry() wrapper for optimize_microdata to handle transient errors
+optimize_microdata_with_retry <- function(micro_data, prob_name= "p", constraint_list, 
+                                          tolerance= round(sum(constraint_list[[1]]) / 2000 * length(constraint_list), 0),
+                                          resample_size= min(sum(constraint_list[[1]]), max(500, round(sum(constraint_list[[1]]) * .005, 0))), 
+                                          p_accept= 0.40, max_iter= 10000L, 
+                                          seed= sample.int(10000L, size=1, replace=FALSE),
+                                          verbose= TRUE, max_tries= 10L, interval= 0.1) {
+    
+    res <- retry::retry(
+        expr= optimize_microdata(
+            micro_data= micro_data, prob_name= prob_name, constraint_list= constraint_list
+            , tolerance= tolerance
+            , resample_size= resample_size
+            , p_accept= p_accept, max_iter= max_iter
+            , seed= seed, verbose= verbose
+        )
+        , max_tries= max_tries
+        , interval= interval
+        , when = "random error"
+    )
+    return(res)
+}

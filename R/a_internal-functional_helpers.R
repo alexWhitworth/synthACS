@@ -29,14 +29,18 @@ factor_return <- function(df, prob_name) {
 # Needed for consistency as library(acs) does not return consistent dataset ordering across
 # versions
 geo_alphabetize <- function(geo, est, se) {
-  ord <- order(geo$NAME)
   if (is.data.frame(est)) {
-    est <- est[ord, , drop= FALSE]
-    se <- se[ord, , drop= FALSE]
+    est <- geo_alphabetize_df(ord, est)
+    se <- geo_alphabetize_df(ord, se)
   } else {
-    est <- lapply(est, function(l, ord) {return(l[ord, , drop= FALSE])}, ord= ord)
-    se <- lapply(se, function(l, ord) {return(l[ord, , drop= FALSE])}, ord= ord)
+    est <- lapply(est, geo_alphabetize_df, ord= ord)
+    se <- lapply(se, geo_alphabetize_df, ord= ord)
   }
-  geo <- geo[ord,] 
+  geo <- geo[order(geo$NAME), , drop= FALSE] 
   return(list(geo= geo, est= est, se= se))
 }
+
+geo_alphabetize_df <- function(ord, df) {
+    return(df[order(rownames(df)), , drop= FALSE])
+}
+

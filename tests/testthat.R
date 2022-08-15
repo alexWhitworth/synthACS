@@ -25,6 +25,10 @@ library(testthat)
 # library(synthACS)
 # ca_geo <- geo.make(state= 'CA', county= '*')
 # ca_dat <- pull_synth_data(2012, 5, ca_geo)
-# save.image("./synthACS/tests/testthat/acsdat.Rdata")
-# towork.Rda == object transit_work from paper
+# save(ca_dat, file= system.file("tests", "testdata", 'dat-cadat.rds'
+#                                     , package= "synthACS"), version= 3)
 
+# ca_transit <- pull_transit_work(2014, 5, ca_geo)
+# towork <- gen_attr_vectors(ca_transit, "mode_transit_by_age")
+# save(ca_dat, file= system.file("tests", "testdata", 'dat-towork.rds'
+#                                , package= "synthACS"), version= 3)

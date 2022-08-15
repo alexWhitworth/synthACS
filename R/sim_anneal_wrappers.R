@@ -132,13 +132,15 @@ all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_
   else {cl <- parallel::makeCluster(nnodes, type= "FORK")}
   
   parallel::clusterExport(cl, "data.table", envir= as.environment("package:data.table"))
+  parallel::clusterExport(cl, "retry", envir= as.environment("package:retry"))
   
   geography_anneal <- parallel::clusterMap(cl, RECYCLE= TRUE, SIMPLIFY= FALSE, .scheduling= "dynamic",
-                                 fun= optimize_microdata, 
+                                 fun= optimize_microdata_with_retry, 
                                  micro_data= micro_datas, prob_name= prob_name,
                                  constraint_list= constraint_list_list,
                                  p_accept= p_accept, max_iter= max_iter,
-                                 seed= seed, verbose= FALSE)
+                                 seed= seed, verbose= FALSE,
+                                 max_tries= 10L, interval= 0.1)
   
   parallel::stopCluster(cl)
   if (verbose) message("... Optimization complete")

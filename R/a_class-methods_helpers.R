@@ -90,7 +90,7 @@ validate_get_inputs <- function(acs, geography, dataset= c("estimate", "st.err")
     stop("geography must be specified as a character vector.")
   } else {
     if (length(geography) == 1L) {
-        if (all(geography != "*", nchar(geography < 4))) {
+        if (all(geography != "*", nchar(geography) < 4)) {
             stop("Please specify at least 4 characters for geography.")
         }
         else if (all(any(geography != "*"), any(nchar(geography) < 4))) {
@@ -131,9 +131,10 @@ fetch_data.macroACS <- function(acs, geography, dataset= c("estimate", "st.err")
     else if (dataset == "st.err") { return(acs$standard_error[[choice]][rowid, ]) }
     else { stop("input 'dataset' is not valid.") }
   } else {
-    if (dataset == "estimate") { return(acs$estimates[[choice]]) } 
-    else if (dataset == "st.err") { return(acs$standard_error[[choice]]) }
+    if (dataset == "estimate") {res <- acs$estimates[[choice]] } 
+    else if (dataset == "st.err") {res <- acs$standard_error[[choice]]}
     else { stop("input 'dataset' is not valid.") }
+    return(res[order(rownames(res)), ])
   }
 }
 
