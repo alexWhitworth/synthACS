@@ -31,3 +31,8 @@ library(testthat)
 # towork <- gen_attr_vectors(ca_transit, "mode_transit_by_age")
 # save(ca_dat, file= system.file("tests", "testdata", 'dat-towork.rds'
 #                                , package= "synthACS"), version= 3)
+
+# split_ca_dat <- split(ca_dat, n_splits = 7)
+# syn <- derive_synth_datasets(split_ca_dat[[1]], leave_cores = 0)
+# syn <- syn[c(2,4,6,8)]
+# class(syn) <- c("synthACS", "list")

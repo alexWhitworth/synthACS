@@ -69,7 +69,6 @@ synth_data_mar <- function(ag_dat, mar_status_vec) {
   
   dat <- do.call("rbind", ag_list)
   dat <- factor_return(dat, prob_name= "p")
-  dat$age <- stats::relevel(dat$age, ref= 'under15')
   return(list(dat, levels(dat$age)))
 }
 
