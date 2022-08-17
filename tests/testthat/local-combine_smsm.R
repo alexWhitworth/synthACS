@@ -11,7 +11,7 @@ context("combine smsm_set objects")
 
 test_that("expected errors and warnings are generated", {
   #-------------------------------
-  testthat::skip_on_cran()
+  #testthat::skip_on_cran()
   testthat::skip_on_covr()
   testthat::skip_on_travis()
   #-------------------------------
@@ -75,7 +75,7 @@ test_that("expected errors and warnings are generated", {
 
 test_that("returns correctly", {
   #-------------------------------
-  testthat::skip_on_cran()
+  #testthat::skip_on_cran()
   testthat::skip_on_covr()
   testthat::skip_on_travis()
   #-------------------------------
