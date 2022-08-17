@@ -265,7 +265,7 @@ test_that("marginalize_attr correctly", {
   expect_equal(nrow(df2), length(levels(df$gender)))
   expect_equal(nrow(df3), length(levels(df$gender)) * length(levels(df$age)))
   expect_equal(nrow(df4), length(levels(df$pov)))
-  expect_equal(df2[,p], as.vector(tapply(df$p, df$gender, sum)))
+  expect_equal(df2[order(gender),p], as.vector(tapply(df$p, df$gender, sum)))
   expect_equal(df4[,p], as.vector(tapply(df$p, list(df$pov), sum)))
   
   # synthACS

@@ -5,7 +5,7 @@ context("local - derive synthetic microdata for geography set")
 
 test_that("get correct results -- serial", {
   #-------------------------------
-  testthat::skip_on_cran()
+  #testthat::skip_on_cran()
   testthat::skip_on_covr()
   testthat::skip_on_travis()
   #-------------------------------
@@ -27,13 +27,13 @@ test_that("get correct results -- serial", {
   
   # test total probabilities
   expect_true(all.equal(unlist(lapply(syn, function(l) sum(l[[2]]$p))), rep(1,58), 
-                        tolerance= 1e-14, check.attributes= FALSE))
+                        tolerance= 1e-12, check.attributes= FALSE))
   
 })
 
 test_that("get correct results -- parallel", {
   #-------------------------------
-  testthat::skip_on_cran()
+  #testthat::skip_on_cran()
   testthat::skip_on_covr()
   testthat::skip_on_travis()
   #-------------------------------
@@ -55,6 +55,6 @@ test_that("get correct results -- parallel", {
   
   # test total probabilities
   expect_true(all.equal(unlist(lapply(syn, function(l) sum(l[[2]]$p))), rep(1,58), 
-                        tolerance= 1e-14, check.attributes= FALSE))
+                        tolerance= 1e-12, check.attributes= FALSE))
   
 })

@@ -21,3 +21,16 @@ r <- c(asian = 392080, `black, afr amer` = 181728, `hispanic, latino` = 332334,
        `native amer` = 8279, `pacific islander` = 12409, `two or more races` = 82543, 
        `white alone` = 505763)
 
+## local test-micro
+# load("./tests/testdata/dat-par_sim_anneal.Rdata")
+
+# test_micro <- syn[[1]]$synthetic_micro
+# a_m <- all_geog_constraint_age(syn, 'synthetic')[[1]]
+# ed_m <- all_geog_constraint_edu(syn, 'synthetic')[[1]]
+# g_m <- all_geog_constraint_gender(syn, 'macro.table')[[1]]
+# nat_m <- all_geog_constraint_nativity(syn, 'macro.table')[[1]]
+# mar_m <- all_geog_constraint_marital_status(syn, 'synthetic')[[1]]
+# r_m <- all_geog_constraint_race(syn, 'synthetic')[[1]]
+# 
+# save(test_micro, a_m, ed_m, g_m, nat_m, mar_m, r_m
+#      , file= "./tests/testdata/dat-test_micro.xz", version= 3, compress= 'xz')

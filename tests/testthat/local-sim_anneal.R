@@ -31,30 +31,30 @@ test_that("adding constraints work", {
   testthat::skip_on_travis()
   #-------------------------------
   # test -- add some constraints singly
-  expect_true(is.list(add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)))
-  expect_equal(length(add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)), 1)
-  expect_equal(names(add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)), "age")
+  expect_true(is.list(add_constraint(attr_name= "age", attr_totals= a_m, micro_data= test_micro)))
+  expect_equal(length(add_constraint(attr_name= "age", attr_totals= a_m, micro_data= test_micro)), 1)
+  expect_equal(names(add_constraint(attr_name= "age", attr_totals= a_m, micro_data= test_micro)), "age")
   
-  expect_true(is.list(add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro)))
-  expect_equal(length(add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro)), 1)
-  expect_equal(names(add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro)), "edu_attain")
+  expect_true(is.list(add_constraint(attr_name= "edu_attain", attr_totals= ed_m, micro_data= test_micro)))
+  expect_equal(length(add_constraint(attr_name= "edu_attain", attr_totals= ed_m, micro_data= test_micro)), 1)
+  expect_equal(names(add_constraint(attr_name= "edu_attain", attr_totals= ed_m, micro_data= test_micro)), "edu_attain")
   
-  expect_true(is.list(add_constraint(attr_name= "gender", attr_totals= g, micro_data= test_micro)))
-  expect_equal(length(add_constraint(attr_name= "gender", attr_totals= g, micro_data= test_micro)), 1)
-  expect_equal(names(add_constraint(attr_name= "gender", attr_totals= g, micro_data= test_micro)), "gender")
+  expect_true(is.list(add_constraint(attr_name= "gender", attr_totals= g_m, micro_data= test_micro)))
+  expect_equal(length(add_constraint(attr_name= "gender", attr_totals= g_m, micro_data= test_micro)), 1)
+  expect_equal(names(add_constraint(attr_name= "gender", attr_totals= g_m, micro_data= test_micro)), "gender")
   
   # test -- add multiple constraints
-  c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
-  expect_equal(length(add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "age", attr_totals= a_m, micro_data= test_micro)
+  expect_equal(length(add_constraint(attr_name= "edu_attain", attr_totals= ed_m, micro_data= test_micro,
                                      constraint_list= c_list)), 2L)
-  expect_equal(names(add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
+  expect_equal(names(add_constraint(attr_name= "edu_attain", attr_totals= ed_m, micro_data= test_micro,
                                     constraint_list= c_list)), c("age", "edu_attain"))
   
-  c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "edu_attain", attr_totals= ed_m, micro_data= test_micro,
                            constraint_list= c_list)
-  c_list <- add_constraint(attr_name= "gender", attr_totals= g, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "gender", attr_totals= g_m, micro_data= test_micro,
                            constraint_list= c_list)
-  c_list <- c_list <- add_constraint(attr_name= "nativity", attr_totals= n, micro_data= test_micro,
+  c_list <- c_list <- add_constraint(attr_name= "nativity", attr_totals= nat_m, micro_data= test_micro,
                                      constraint_list= c_list)
   
   expect_equal(length(c_list), 4)
@@ -78,12 +78,12 @@ test_that("sample_totals calculates accurately", {
   testthat::skip_on_travis()
   #-------------------------------
   # build out constraints
-  c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
-  c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "age", attr_totals= a_m, micro_data= test_micro)
+  c_list <- add_constraint(attr_name= "edu_attain", attr_totals= ed_m, micro_data= test_micro,
                            constraint_list= c_list)
-  c_list <- add_constraint(attr_name= "gender", attr_totals= g, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "gender", attr_totals= g_m, micro_data= test_micro,
                            constraint_list= c_list)
-  c_list <- c_list <- add_constraint(attr_name= "nativity", attr_totals= n, micro_data= test_micro,
+  c_list <- c_list <- add_constraint(attr_name= "nativity", attr_totals= nat_m, micro_data= test_micro,
                                      constraint_list= c_list)
   
   set.seed(235L)
@@ -104,8 +104,8 @@ test_that("tae_mapply calculates accurately", {
   testthat::skip_on_travis()
   #-------------------------------
   # build out constraints
-  c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
-  c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "age", attr_totals= a_m, micro_data= test_micro)
+  c_list <- add_constraint(attr_name= "edu_attain", attr_totals= ed_m, micro_data= test_micro,
                            constraint_list= c_list)
   # sample data and run
   set.seed(235L)
@@ -114,10 +114,10 @@ test_that("tae_mapply calculates accurately", {
                               c_list)
   
   # test output -- values
-  tae_age <- sum(abs(table(samp$age) - a)) # 3098
-  tae_edu <- sum(abs(table(samp$edu_attain) - e)) # 3266
+  tae_age <- sum(abs(table(samp$age) - a_m)) # 100
+  tae_edu <- sum(abs(table(samp$edu_attain) - ed_m)) # 48
   
-  expect_equal(sum(t1), sum(3098, 3266))
+  expect_equal(sum(t1), sum(100, 48))
   expect_equal(sum(t1), sum(tae_age, tae_edu))
   expect_equal(t1[1], tae_age)
   expect_equal(t1[2], tae_edu)
@@ -134,15 +134,15 @@ test_that("tae errors work appropriately", {
   testthat::skip_on_travis()
   #-------------------------------
   # build out constraints
-  c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
-  c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "age", attr_totals= a_m, micro_data= test_micro)
+  c_list <- add_constraint(attr_name= "edu_attain", attr_totals= ed_m, micro_data= test_micro,
                            constraint_list= c_list)
-  c_list <- add_constraint(attr_name= "gender", attr_totals= g, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "gender", attr_totals= g_m, micro_data= test_micro,
                            constraint_list= c_list)
-  c_list <- c_list <- add_constraint(attr_name= "nativity", attr_totals= n, micro_data= test_micro,
+  c_list <- c_list <- add_constraint(attr_name= "nativity", attr_totals= nat_m, micro_data= test_micro,
                                      constraint_list= c_list)
   
-  c_list2 <- add_constraint(attr_name= "age", attr_totals= a * 2, micro_data= test_micro)
+  c_list2 <- add_constraint(attr_name= "age", attr_totals= a_m * 2, micro_data= test_micro)
   # sample data
   set.seed(235L)
   mm <- matrix(rnorm(100), 10)
@@ -162,8 +162,8 @@ test_that("TAE results are exactly correct", {
   testthat::skip_on_travis()
   #-------------------------------
   # build out constraints
-  c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
-  c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "age", attr_totals= a_m, micro_data= test_micro)
+  c_list <- add_constraint(attr_name= "edu_attain", attr_totals= ed_m, micro_data= test_micro,
                            constraint_list= c_list)
   
   # sample data and run
@@ -172,19 +172,19 @@ test_that("TAE results are exactly correct", {
   t1 <- calculate_TAE(samp, c_list)
   
   # test output -- values
-  tae_age <- sum(abs(table(samp$age) - a)) # 3098
-  tae_edu <- sum(abs(table(samp$edu_attain) - e)) # 3266
+  tae_age <- sum(abs(table(samp$age) - a_m)) # 100
+  tae_edu <- sum(abs(table(samp$edu_attain) - ed_m)) # 48
   
-  expect_equal(t1[[1]], sum(3098, 3266))
+  expect_equal(t1[[1]], sum(100, 48))
   expect_equal(t1[[1]], sum(tae_age, tae_edu))
   
   ## add another constraint, retest
-  c_list <- add_constraint(attr_name= "gender", attr_totals= g, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "gender", attr_totals= g_m, micro_data= test_micro,
                            constraint_list= c_list)
   t1 <- calculate_TAE(samp, c_list)
   
-  tae_g <- sum(abs(table(samp$gender) - g)) # 1106
-  expect_equal(t1[[1]], sum(3098, 3266, 1106))
+  tae_g <- sum(abs(table(samp$gender) - g_m)) # 6
+  expect_equal(t1[[1]], sum(100, 48, 6))
   expect_equal(t1[[1]], sum(tae_age, tae_edu, tae_g))
   
 })
@@ -197,12 +197,12 @@ test_that("TAE ouptuts appropriately - no iterations", {
   testthat::skip_on_travis()
   #-------------------------------
   # build out constraints
-  c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
-  c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "age", attr_totals= a_m, micro_data= test_micro)
+  c_list <- add_constraint(attr_name= "edu_attain", attr_totals= ed_m, micro_data= test_micro,
                            constraint_list= c_list)
-  c_list <- add_constraint(attr_name= "gender", attr_totals= g, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "gender", attr_totals= g_m, micro_data= test_micro,
                            constraint_list= c_list)
-  c_list <- add_constraint(attr_name= "nativity", attr_totals= n, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "nativity", attr_totals= nat_m, micro_data= test_micro,
                                      constraint_list= c_list)
   # sample data and run
   set.seed(235L)
@@ -225,17 +225,17 @@ test_that("TAE results are exactly correct - iterations 2-3", {
   testthat::skip_on_travis()
   #-------------------------------
   # build out constraints
-  c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
-  c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "age", attr_totals= a_m, micro_data= test_micro)
+  c_list <- add_constraint(attr_name= "edu_attain", attr_totals= ed_m, micro_data= test_micro,
                            constraint_list= c_list)
-  c_list <- add_constraint(attr_name= "gender", attr_totals= g, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "gender", attr_totals= g_m, micro_data= test_micro,
                            constraint_list= c_list)
   # sample data and run
   set.seed(235L)
   samp <- synthACS:::sample_micro(test_micro, sum(c_list[[1]]), prob_name= "p")
   t1 <- calculate_TAE(samp, c_list)
   
-  expect_equal(t1[[1]], sum(3098, 3266, 1106))
+  expect_equal(t1[[1]], sum(100, 48, 6))
   
   # take a resample
   drop_ind <- sample(1:nrow(samp), size= 500, replace=FALSE)
@@ -251,14 +251,14 @@ test_that("TAE results are exactly correct - iterations 2-3", {
   new_samp <- rbind(samp[-drop_ind,], new_obs)
   st <- synthACS:::sample_totals(names(c_list), new_samp)
   
-  tae_age <- sum(abs(table(new_samp$age) - a)) # 3094
-  tae_edu <- sum(abs(table(new_samp$edu_attain) - e)) # 3250
-  tae_g   <- sum(abs(table(new_samp$gender) - g)) # 1086
+  tae_age <- sum(abs(table(new_samp$age) - a_m)) # 108
+  tae_edu <- sum(abs(table(new_samp$edu_attain) - ed_m)) # 52
+  tae_g   <- sum(abs(table(new_samp$gender) - g_m)) # 28
   
   # test output -- exact counts
   #----------------------------------------------
   expect_equal(t2[[1]], sum(tae_age, tae_edu, tae_g))
-  expect_equal(t2[[1]], sum(3094, 3250, 1086))
+  expect_equal(t2[[1]], sum(108, 52, 28))
   expect_equal(st[[1]], t2[[2]][[1]])
   expect_equal(st[[2]], t2[[2]][[2]])
   expect_equal(st[[3]], t2[[2]][[3]])
@@ -282,13 +282,13 @@ test_that("TAE results are exactly correct - iterations 2-3", {
   new_samp2 <- rbind(new_samp[-drop_ind,], new_obs)
   st <- synthACS:::sample_totals(names(c_list), new_samp2)
   
-  tae_age <- sum(abs(table(new_samp2$age) - a)) # 3088
-  tae_edu <- sum(abs(table(new_samp2$edu_attain) - e)) # 3282
-  tae_g   <- sum(abs(table(new_samp2$gender) - g)) # 1100
+  tae_age <- sum(abs(table(new_samp2$age) - a_m)) # 102
+  tae_edu <- sum(abs(table(new_samp2$edu_attain) - ed_m)) # 46
+  tae_g   <- sum(abs(table(new_samp2$gender) - g_m)) # 30
   
   # text outputs exactly
   expect_equal(t2[[1]], sum(tae_age, tae_edu, tae_g))
-  expect_equal(t2[[1]], sum(3088, 3282, 1100))
+  expect_equal(t2[[1]], sum(102, 46, 30))
   expect_equal(st[[1]], t2[[2]][[1]])
   expect_equal(st[[2]], t2[[2]][[2]])
   expect_equal(st[[3]], t2[[2]][[3]])
@@ -306,12 +306,12 @@ test_that("TAE outputs appropriately - iterations 2-3", {
   testthat::skip_on_travis()
   #-------------------------------
   # build out constraints
-  c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
-  c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "age", attr_totals= a_m, micro_data= test_micro)
+  c_list <- add_constraint(attr_name= "edu_attain", attr_totals= ed_m, micro_data= test_micro,
                            constraint_list= c_list)
-  c_list <- add_constraint(attr_name= "gender", attr_totals= g, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "gender", attr_totals= g_m, micro_data= test_micro,
                            constraint_list= c_list)
-  c_list <- c_list <- add_constraint(attr_name= "nativity", attr_totals= n, micro_data= test_micro,
+  c_list <- c_list <- add_constraint(attr_name= "nativity", attr_totals= nat_m, micro_data= test_micro,
                                      constraint_list= c_list)
   # sample data and run
   set.seed(235L)
@@ -377,8 +377,8 @@ test_that("errors work", {
   )
   
   # build out constraints
-  c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
-  c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "age", attr_totals= a_m, micro_data= test_micro)
+  c_list <- add_constraint(attr_name= "edu_attain", attr_totals= ed_m, micro_data= test_micro,
                            constraint_list= c_list)
   
   c_list2 <- c_list; names(c_list2) <- NULL
@@ -431,16 +431,16 @@ test_that("annealing works correctly", {
   testthat::skip_on_travis()
   #-------------------------------
   # build out constraints
-  c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
-  c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "age", attr_totals= a_m, micro_data= test_micro)
+  c_list <- add_constraint(attr_name= "edu_attain", attr_totals= ed_m, micro_data= test_micro,
                            constraint_list= c_list)
-  c_list <- add_constraint(attr_name= "gender", attr_totals= g, micro_data= test_micro,
+  c_list <- add_constraint(attr_name= "gender", attr_totals= g_m, micro_data= test_micro,
                            constraint_list= c_list)
-  c_list <- c_list <- add_constraint(attr_name= "marital_status", attr_totals= m, micro_data= test_micro,
+  c_list <- c_list <- add_constraint(attr_name= "marital_status", attr_totals= mar_m, micro_data= test_micro,
                                      constraint_list= c_list)
-  c_list <- c_list <- add_constraint(attr_name= "race", attr_totals= r, micro_data= test_micro,
+  c_list <- c_list <- add_constraint(attr_name= "race", attr_totals= r_m, micro_data= test_micro,
                                      constraint_list= c_list)
-  c_list <- c_list <- add_constraint(attr_name= "nativity", attr_totals= n, micro_data= test_micro,
+  c_list <- c_list <- add_constraint(attr_name= "nativity", attr_totals= nat_m, micro_data= test_micro,
                                      constraint_list= c_list)
   # sample data and run
   anneal1 <- optimize_microdata(test_micro, "p", c_list, max_iter= 10, resample_size= 500, p_accept= 0.01,

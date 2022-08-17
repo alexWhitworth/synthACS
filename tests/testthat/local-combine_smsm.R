@@ -3,6 +3,7 @@
 library(testthat)
 library(synthACS)
 library(parallel)
+library(retry)
 
 #------------------------------------------------------------------------------
 context("combine smsm_set objects")
@@ -15,9 +16,9 @@ test_that("expected errors and warnings are generated", {
   testthat::skip_on_travis()
   #-------------------------------
   # create smsm_set object 
-  cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a_par, macro_micro= syn)
-  cll <- all_geogs_add_constraint(attr_name= "gender", attr_total_list= g_par, macro_micro= syn, constraint_list_list= cll)
-  cll <- all_geogs_add_constraint(attr_name= "edu_attain", attr_total_list= e_par, macro_micro= syn, constraint_list_list= cll)
+  cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a, macro_micro= syn)
+  cll <- all_geogs_add_constraint(attr_name= "gender", attr_total_list= g, macro_micro= syn, constraint_list_list= cll)
+  cll <- all_geogs_add_constraint(attr_name= "edu_attain", attr_total_list= e, macro_micro= syn, constraint_list_list= cll)
   
   opt_geog <- all_geog_optimize_microdata(syn, prob_name= "p", constraint_list_list= cll, seed= 100L,
                                           p_accept= 0.4,  max_iter= 2L, verbose= FALSE)
@@ -79,9 +80,9 @@ test_that("returns correctly", {
   testthat::skip_on_travis()
   #-------------------------------
   # create smsm_set object 
-  cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a_par, macro_micro= syn)
-  cll <- all_geogs_add_constraint(attr_name= "gender", attr_total_list= g_par, macro_micro= syn, constraint_list_list= cll)
-  cll <- all_geogs_add_constraint(attr_name= "edu_attain", attr_total_list= e_par, macro_micro= syn, constraint_list_list= cll)
+  cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a, macro_micro= syn)
+  cll <- all_geogs_add_constraint(attr_name= "gender", attr_total_list= g, macro_micro= syn, constraint_list_list= cll)
+  cll <- all_geogs_add_constraint(attr_name= "edu_attain", attr_total_list= e, macro_micro= syn, constraint_list_list= cll)
   
   opt_geog <- all_geog_optimize_microdata(syn, prob_name= "p", constraint_list_list= cll,
                                           max_iter= 2L, verbose= FALSE)
