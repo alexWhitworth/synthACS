@@ -62,17 +62,17 @@ factor_return <- function(df, prob_name) {
 # versions
 geo_alphabetize <- function(geo, est, se) {
   if (is.data.frame(est)) {
-    est <- geo_alphabetize_df(ord, est)
-    se <- geo_alphabetize_df(ord, se)
+    est <- geo_alphabetize_df(est)
+    se <- geo_alphabetize_df(se)
   } else {
-    est <- lapply(est, geo_alphabetize_df, ord= ord)
-    se <- lapply(se, geo_alphabetize_df, ord= ord)
+    est <- lapply(est, geo_alphabetize_df)
+    se <- lapply(se, geo_alphabetize_df)
   }
   geo <- geo[order(geo$NAME), , drop= FALSE] 
   return(list(geo= geo, est= est, se= se))
 }
 
-geo_alphabetize_df <- function(ord, df) {
+geo_alphabetize_df <- function(df) {
     return(df[order(rownames(df)), , drop= FALSE])
 }
 

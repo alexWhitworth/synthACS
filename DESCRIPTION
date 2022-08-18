@@ -1,7 +1,9 @@
 Package: synthACS
 Title: Synthetic Microdata and Spatial MicroSimulation Modeling for ACS Data
 Version: 1.7.0
-Authors@R: person("Alex", "Whitworth", , email = "whitworth.alex@gmail.com", c("aut", "cre"))
+Authors@R: person("Alex", "Whitworth", , email = 
+"whitworth.alex@gmail.com", role=c("aut", "cre"))
+Maintainer: Alex Whitworth <whitworth.alex@gmail.com>
 Description: Provides access to curated American Community Survey (ACS) base tables via a wrapper
   to library(acs). Builds synthetic micro-datasets at any user-specified geographic level with
   ten default attributes; and, conducts spatial microsimulation modeling (SMSM) via simulated
@@ -22,7 +24,7 @@ Suggests:
     knitr,
     rmarkdown,
     R.rsp
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1
 Encoding: UTF-8
 LinkingTo: Rcpp
 VignetteBuilder: knitr, R.rsp
