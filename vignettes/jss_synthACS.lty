@@ -1,10 +1,10 @@
 \documentclass[nojss]{jss}
 
 %\VignetteIndexEntry{synthACS: An Introduction}
-  %\VignetteAuthor{Alex Whitworth}
-  %\VignetteKeywords{R, introduction}
-  %\VignetteTangle{no}
-  %\VignetteEngine{R.rsp::rsp}
+%\VignetteAuthor{Alex Whitworth}
+%\VignetteKeywords{R, introduction, LaTeX, spatial}
+%\VignetteTangle{no}
+%\VignetteEngine{R.rsp::tex}
 
 \usepackage{graphicx, color, hyperref, ae, fancyvrb, natbib} % -- default JSS packages
 \usepackage{amsmath, amssymb, amsthm} % American Math. Society Packages
