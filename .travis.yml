@@ -12,7 +12,7 @@ notifications:
     on_failure: change
 
 service_name: travis-pro
-repo_token: mYAwUYufK46TBtlMOSzFxN2RB96dK7nOM
+repo_token: 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
 
 
 after_success:

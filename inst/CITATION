@@ -2,18 +2,20 @@ citHeader("To cite synthACS in publications use:")
 
 citEntry(entry = "Article",
   title        = "{synthACS}: Spatial MicroSimulation Modeling with Synthetic American Community Survey Data",
-  author       = personList(as.person("Alex Whitworth")),
+  author       = person(given = "Alex",
+                        family = "Whitworth",
+                        email = "whitworth.alex@gmail.com"),
   journal      = "Journal of Statistical Software",
-  year         = "Forthcoming",
-#   volume       = "TBD",
-#   number       = "TBD",
-#   pages        = "TBD",
-#   url          = "https://www.jstatsoft.org/v??",
+  year         = "2022",
+  volume       = "104",
+  number       = "7",
+  pages        = "1--30",
+  doi          = "10.18637/jss.v104.i07",
 
   textVersion  =
-  paste("Alex Whitworth.", # (2020)
+  paste("Alex Whitworth. (2022)",
         "synthACS: Spatial MicroSimulation Modeling with Synthetic American Community Survey Data.",
-        "Journal of Statistical Software, Forthcoming" # XX(x), X-XX."
+        "Journal of Statistical Software, Forthcoming 7(104), 1-30."
   )
 #         "URL TBD.")
 )
